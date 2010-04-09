@@ -1,0 +1,192 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{PHP}
+
+\url{http://www.php.net/} \\
+\url{http://www.zend.com/} \\
+
+
+\section{Présentation}
+
+Un danois, Rasmus Lerdorf\footnote{\url{http://www.lerdorf.com/}}, décidant de mettre en valeur sa page personnelle a créé une collection de scripts en Perl/CGI appelée PHPTools (Personel Home Page Tools). Réécrit en langage C, l'outil fut renommé PHP/FI (Forms Interpreter). PHP/FI version 2 peut s'insérer sous forme de module au serveur Apache et permet d'insérer directement des instructions dans du code HTML. En 1997, plusieurs développeurs s'associent à Rasmus Lerdorf pour sortir un an plus tard PHP 3 qui intégrait de nombreuses fonctionnalités comme le support de systèmes de gestion de base de données. PHP étant cette fois un acronyme récursif de "PHP : Hypertext Preprocessor". La sortie de PHP 4 en 2000 puis de PHP 5 en 2004 apporta de nombreuses fonctionnalités supplémentaires.\\
+PHP est donc un langage de programmation Open Source principalement utilisé par les développeurs web pour créer des pages dynamiques. En effet c'est un langage de script exécuté du côté serveur générant principalement du HTML. Sa syntaxe empruntée aux langages C, Java et Perl est assez simple à apprendre. \\
+~\\
+\section{Installation}
+\subsection{Compilation}
+
+Comme la plupart des logiciels libres et Apache, il est possible de compiler PHP à partir des sources. Cela permet de compiler uniquement avec les options que l'on a besoin et d'avoir des binaires bien adaptés à sa machine :\\
+\begin{verbatim}
+./configure [options]
+make
+make install
+\end{verbatim}
+
+\subsection{Paquets}
+
+~\\
+\textbf{Pour Debian GNU/Linux :}
+~\\
+\textit{Paquets principaux :}
+~\\
+\begin{itemize}
+\item[\textbf{php5-common}] : fichiers courants pour PHP
+\item[\textbf{libapache2-mod-php5}] : module mod\_php pour Apache2
+\end{itemize}
+~\\
+\emph{Dépendances directes :}
+~\\
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+libc6 :& librairies "GNU C"\\
+\hline
+libbz2-1.0 :& librairie de compression bzip2\\
+\hline
+libdb4.2 :& librairies "Berkeley v4.2 Database"\\
+\hline
+libexpat1 :& librairie "XML parsing C"\\
+\hline
+libpcre3 :& librairie Perl 5 Compatible Regular Expression\\
+\hline
+libssl0.9.7 :& librairies "SSL shared"\\
+\hline
+zlib1g :& librairies de compression gzip\\
+\hline
+mime-support :& support MIME (mime.types, mailcap)\\
+\hline
+apache2-mpm-prefork :& implémentation "non-threaded" (similaire à Apache 1.3.x)\\
+\hline
+libmagic1 :& librairie pour les types de fichiers utilisant les numéros magiques\\
+\hline
+\end{tabular}
+\end{center}
+~\\
+
+\section{Configuration}
+\subsection{Fichier de configuration}
+
+La configuration par défaut de PHP fonctionne en général assez bien. Néanmoins un certain nombre de paramètres peuvent être configurés dans le fichier nommé php.ini (sa syntaxe rappelle en effet les fichiers INI d'applications Microsoft Windows). Il est important de se familiariser avec cette configuration pour pouvoir la modifier pour des questions de sécurité ou pour certaines applications.\\
+~\\
+\texttt{php.ini :}
+~\\
+\begin{verbatim}
+; activer l'interpretation du Code PHP
+engine = On
+; active le support des balises courtes <? ... ?>
+short_open_tag = On
+; quantité maximale de memoire qu'un script peut reserver
+memory_limit = 8M
+
+; ajoute des restrictions et controle sur les scripts 
+; http://www.php.net/manual/fr/features.safe-mode.functions.php
+; obsolete
+;safe_mode = On
+
+;  permet de ne changer que certaines variables d'environnement
+safe_mode_allowed_env_vars = PHP_
+
+; messages d'erreur non visibles
+display_errors = Off
+
+; duree maximale d'execution d'un script en seconde
+max_execution_time = 30 
+
+; permet d'eviter l'execution de scripts distants
+allow_url_fopen = Off
+
+; ajoute des quotes pour empecher certaines injections sql
+magic_quotes_gpc = On
+
+; ne pas indiquer la presence de PHP dans entete HTTP
+expose_php = Off
+
+; enregistrer les erreurs
+log_errors = On 
+
+; journal des erreurs
+error_log = /var/log/php.log
+
+; desactiver des fonctions dangereuses
+disable_functions = exec, shell_exec, system, passthru, putenv, popen
+
+; specifie si uploads possibles ou non
+file_uploads = On
+
+; la taille maximale des uploads
+upload_max_filesize = 2M
+
+; repertoire temporaire pour les uploads
+upload_tmp_dir = /tmp/php/
+
+\end{verbatim}
+~\\
+Lien~: \url{http://www.php.net/manual/fr/features.safe-mode.functions.php}\\
+~\\
+
+Malgré l'intégration du moteur Zend (parseur de code), certains "optimiseurs" peuvent accélérer l'exécution de script PHP en optimisant code, cache, etc. 
+~\\
+Zend Optimizer \\
+Eaccelerator \\
+APC\\
+~\\
+
+Les problèmes de sécurité en relation avec PHP proviennent bien souvent d'erreurs de code. Ils concernent donc principalement les scripts du type PHP-Nuke, PHPBB2, etc. Néanmoins, PHP peut comporter des failles de sécurité. Outre l'utilisation des fonctionnalités disponibles dans la configuration de PHP, il existe des patches comme hardened-php qui permettent d'éviter certains problèmes. Le suivi des listes de sécurité et la mise-à-jour de PHP reste indispensable.\\
+
+Liens~:\\
+\url{http://www.hardened-php.net/}\\
+\url{http://www.phpsecure.info}\\
+~\\
+
+
+\textbf{Exécution de scripts en mode de commande :}
+~\\
+\textit{list.php}
+\begin{verbatim}
+<?php echo "Hello World\n"; ?>
+
+$ php /tmp/php.php
+X-Powered-By: PHP
+Content-type: text/html
+
+bonjour
+\end{verbatim}
+~\\
+
+\subsection{Utilisation avec Apache}
+
+Module mod\_php5\\
+~\\
+LoadModule php5\_module /usr/lib/apache2/modules/libphp5.so\\
+~\\
+\texttt{
+<IfModule mod\_php5.c>\\
+  AddType application/x-httpd-php .php .html .phtml .php5\\
+  AddType application/x-httpd-php-source .phps\\
+</IfModule>\\
+}
+On vérifie avec le script PHP suivant :\\
+~\\
+\texttt{echo "<?php phpinfo(); ?>" > /var/www/info.php}
+~\\
+
+\section{Base de programmation}
+
+
+Il existe de nombreuses extensions de PHP (MySQL, PostGreSQL, LDAP, FTP, IMAP, GD, XML, etc.) et également des bibliothèques dont la plus connue est PEAR (PHP Extension and Application Repository) qui comprend classes et librairies mais introduit également un style de codage.\\
+~\\
+Liens :\\
+\url{http://www.nexen.net/docs/php/} \\
+\url{http://pear.php.net/}\\
+\url{http://pecl.php.net/}\\
+\url{http://www.lephpfacile.com/manual\_pear/index.php}\\
+\url{http://gtk.php.net/}\\
+~\\
+
+% open_basedir
+
+

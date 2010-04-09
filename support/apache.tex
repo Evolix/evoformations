@@ -1,0 +1,1087 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Apache}
+
+\section{Rappel de l'architecture client/serveur}
+
+L'architecture client-serveur\footnote{http://www.faqs.org/faqs/client-server-faq/} se résume à la demande de services d'un programme client à un programme serveur. Il s'agit de l'extension logique du partitionnement des logiciels importants en modules donnant la possibilité de développement et de maintenance plus aisés. Les modules "demandeurs" sont appelés client et les modules appelés sont appelés service. Ainsi les différents modules fonctionnent sur des plateformes différentes et appropriées à leur fonction. Par exemple, les systèmes de gestion de base de données tournent sur des plateformes logicielles et matérielles conçues pour optimiser les requêtes, ou les serveurs de fichiers tournent sur des plateformes adaptées pour la gestion de fichiers.\\
+~\\
+Le client est donc un programme qui envoie un message à un programme serveur, demandant au serveur un service. Les programmes client sont en général constitués d'une interface permettant de valider les données entrées par l'utilisateur et d'un programme permettant de traiter et d'envoyer les requêtes aux programmes serveur.\\
+~\\
+Le programme contient donc un certain nombre de facilités pour interagir avec l'utilisateur. Ainsi, il accède aux ressources locales (écran, clavier, processeur, périphériques, etc.).\\ Un des éléments souvent présent sur une machine de type poste de travail est une interface graphique : GUI (Graphical User Interface).\\ 
+Normalement, c'est le Windows Manager qui détecte les actions de l'utilisateur, gère les différentes fenêtres et affiche les données.\\
+~\\
+Le serveur est un programme qui répond aux demandes du client en réalisant la tâche demandée. Les programmes serveur recoivent en général des requêtes des programmes client, exécutent des requêtes et mises-à-jour sur une base de données, contrôlent l'intégrité des données et répondent aux programmes clients. Le programme serveur devrait être sur une machine indépendante sur le réseau mais souvent plusieurs programmes serveur sont sur la même machine et dans  certains cas, la machine hébergeant le service est un poste de travail. Le programme serveur peut souvent accéder à des resources locales telles que les bases de données, imprimantes, interfaces et processeur(s).\\ 
+~\\
+
+\section{Le protocole HTTP}
+
+\subsection{Différentes versions}
+
+HTTP/0.9 : première version du protocole HTTP, très simple, permettant uniquant une requête GET et une réponse sans méta-données. \\
+HTTP/1.0 : ancienne version du protocole HTTP, encore utilisée par certains logiciels. Le serveur HTTP ferme encore la connexion dès qu'il a envoyé sa réponse. \\
+HTTP/1.1 : version la plus répandue du protocole HTTP. Elle permet notamment les connexions persistantes, la négociation du contenu, et une meilleure gestion du cache.~\\
+~\\
+\subsection{Méthodes :}
+~\\
+GET : requête d'une ressource \\
+HEAD : requête uniquement des entête d'une ressource \\
+POST : envoi de données à une ressource \\
+Il existes d'autres méthodes moins utilisées (PUT, DELETE, TRACE, CONNECT) \\
+~\\
+\subsection{Codes d'état :}
+\begin{itemize}
+\item{1xx} : Information  (peu utilisé)
+\item{2xx} : Succès, notamment le code 200 correspondant à OK
+\item{3xx} : Redirection, notamment 301 (déplacement défintif) et 302 (déplacement temporaire)
+\item{4xx} : Erreur du client, notamment 404 (non trouvé) et 403 (non autorisé)
+\item{5xx} : Erreur du serveur, notamment 500 (erreur interne)
+\end{itemize}
+
+\subsection{Champs d'entête :}
+\begin{itemize}
+\item{Allow}
+\item{Authorization}
+\item{Content-Encoding}
+\item{Content-Length}
+\item{Date}
+\item{Expires}
+\item{From}
+\item{If-Modified-Since}
+\item{Last-Modified}
+\item{Location}
+\item{Pragma}
+\item{Referer}
+\item{Server}
+\item{User-Agent}
+\item{WWW-Authenticate}
+\item{etc.}
+\end{itemize}
+
+\section{Présentation}
+~\\
+Le logiciel Apache est un serveur HTTP. Apparu en 1995, il est dérivé de nombreux patches pour le serveur NCSA HTTPD\footnote{http://hoohoo.ncsa.uiuc.edu/}. Complètement réécrit, son nom serait tiré officieusement de l'appelation "a patchy server", c'est-à-dire un serveur fait de patches. La version officielle indique que le nom a été choisi en l'honneur de la tribu Apache, bien connue pour son sens aigu de la stratégie guerrière et pour son endurance. Dès 1996, il devenait le serveur HTTP le plus répandu sur Internet et sa popularité ne cesse de croître car en 1999, il était présent sur 57\% des serveurs et en 2004, le chiffre atteind 67\% \footnote{http://news.netcraft.com/archives/web\_server\_survey.html}.\\
+La fondation Apache, Apache Software Foundation\footnote{http://www.apache.org/foundation/}, a été créée en 1999 afin de soutenir le développement d'Apache mais aussi de nombreux autres projets orientés web (Jakarta, Spamassassin, etc.).\\
+Apache est l'un des logiciels libres - sous licence Apache\footnote{http://www.apache.org/licenses/} souvent cité en exemple quand on parle des logiciels libres car il est notamment réputé pour sa sécurité et sa fiabilité.\\
+
+Liens : \\
+\url{http://www.apache.org/}\\
+\url{http://en.wikipedia.org/wiki/Apache\_HTTP\_Server}\\
+~\\
+On distingue actuellement la version 1.x de la version 2.x qui comprend de nombreuses avancées telles qu'une nouvelle API, le support natif de l'IPv6 et la possibilité d'installation sur des plateformes non UNIX. Apache possède également de nombreux modules (CGI, Perl, PHP, authentification avancée, etc.) offrant des possibilités de mise en oeuvre de services complexes.\\
+
+\section{Installation}
+\subsection{Compilation}
+~\\
+Comme la plupart des logiciels libres, il est possible de compiler Apache à partir des sources. Cela permet de compiler uniquement avec les options que l'on a besoin et d'avoir des binaires bien adaptés à sa machine.\\
+Pour la compilation en elle-même, on applique donc la procédure classique. On va reprendre en détail cette procédure.\\
+~\\
+On télécharge les sources mais également le hash MD5 des sources ainsi que la signature PGP (et les clés des développeurs Apache) de ces sources~:
+
+\begin{verbatim}
+$ wget apache\_x.y.z.tar.gz
+$ wget apache\_x.y.z.tar.gz.md5
+$ wget KEYS
+$ wget apache\_x.y.z.tar.gz.asc
+\end{verbatim}
+
+On vérifie le bon déroulement du téléchargement des sources en comparant le résultat des commandes suivantes~:
+\begin{verbatim}
+$ md5sum apache_x.y.z.gz
+$ cat apache_x.y.z.tar.gz.md5
+\end{verbatim}
+~\\
+
+On importe les clés des développeurs Apache et on vérifie l'intégrité des sources~:
+
+\begin{verbatim}
+$ gpg --import KEYS
+$ gpg --verify apache_x.y.z.tar.gz.asc
+\end{verbatim}
+
+On peut ensuite décompresser et désarchiver les sources~:
+
+\begin{verbatim}
+tar -zxvf apache_x.y.z.tar.gz
+cd apache_x.y.z.tar.gz
+\end{verbatim}
+
+On prend ensuite connaissance des options qui s'offrent à nous grâce à la commande~:
+\begin{verbatim}
+./configure --help
+\end{verbatim}
+On distinguera les options d'administration (noms des répertoires, chemins des librairies, etc.). Par exemple~:
+\begin{verbatim}
+--sysconfdir=/etc/apache2 --sbindir=/usr/sbin ; 
+\end{verbatim}
+
+Et les options relatives aux fonctionnalités, par exemple~:
+
+\begin{verbatim}
+--with-mpm=worker --enable-ssl --enable-rewrite 
+--enable-cgi --enable-dav-fs --enable-dav
+\end{verbatim}
+
+On aura bien sûr besoin de nombreuses librairies de développement pour compiler Apache (l'étape suivante sert bien sûr à vérifier leurs présences). Ensuite, on spécifie les options choisies avant de lancer l'étape de vérification :\\
+~\\
+\texttt{./configure [options]}\\
+~\\
+On compile :\\
+~\\
+\texttt{make}\\
+~\\
+Et on procède à l'installation :\\
+~\\
+\texttt{make install}\\
+~\\
+
+\subsection{Paquets}
+~\\
+Les paquets offrent plusieurs avantages sur la compilation à partir des sources. Ils permettent notamment de gagner du temps, et parfois de gérer les dépendances. On distinguera les paquets RPM\footnote{http://www.rpm.org/}, DEB\footnote{http://www.debian.org/distrib/packages}, etc.\\
+~\\
+Par exemple, sur un système Debian~:\\
+~\\
+\textbf{Pour Apache 2 :}
+~\\
+\texttt{ aptitude install apache2-mpm-prefork}\\
+~\\
+\emph{Paquets principaux :}\\
+~\\
+\begin{itemize}
+\item[apache2.2-common :] modules de base, documentations et icones pour Apache
+~\\
+\textit{Plusieurs choix pour Apache MPM (Multi-Processing Module) :}
+~\\
+\item[apache2-mpm-worker :] version par défaut. Adapté aux serveurs à fort trafic
+\item[apache2-mpm-prefork :] implémentation "non-threaded" (similaire à l'historique Apache 1.3.x)
+\item[apache2-mpm-itk :] similaire au prefork, avec la possibilité de préciser l'utilisateur et le groupe pour chaque VirtualHost
+\end{itemize}
+~\\
+
+\emph{Dépendances directes :}\\
+~\\
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+libapr0 :& librairie "Apache Portable Runtime"\\
+\hline
+openssl :& librairies "Authentication abstraction"\\
+\hline
+ssl-cert :& surcouche pour générer des certificats\\
+\hline
+libldap2 :& librairies OpenLDAP\\
+\hline
+libgnutls11 :& librairies GNU TLS\\
+\hline
+libgcrypt11 :& librairies cryptographiques LGPL\\
+\hline
+libgpg-error0 :& librairie pour erreurs/messages composants GnuPG\\
+\hline
+liblzo1 :& librairies de compression LZO\\
+\hline
+libopencdk8 :& Kit "Open Crypto Development"\\
+\hline
+libtasn1-2 :& librairies structures ASN.1\\
+\hline
+zlib1g :& librairies de compression gzip\\
+\hline
+libsasl2 :& librairies SASL v2\\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Configuration}
+
+On vérifiera sa configuration grâce à la commande :\\
+~\\
+\texttt{apache2ctl configtest}\\
+~\\
+La configuration d'Apache 2 se trouve dans le répertoire /etc/apache2/ \\
+La configuration principale est dans le fichier apache2.conf \\
+
+\textit{Note :} Selon les systèmes (distributions Linux, BSD, etc.), cela peut varier : la commande peut être apachectl, le répertoire de configuration peut être /etc/httpd ou /usr/local/etc/apache22 par exemple, et la configuration peut être dans un fichier httpd.conf \\
+~\\
+Passons en revue quelques options à connaître grâce à un exemple de fichier de configuration.\\
+Détaillons la première partie correspondant à l'environnement et aux modules :\\
+~\\
+\begin{verbatim}
+### Section 1: Environnement
+
+# mode d'execution du serveur : inetd ou standalone
+ServerType standalone
+
+# repertoire de configuration
+ServerRoot /etc/apache2
+
+# lock and PID file
+LockFile /var/lock/apache.lock
+PidFile /var/run/apache.pid
+
+# temporisation pdt laquelle Apache attend temps total réception requête GET
+# ou entre réception paquets TCP lors d'une requête POST ou PUT etc.
+Timeout 300
+
+# connexions persistentes
+#KeepAlive On
+# nombre de requêtes permises pour une connexion unique
+# lorsque la directive KeepAlive est activée
+#MaxKeepAliveRequests 100
+# nombre de secondes pendant lesquelles Apache
+# attendra une requête postérieure avant de rompre une connexion.
+#KeepAliveTimeout 15
+
+# nombre minimum de processus fils en attente qu'un serveur pourra conserver
+#MinSpareServers 5
+# nombre maximal de processus fils en attente
+#MaxSpareServers 10
+# nombre de processus fils créés dès le démarrage du serveur
+#StartServers 5
+
+# nombre limite de requêtes simultanées pouvant être acceptées par le serveur
+MaxClients 150
+# nombre limite de requêtes qu'un processus serveur fils peut traîter
+MaxRequestsPerChild 100
+
+# modules
+LoadModule ...
+LoadModule ...
+LoadModule ...
+
+# MIME 
+<IfModule mod_negotiation.c>
+    LanguagePriority fr en da nl et de el it ja pl pt pt-br ltz ca es sv
+</IfModule>
+
+AddType application/x-httpd-php .html .php .php3
+AddType application/x-httpd-php-source .phps
+AddType application/x-tar .tgz
+...
+
+# avoir le maximum d'informations (mod_status)
+<Location /server-status-0906>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.1
+    Allow from 1.2.3.4
+</Location>
+ExtendedStatus On
+<Location /server-info-0906>
+    SetHandler server-info
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.1
+    Allow from 1.2.3.4
+</Location>
+
+
+# xxx
+ReadmeName README
+HeaderName HEADER
+IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t
+
+# redirection vers fichiers index (mod_dir)
+<IfModule mod_dir.c>
+    DirectoryIndex index.html index.htm index.shtml index.cgi index.php index.php3 index.php4
+</IfModule>
+
+# Répertoires utilisateurs (mod_userdir)
+<IfModule mod_userdir.c>
+    #nom du répertoire public
+    UserDir public_html
+    #root n'a pas de site perso
+    UserDir disabled root
+</IfModule>
+
+<Directory /home/*/public_html>
+    AllowOverride FileInfo AuthConfig Limit
+    Options MultiViews Indexes FollowSymLinks IncludesNoExec
+    <Limit GET POST OPTIONS PROPFIND>
+        Order allow,deny
+        Allow from all
+    </Limit>
+    <Limit PUT DELETE PATCH PROPPATCH MKCOL COPY MOVE LOCK UNLOCK>
+        Order deny,allow
+        Deny from all
+    </Limit>
+</Directory>
+
+# navigateurs particuliers (mod_setenvif)
+<IfModule mod_setenvif.c>
+    BrowserMatch "Mozilla2" nokeepalive
+    BrowserMatch "MSIE 4.0b2;" nokeepalive downgrade-1.0 
+    force-response-1.0
+    BrowserMatch "RealPlayer 4.0" force-response-1.0
+    BrowserMatch "Java/1.0" force-response-1.0
+    BrowserMatch "JDK/1\.0" force-response-1.0
+</IfModule>
+\end{verbatim}
+
+Détaillons maintenant la seconde partie~:
+
+\begin{verbatim}
+### Section 2: configuration principale
+
+#numéro du port
+Port 80
+#utilisateur et groupe propriétaire d'apache
+User www-data
+Group www-data
+
+#adresse e-mail que le serveur peut inclure dans un message d'erreur
+#retourné au client
+ServerAdmin webmaster@domaine.tld
+
+#nom d'hote (sert pour redirection)
+ServerName www.example.com
+ServerAlias example.com tmp.example.com
+
+#Répertoire racine du serveur
+DocumentRoot /var/www
+
+#configuration par defaut
+<Directory />
+    #pas d'acces par defaut
+    Order Deny,Allow
+    Deny from all
+    #possibilite de liens symboliques ssi liens et destinations
+    #ont meme proprio
+    Options SymLinksIfOwnerMatch
+    #htaccess desactive
+    AllowOverride None
+</Directory>
+
+<Directory /var/www/>
+    Options Indexes Includes FollowSymLinks MultiViews
+    AllowOverride AuthConfig FileInfo
+    Allow from all
+</Directory>
+
+#HTACCESS si directive AllowOverride
+AccessFileName .htaccess
+<Files ~ " ^.ht">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# resolution inverse double
+#HostnameLookups Off
+# Desactive version verbeuse
+ServerTokens Prod
+# ajoute une ligne contenant ServerName et ServerAdmin
+# en bas des pages d'erreurs notamment
+ServerSignature On
+
+#CGI
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+<Directory /usr/lib/cgi-bin/>
+    AllowOverride None
+    Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+</Directory>
+
+# icones
+Alias /icons/ /usr/share/apache/icons/
+<Directory /usr/share/apache/icons>
+    Options Indexes MultiViews
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+
+# forcer
+#AddDefaultCharset UTF-8
+\end{verbatim}
+
+Revenons sur certaines options :\\
+~\\
+Dans \textbf{<Directory ...></Directory>} :\\
+~\\
+\textbf{- Gestion des accès}\\
+~\\
+\url{http://httpd.apache.org/docs-2.0/mod/mod\_access.html}\\
+~\\
+
+\begin{verbatim}
+Order [option]
+Allow/Deny from [nom de domaine, adresse IPv4/v6, réseau]
+
+   Order Deny,Allow
+   Allow from 10.1.0.0/255.255.0.0
+   Deny from all
+\end{verbatim}
+
+\textbf{- Options :}
+
+Options [options]
+
+\begin{itemize}
+\item[\textbf{None}] : rien
+\item[\textbf{MultiViews}] :  rediriger les demandes selon les préférences du navigateur (mod\_negotiated)
+\item[\textbf{All}] : toutes les options ci-dessous
+\item[\textbf{Indexes}] : lister le répertoire si il n'y a pas de fichier index (mod\_index)
+\item[\textbf{FollowSymLinks}] : suit les liens symboliques
+\item[\textbf{SymLinksIfOwnerMatch}] : suit les liens symboliques ssi liens et destinations ont le même propriétaire
+\item[\textbf{Includes}] : possibilité de filtres Server-side (mod\_include)
+\item[\textbf{IncludesNOEXEC}] : Includes mais sans scripts exécutables
+\item[\textbf{ExecCGI}] : l'exécution de scripts CGI est permise (mod\_cgi)
+\end{itemize}
+
+Possibilités de faire +/- [options] par rapport à une directive supérieure (répertoire contenant ou racine)
+
+\textbf{- AllowOverride :}
+
+AllowOverride [options]
+
+Permet de spécifier certains paramètres dans des fichiers .htaccess :
+\begin{itemize}
+\item[\textbf{AuthConfig}] : pour les directives d'authentification (Auth*, Require, etc.)
+\item[\textbf{FileInfo}] : pour les directives de contrôle des types de fichier (DefaultType, ErrorDocument, SetHandler, etc.)
+\item[\textbf{Indexes}] : pour les directives d'indexation de répertoire (DirectoryIndex, DefaultIcon, etc.)
+\item[\textbf{Limit}]: permet de spécifier les directives de gestion d'accès (Allow, Deny, Order)
+\item[\textbf{Options}] : permet de spécifier les options d'Options
+\end{itemize}
+~\\
+\textbf{Fichiers .htaccess}
+~\\
+\url{http://httpd.apache.org/docs-2.2/howto/htaccess.html} \\
+~\\
+
+\textit{Exemple de fichier .htaccess :}\\
+
+\begin{verbatim}
+AuthUserFile .htpasswd
+AuthGroupFile /dev/null
+AuthName "Acces reserve"
+AuthType Basic
+<LIMIT GET POST>
+Require valid-user
+</LIMIT>
+\end{verbatim}
+
+~\\
+Voir mod\_auth\\
+\textbf{<Location ...></Location>} est similaire à <Directory></Directory> à la différence que les directives sont valables sur les chemins d'URL\\
+~\\
+
+Exemple~:
+
+\begin{verbatim}
+
+<Location /status>
+SetHandler server-status
+Order Deny,Allow
+Deny from all
+Allow from 192.168.176.53
+</Location>
+
+\end{verbatim}
+Dans \textbf{<Files ...></Files>} :\\
+~\\
+Directives portant sur les fichiers.\\
+~\\
+Exemple :\\
+\begin{verbatim}
+
+<Files ~".(mp3|ogg|avi|mpeg)\$">
+    Order allow,deny
+    Deny from all   
+</Files>
+
+\end{verbatim}
+~\\
+\textbf{<Limit ... ></Limit>} impose des restrictions sur certaines méthodes du protocole HTTP.
+~\\
+Exemple :\\
+\begin{verbatim}
+<Limit PUT DELETE PATCH PROPPATCH MKCOL COPY MOVE LOCK UNLOCK>
+    Order deny,allow
+    Deny from all
+</Limit>
+
+\end{verbatim}
+~\\
+
+Par défaut, la configuration d'Apache est souvent répartie dans plusieurs
+fichiers pour une meilleure gestion. Ainsi, sous Debian, on retrouve
+le partitionnement suivant, indiqué dans le fichier de configuration principal :\\
+
+\begin{verbatim}
+
+Include /etc/apache2/mods-enabled/*.load
+Include /etc/apache2/mods-enabled/*.conf
+
+Include /etc/apache2/httpd.conf
+
+Include /etc/apache2/ports.conf
+
+Include /etc/apache2/conf.d/[^.#]*
+
+Include /etc/apache2/sites-enabled/[^.#]*
+
+\end{verbatim}
+~\\
+~\\
+\textbf{Les modules :}\\
+~\\
+On trouve les répertoires mods-available et mods-enabled dans le répertoire de configuration. mods-available contient des fichiers NOM.load et NOM.conf : un fichier NOM.load contient la directive permettant le chargement d'un module disponible :\\
+\begin{verbatim}
+
+LoadModule /chemin/NOM.so
+
+\end{verbatim}
+~\\
+Le fichier NOM.conf contient les éventuelles options de configuration du modèle, par exemple :\\
+\texttt{
+<IfModule mod\_NOM.c>\\
+	...\\
+</IfModule>\\
+}
+~\\
+Pour activer un module, on fait simplement un lien symbolique du fichier NOM.load (et NOM.conf si il existe) vers le répertoire mods-enabled.\\
+~\\
+Exemple :\\
+{\small
+\texttt{
+\# ln -s /etc/apache2/mods-available/ssl.load /etc/apache2/mods-enabled/ssl.load
+\# ln -s /etc/apache2/mods-available/ssl.conf /etc/apache2/mods-enabled/ssl.conf
+}
+}
+~\\
+\textit{Voir les modules}\\
+~\\
+-Le fichier \texttt{httpd.conf} :\\
+~\\
+Utilisé pour les directives supplémentaires
+(vide par défaut)\\
+~\\
+-Le fichier \texttt{ports.conf} :
+
+\begin{verbatim}
+Listen 80
+Listen IP:80
+Listen domain.tld:80
+\end{verbatim}
+
+La troisième possibilité est à éviter si possible\footnote{http://httpd.apache.org/docs-2.2/dns-caveats.html}\\
+~\\
+
+\subsection{VirtualHost}
+~\\
+Le terme de VirtualHost se réfère à la pratique de faire tourner plusieurs sites Internet sur une seule machine alors que l'utilisateur final ne se rend pas compte que les différents sites tournent physiquement sur la même machine.\\
+~\\
+Apache est capable d'avoir des VirtualHost basés sur les adresses IP et sur les noms. Attention, les ports d'écoute sont définis avec le paramètre Listen. Les VirtualHost ne font que "rediriger" les requêtes entrantes.\\
+~\\
+\begin{verbatim}
+NameVirtualHost IP:*
+NameVirtualHost *
+
+<VirtualHost 10.1.2.3:>
+ServerAdmin webmaster@host.foo.com
+DocumentRoot /www/docs/host.foo.com
+ServerName host.foo.com
+ErrorLog logs/host.foo.com-error_log
+TransferLog logs/host.foo.com-access_log
+</VirtualHost>
+\end{verbatim}
+~\\
+Exemple complexe :\\
+\begin{verbatim}
+Listen IP1:80
+Listen IP2:8080
+
+NameVirtualHost IP1:80
+
+<VirtualHost IP1:80>
+DocumentRoot /www/ip1
+ServerName www.name1.tld
+</VirtualHost>
+
+<VirtualHost IP1:80>
+DocumentRoot /www/ip2
+ServerName www.name2.tld
+</VirtualHost>
+
+#basé sur l'IP
+
+<VirtualHost IP2:8080>
+DocumentRoot /www/ip3
+ServerName www.name3.tld
+</VirtualHost>
+\end{verbatim}
+~\\
+À l'intérieur d'un VirtualHost, on peut spécifier de nombreuses directives. Souvent il s'agira de~:\\
+\begin{verbatim}
+DocumentRoot
+ServerAdmin
+ServerName
+ServerAlias
+ErrorLog
+TransferLog
+LogLevel
+CustomLog
+ServerSignature
+ErrorDocument
+Rewrite*
+etc.
+\end{verbatim}
+~\\
+Ainsi que le <Directory /></Directory> spécifiant les droits par défaut sur les répertoires concernés (DocumentRoot, script CGI, script Perl, icones, manuel, ...)\\
+~\\
+Voir dans la documentation, les paramètres pouvant s'appliquer dans un VirtualHost.\\
+~\\
+Lien:\url{http://httpd.apache.org/docs/vhosts/}\\
+~\\
+\subsection{Configuration des sites en ligne}
+~\\
+La configuration d'Apache fonctionne souvent avec des VirtualHost... même pour un seul site mis en ligne ! On trouve les répertoires \textit{sites-enabled} et \textit{sites-available} dans le répertoire de configuration. Par exemple, le fichier \textit{default} :
+
+\begin{verbatim}
+NameVirtualHost *
+<VirtualHost *>
+	ServerName www.example.com
+	ServerAlias example.com
+        ServerAdmin webmaster@example.com
+        DocumentRoot /var/www/
+
+        <Directory />
+                Order Deny,Allow
+                Deny from all
+                Options None
+                AllowOverride None
+        </Directory>
+        <Directory /var/www/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+        </Directory>
+
+        ErrorLog /var/log/apache2/error.log
+        LogLevel warn
+        CustomLog /var/log/apache2/access.log combined
+        ServerSignature On
+</VirtualHost>
+\end{verbatim}
+
+Pour activer un site, on fait simplement un lien symbolique du fichier dans le répertoire sites-available vers le répertoire sites-enabled. Par contre, Apache passe en revue les liens du répertoire sites-enabled dans l'ordre alphanumérique/alphabétique. Il faut donc nommer les liens selon ses préférences. Ainsi, on créra un lien :
+~\\
+{\small \# ln -s /etc/apache2/sites-available/default /etc/apache2/sites-enabled/000-default}
+{\small \# a2ensite test}
+~\\
+\section{Modules}
+~\\
+Un grand nombre de modules sont préinstallés. On cherchera les paquets des modules supplémentaires avec la commande :
+\texttt{\\
+apt-cache search \textasciicircum libapache2-mod \\
+}
+~\\
+\subsection{mod\_cgi}
+~\\
+Lien~: \url{http://httpd.apache.org/docs-2.2/mod/mod\_cgi.html}\\
+~\\
+Ce module permet l'exécution de scripts CGI (les scripts CGI peuvent être écrits en C, Perl, Shell, etc.).\\
+~\\
+\textbf{Configuration :}
+~\\
+\begin{verbatim}
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+<Directory /usr/lib/cgi-bin/>
+    AllowOverride None 
+    Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+</Directory>
+\end{verbatim}
+~\\
+\textbf{Exemple} :
+~\\
+date.cgi :
+\begin{verbatim}
+#!/bin/sh
+tmp=`/bin/date`
+cat << EndFile
+Content-type: text/html
+
+<HTML><HEAD><TITLE>Date du serveur</TITLE></HEAD>
+<BODY>
+<CENTER>
+<H1>La date du serveur est</H1>
+$tmp
+</CENTER>
+</BODY>
+</HTML>
+
+EndFile
+\end{verbatim}
+
+\subsection{mod\_perl}
+~\\
+Lien:\url{http://perl.apache.org/}\\
+~\\
+Ce module permet d'exécuter des scripts Perl. Il offre de nombreux avantages par rapport aux scripts CGI en Perl (rapidité, optimisation, etc.)\\
+~\\
+\texttt{apt-cache search \textasciicircum libapache perl}
+~\\
+\subsection{mod\_php4}
+
+\textit{voir PHP}
+
+\subsection{mod\_auth}
+
+Lien:\url{http://httpd.apache.org/docs-2.0/mod/mod\_auth.html}\\
+~\\
+Exemple :\\
+~\\
+\begin{verbatim}
+AuthUserFile /var/apache/passwd/.htpasswd
+AuthGroupFile /dev/null
+AuthName "Accès reservé"
+AuthType Basic
+<LIMIT GET POST>
+Require valid-user
+</LIMIT>
+\end{verbatim}
+~\\
+Exemple :\\
+~\\
+\begin{verbatim}
+mkdir /etc/apache2/pass
+htpasswd -c /etc/apache2/pass/.htpasswd user1
+
+htpasswd /etc/apache2/pass/.htpasswd user2
+\end{verbatim}
+~\\
+Souvent dans un fichier .htaccess\\
+
+\subsection{mod\_proxy}
+~\\
+Lien~: \url{http://httpd.apache.org/docs-2.0/mod/mod\_proxy.html}\\
+~\\
+Ce module implémente un proxy/cache pour Apache. Il gère les fonctionnalités de proxy pour FTP, CONNECT (pour SSL), HTTP/0.9, et HTTP/1.0.\\
+
+\subsection{mod\_rewrite}
+~\\
+Lien : \url{http://httpd.apache.org/docs-2.0/mod/mod\_rewrite.html}\\
+\begin{verbatim}
+RewriteEngine On
+
+RewriteCond
+
+Variables :
+
+RegEx :
+
+^ : début
+$ : fin
+. : tous les caractères
+* : nombre infini de fois
+
+RewriteRule
+\end{verbatim}
+~\\
+Exemple : forcer le nom SERVER\_NAME pour le serveur :
+\begin{verbatim}
+
+RewriteEngine On
+RewriteLog  "/var/log/apache/rewrite.log"
+RewriteLogLevel 3
+RewriteCond %{HTTP_HOST} !^%www.domaine.tld$
+RewriteRule ^/(.*) http://%{SERVER_NAME}/$1 [L,R]
+
+\end{verbatim}
+
+\subsection{mod\_dav}
+~\\
+Lien : \url{http://httpd.apache.org/docs-2.0/mod/mod\_dav.html}\\
+~\\
+mod\_dav et mod\_dav\_fs
+~\\
+dav\_fs.conf:\\
+\begin{verbatim}
+DAVLockDB /var/lock/apache2/DAVLock/DAVLockDB
+\end{verbatim}
+~\\
+
+\subsection{mod\_ssl}
+~\\
+SSLEngine On\\
+~\\
+Lien:\url{http://httpd.apache.org/docs-2.0/mod/mod\_ssl.html}\\
+~\\
+
+On rappelle la procédure de génération d'un certificat auto-signé~:\\
+~\\
+
+On crée une "demande" de certificat en se basant sur des paramètres aléatoires ainsi que sur une clé privée \texttt{privkey.pem} protégée par un mot de passe~:
+
+\begin{verbatim}
+$ openssl req -new > demande.csr
+\end{verbatim}
+
+Si l'on veut supprimer ce mot de passe de protection (utile dans le cas d'un serveur), on ajoute l'argument \texttt{-out cleprivee.pem} et l'on obtient une clé privée \texttt{cleprivee.pem} non protégée~:
+
+\begin{verbatim}
+$ openssl rsa -in privkey.pem -out cleprivee.pem
+\end{verbatim}
+
+Enfin, on génère le certificat basé sur la demande et signé par la clé privée~:
+
+\begin{verbatim}
+$ openssl x509 -in demande.csr -out certificat.pem -req -signkey cleprivee.pem -days 365
+\end{verbatim}
+
+~\\
+On peut ajouter ensuite les lignes suivantes dans le VirtualHost~:
+\begin{verbatim}
+#activation SSL
+  SSLEngine on
+#certificats
+  SSLCertificateFile /path/to/certs/certificat.pem
+#cle privee
+  SSLCertificateKeyFile /path/to/certs/cleprivee.pem
+\end{verbatim}
+~\\
+\textbf{Exemple 1} : avoir un site disponible avec HTTP et HTTPS\\
+
+\begin{verbatim}
+ports.conf :
+Listen 80
+Listen 443
+
+sites-available/default :
+
+NameVirtualHost *:80
+<VirtualHost *:80>
+...
+</VirtualHost>
+
+sites-available/default-ssl :
+NameVirtualHost *:443
+<VirtualHost *:443>
+...
+#SSL
+  SSLEngine on
+#certificats
+  SSLCertificateFile /etc/apache2/ssl/certificat.cert
+#cle privee
+  SSLCertificateKeyFile /etc/apache2/ssl/cle-privee.key
+</VirtualHost>
+
+\end{verbatim}
+~\\
+{\small ln -s /etc/apache2/sites-available/default /etc/apache2/sites-enabled/000-default}\\
+{\small ln -s /etc/apache2/sites-available/default-ssl /etc/apache2/sites-enabled/001-default-ssl}\\
+~\\
+\textbf{Exemple 2} : avoir un site disponible en HTTPS et HTTP redirigé vers HTTPS\\
+~\\
+\begin{verbatim}
+sites-available/default-ssl :
+NameVirtualHost *:80
+NameVirtualHost *:443
+
+<VirtualHost *:80>
+        RewriteEngine On
+        RewriteRule ^/(.*) https://webmail.domain.tld/ [L,R]
+</VirtualHost>
+
+<VirtualHost *:443>
+...
+</VirtualHost>
+\end{verbatim}
+~\\
+Lien:\url{http://home.earthlink.net/~fjhirsch/Papers/wwwj/article.html}\\
+~\\
+
+\subsection{autres options}
+
+UseCanonicalName : On|Off|DNS (défaut=On)
+Permet de spécifier que l'on se réfère à l'option ServerName pour déterminer les variables SERVER\_NAME et SERVER\_PORT
+
+\section{Optimisation}
+~\\
+Lien:\url{http://httpd.apache.org/docs-2.0/misc/perf-tuning.html}\\
+\begin{verbatim}
+HostnameLookups off
+<Files ~ ".(html|cgi)$">
+HostnameLookups on
+</Files>
+\end{verbatim}
+~\\
+\texttt{AllowOverride None} : partout où l'on peut (évite de chercher .htaccess partout)\\
+~\\
+\texttt{Options SymLinksIfOwnerMatch} à utiliser le moins possible (pas par défaut)\\
+~\\
+DirectoryIndex index.php index.html index.html index.cgi index.pl
+~\\
+
+\section{Sécurité}
+~\\
+
+Pour améliorer la sécurité d'Apache, on peut installer mod\_security~:
+
+\begin{verbatim}
+# aptitude install libapache2-mod-security2
+\end{verbatim}
+
+Avec le fichier de configuration conf.d/mod-security2.conf resemblant à :
+
+\begin{verbatim}
+# enable mod_security
+SecRuleEngine On
+# access to request bodies
+SecRequestBodyAccess On
+#SecRequestBodyLimit 134217728
+#SecRequestBodyInMemoryLimit 131072
+# access to response bodies
+SecResponseBodyAccess On
+#SecResponseBodyLimit 524288
+SecResponseBodyMimeType (null) text/html text/plain text/xml
+#SecServerSignature "Apache/2.2.0 (Fedora)"
+
+SecUploadDir /tmp
+SecUploadKeepFiles Off
+
+# default action
+SecDefaultAction "log,auditlog,deny,status:406,phase:2,t:none"
+
+SecAuditEngine RelevantOnly
+#SecAuditLogRelevantStatus "^[45]"
+# use only one log file
+SecAuditLogType Serial
+# audit log file
+SecAuditLog /var/log/apache2/modsec_audit.log
+# what is logged
+SecAuditLogParts "ABIFHZ"
+
+#SecArgumentSeparator "&"
+SecCookieFormat 0
+SecDebugLog /var/log/apache2/modsec_debug.log
+SecDebugLogLevel        0
+
+SecDataDir /tmp
+SecTmpDir /tmp
+
+#########
+# RULES
+#########
+
+# File name
+SecRule REQUEST_FILENAME "modsecuritytest1"
+# Complete URI
+SecRule REQUEST_URI "modsecuritytest2"
+SecRule REQUEST_FILENAME "(?:n(?:map|et|c)|w(?:guest|sh)|cmd(?:32)?|telnet|rcmd|ftp)\.exe"
+\end{verbatim}
+
+~\\
+
+Afin de sécuriser les requêtes vers l'extérieur, il est recommandé d'installation
+un proxy tel que Squid. Voici le fichier squid.conf~:
+
+\begin{verbatim}
+# ports
+http_port 8888 transparent
+icp_port 0
+
+# ACL
+acl all src 0.0.0.0/0.0.0.0
+acl localhost src 127.0.0.1/255.255.255.255
+acl INTERNE src 1.2.3.4/32 127.0.0.0/8
+acl Safe_ports port 80          # http
+acl SSL_ports port 443 563
+
+acl WHITELIST url_regex "/etc/squid/whitelist.conf"
+
+http_access deny !WHITELIST
+http_access allow INTERNE
+http_access deny all
+\end{verbatim}
+
+Avec le fichier /etc/squid/whitelist.conf suivant :
+
+\begin{verbatim}
+http://.*debian.org/.*
+http://zidane.evolix.net/.*
+http://pub.evolix.net/.*
+http://www.kernel.org/.*
+http://pear.php.net/.*
+http://.*akismet.com/.*
+http://.*wordpress.org/.*
+http://etc.inittab.org/.*
+http://.*twitter.com/.*
+http://feeds.feedburner.com/.*
+http://feeds2.feedburner.com/.*
+http://sync.openx.org/.*
+http://oxc.openx.org/.*
+http://code.openx.org/.*
+http://pc.openx.com/.*
+http://api.pc.openx.com/.*
+http://bid.openx.net/.*
+http://blog.openx.org/.*
+http://forum.openx.org/.*
+http://www.backports.org/.*
+\end{verbatim}
+
+Pour l'activer, on ajoute les regles suivantes dans le firewall :
+
+\begin{verbatim}
+#HTTPSITES='0.0.0.0/0'
+# Proxy
+/sbin/iptables -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
+/sbin/iptables -t nat -A OUTPUT -p tcp --dport 80 -d 1.2.3.4 -j ACCEPT
+/sbin/iptables -t nat -A OUTPUT -p tcp --dport 80 -d 127.0.0.1 -j ACCEPT
+/sbin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-port 8888
+\end{verbatim}
+
+\section{Surveillance}
+~\\
+Apache génère donc les logs selon votre configuration.
+Généralement, on retrouvera les erreurs dans error.log et les logs des VirtualHost là où on veut :)\\
+~\\
+\textbf{Analyse des logs :} awstats, webalizer, scanerrlog, webdruid, vlogger\\
+~\\
+\textbf{Outils :}
+~\\
+\begin{itemize}
+\item[\textbf{ab}] - ApacheBench\\
+\texttt{ab -n 5000 -c 100 http://www.domaine.com/index.html}\\
+
+\item[\textbf{siege}] - outil de benchmark semblable à ab\\
+
+\item[\textbf{tsung}] - outil de benchmark très puissant\\
+
+\item[\textbf{apachetop}] - surveillance Apache en temps réel\\
+
+\item[\textbf{Munin}] - surveillance notamment d'Apache via divers graphes\\
+
+Installer le paquet libwww-perl et configurer mod\_status pour assurer
+le bon fonctionnement des courbes.
+
+\item[\textbf{awstats}] - analyse de logs\\
+
+\textit{awstats.VHOST.conf} :\\
+\begin{verbatim}
+LogFile="/var/log/apache/access.VHOST.log"
+SiteDomain="www.VHOST.tld"
+Lang="fr"
+[...]
+\end{verbatim}
+~\\
+\textit{cron.d/awstats.VHOST}\\
+{\small
+\begin{verbatim}
+30 * * * * root [ -x /usr/lib/cgi-bin/awstats.pl -a -f 
+/etc/awstats/awstats.VHOST.conf -a -r /var/log/apache/access.VHOST.log ] 
+&& /usr/lib/cgi-bin/awstats.pl -config=VHOST -update >/dev/null
+\end{verbatim}
+}
+\end{itemize}
+~\\
+
+%http://www.SERVER.tld/cgi-bin/awstats.pl?config=VHOST
+
+\newpage

@@ -1,0 +1,113 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\section{Le noyau Linux}
+
+\subsection{Présentation}
+~\\
+Andrew Tanenbaum, professeur, développa en 1985 Minix, un système d'exploitation minimal inspiré du système UNIX Time-Sharing System version 7. Destiné à enseigner le concept des systèmes d'exploitations, Minix fut la source d'inspiration de Linus Torvalds, un étudiant finlandais, qui développa un nouveau système d'exploitation baptisé Linux. Complètement ré-écrit (principalement en langage C), Linux fut tout d'abord développé pour les ordinateurs de type i386. Linus Torvalds choisit la licence GPL pour son développement et rapidement, grâce à Internet, il reçut l'aide de plusieurs informaticiens. L'explosion des réseaux et d'Internet a largement favorisé le développement collaboratif de Linux, au point que certains le considèrent comme le premier produit d'Internet. Linux est généralement compilé avec GCC et plus accompagné d'outils provenant du projet GNU afin de fournir un système d'exploitation utilisable. C'est pourquoi on a tendance à qualifier ce système d'exploitation de "GNU/Linux" \footnote{\url{http://www.gnu.org/gnu/why-gnu-linux.fr.html}} \\
+La première version de Linux sortit en 1991, la version 1.0 sortit en 1993 et la version 2.0 sortit en 1996. Aujourd'hui, Linux supporte plusieurs architectures (Alpha, MIPS, SPARC, PPC, ...) et compte plusieurs millions de lignes de code. On peut télécharger Linux sur le site \url{http://www.kernel.org}. Sa branche stable actuelle est la 2.6.x \\
+
+~\\
+ x.y.z \\
+~\\
+x désigne la branche (numéro de version majeure), y complète le numéro de version et z est le numéro de release (c'est-à-dire le nombre de publications de cette version). Si y est pair, il s'agit d'une version stable, si y est impair il s'agit d'une version en cours de développement. \\
+ Depuis la version 2.6.11, la numérotation a un peu changé avec l'introduction d'un quatrième chiffre indiquant des changements mineurs de versions (quelques patches peu conséquents). \\
+
+Des suffixes tels que preN ou rcN (prépatches), bkN (snapshots), acN (patches d'Alan Cox) ou mmN (patches d'Andrew Morton) indiquent des versions particulières du noyau. \\
+
+On peut connaître la version actuelle grâce à la commande \texttt{uname} qui affiche  des  informations  concernant  la machine et le système d'exploitation sur lequel il est invoqué. \\
+
+~\\
+Exemple : \\
+\texttt{
+\$ uname -r \\
+2.6.10-rc2laptop221104} \\
+~\\
+
+
+
+%Multi-utilisateurs \\
+%Principes utilisateurs/groupes \\
+%Processus \\
+%noyau monolithique != micro noyau \\
+%approche modulaire \\
+%système de fichiers (définitions POSIX d'un fichier) \\
+%droits d'accès \\
+%mode User/mode Kernel \\
+~\\
+Liens:\\
+\url{http://www.kernelnewbies.org/}\\
+\url{http://www.bertolinux.com/}\\
+
+\subsection{Compilation}
+~\\
+Sous Debian, le noyau compilé se trouve dans le répertoire /boot sous le nom vmlinuz-x.y.z
+Les sources du noyau se trouvent dans le répertoire /usr/src/linux-x.y.z (ou kernel-source-x.y.z).
+Historiquement on retrouve un lien /usr/src/linux pointant vers le répertoire des sources du noyau.
+On trouve également les modules dans /lib/modules/x.y.z, les entêtes dans /usr/src et les tables de symboles\footnote{\url{http://www.dirac.org/linux/system.map/}} du noyau dans system.map-x.y.z (souvent dans le répertoire /boot )
+~\\
+~\\
+Une fois l'installation de Linux terminée, on procédera éventuellement (surtout sur un serveur) à la compilation d'un noyau adapté aux besoins de la machine. On privilégiera un noyau débarrassé des modules inutiles~: toutes les options strictement nécessaires devront être compilées en dur (sauf exception).\\
+
+On va donc récupérer les sources du noyau Linux. la procédure la plus classique est de prendre le noyau sur le site officiel \url{http://www.kernel.org/}. On prendra garde à bien vérifier l'intégrité des sources téléchargées~: \\ 
+~\\
+\begin{verbatim}
+$ wget http://kernel.org/pub/linux/kernel/v2.6/linux-2.6.z.tar.bz2.sign
+$ gpg --keyserver wwwkeys.pgp.net --recv-keys 0x517D0F0E
+$ gpg --verify linux-2.6.z.tar.bz2.sign linux-2.6.z.tar.bz2
+\end{verbatim}
+~\\
+La recompilation dite classique d'un noyau consiste à vérifier les dépendances (\texttt{dep}), nettoyer les sources (\texttt{clean}), compiler le noyau en lui-même (\texttt{bzImage}), puis les modules (\texttt{modules}) et les installer (\texttt{modules\_install}) :\\
+~\\
+\begin{itemize}
+\item[\texttt{make dep}] vérifie les dépendances\\
+\item[\texttt{make clean}] fait un peu le ménage\\
+\item[\texttt{make bzImage}] compile le noyau\\
+\item[\texttt{make modules}] compile les modules\\
+\end{itemize}
+~\\
+\textit{makes modules\_install}
+~\\
+\textit{cp arch/i386/boot/bzImage /boot/vmlinuz-new}\\
+
+
+Avec Debian, il existe les sources Debian du noyau Linux. Il s'agit des sources originales patchées par Debian. On téléchargera ces sources grâce à APT~: \\
+~\\
+\texttt{apt-cache search kernel-source*} \\
+~\\
+Lorsque l'on veut patcher les sources du noyau, il faudra éviter d'appliquer des patches incompatibles. C'est pourquoi il peut être préférable de patcher à partir des sources originales. Il existe de nombreux patches pour le noyau Linux. Pour un serveur, on s'intéressera au patches de sécurité grsecurity\footnote{\url{http://www.grsecurity.net/}} proposant un certain nombre de fonctionnalités. Voici la procédure pour l'installer~: \\
+~\\
+%http://www.cgsecurity.org/Articles/2-MISC/Protections-2/
+~\\
+\texttt{\$ tar -jxvf linux-2.6.z.tar.bz2}\\
+\texttt{\$ patch -p0 < grsecurity-2.0-2.6.z.patch}\\
+~\\
+La phase la plus délicate est en réalité le choix des options du noyau. En effet, il faut lire attentivement les explications de chaque option pour déterminer si on doit l'activer pour notre machine. Pour lancer le choix des options du noyau, on fera:\\
+~\\
+\texttt{cd linux-2.6.z.tar.bz2}\\
+\texttt{make menuconfig}\\
+~\\
+On pourra également utiliser \texttt{make config} mais son utilisation est moins aisée.
+Le choix des options est stocké dans le fichier \texttt{.config}.
+En cas de changement de sources (par exemple en cas de changement de version du noyau), on peut réutiliser ce fichier \texttt{.config} en ne choisissant que les nouvelles options. Pour cela on le transférera à la racine des nouvelles sources et on lancera la commande~:\\
+~\\
+\texttt{make oldconfig}\\
+~\\
+~\\
+Debian propose des outils pour compiler simplement. La commande \texttt{make-kpkg} permet de construire des paquets Debian contenant un noyau compilé prêt à être installé. On procédera ainsi :\\
+~\\
+\texttt{
+make-kpkg clean\\
+make-kpkg kernel\_image kernel\_headers kernel\_source kernel\_doc\\
+dpkg -i ../kernel-*-2.6.z.xxx.deb\\
+}
+~\\
+Les options de \texttt{make-kpkg} permettent de spécifier un nom particulier pour le noyau (-~-append-to-version), de compiler avec initrd (-~-initrd), de compiler avec des modules (-~-added-modules), etc.
+~\\
+~\\
+

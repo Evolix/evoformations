@@ -1,0 +1,833 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Samba}
+
+\section{Présentation}
+
+SAMBA est un logiciel libre qui met en oeuvre des services de type partage de fichiers ou d'imprimante pour des clients SMB/CIFS. Il permet une interopératibilité entre les serveurs Linux/Unix et les clients Microsoft Windows.\\
+~\\
+\textbf{SMB (\textit{Server Message Block})} est un protocole réseau pour le partage fichiers, imprimantes, ports séries entre différentes machines. Inventé à l'origine par IBM, il fut repris et largement modifié par Microsoft. Il est renommé en CIFS en 1998. \textbf{CIFS (\textit{Common Internet File System})} est le successeur du protocole réseau SMB apportant son lot de nouvelles fonctionnalités : liens, fichiers de grande taille, etc.\\
+
+SMB/CIFS utilise depuis le début des implémentations de NetBIOS (NetBEUI, NBT). NBT (NetBIOS over TCP/IP), décrit dans les RFC 1001\footnote{http://www.ietf.org/rfc/rfc1001.txt} et 1002\footnote{http://www.ietf.org/rfc/rfc1002.txt}, est désormais utilisé sur les machines Windows 2000, XP et 2003 Server.\\
+
+SMB/CIFS utilise l'architecture client/serveur. Ainsi le client envoie par exemple, un message d'ouverture de fichier au serveur. Le serveur vérifie que la requête est légale, que les droits sont corrects puis exécute (ou non) la requête et renvoie une notification au client. Le client, grâce à la notification, connait l'état de sa demande. Parmi les nombreuses opérations disponibles (qui diffèrent selon les versions) : File access, File and record locking, Safe file caching, File change notification, Protocol negotiation, Extended file attribute handling, Batched requests, Unicode support, etc. 
+
+%NetBIOS (Network Basic Input Output System) et ses adaptations 
+
+%Name Service
+%Session Service
+%Datagram Service
+
+%NBNS (NetBIOS Name Server) -> serveur WINS
+%NBDD (Netbios Datagram Distribution) -> "never worked" !?
+
+\section{Noms NetBIOS}
+
+Chaque serveur SMB/CIFS possède un nom NetBIOS. Les noms NetBIOS sont des noms "human readable" assignés à chaque machine. D'une longueur maximale de 15 caractères, ils peuvent contenir les caractères suivants~: 
+
+\begin{verbatim}
+a-z, A-Z, 0-9 et ! @ # $ % ^ & ( ) - ' { } . ~ "
+\end{verbatim}
+
+Ce sont les noms généralement visibles dans le "voisinage réseau" des systèmes Windows; un service de résolution des noms NetBIOS, comparable au service DNS, permet l'utilisation directe de ces noms.\\
+
+Chaque client s'annonce/recherche en "broadcast" sur son sous-réseau et/ou communique avec un serveur de noms NetBIOS (NBNS) alias serveur WINS. Ainsi on peut distinguer plusieurs modes de fonctionnement~:\\
+
+\begin{itemize}
+\item Broadcast seulement (B-Node)
+\item NBNS seulement (P-Node)
+\item premièrement Broadcast et NBNS seulement si aucune réponse en Broadcast (M-Node)
+\item NBNS puis Broadcast uniquement si le serveur ne répond pas (H-Node)
+\end{itemize}
+~\\
+Lien~: \url{http://www.codefx.com/CIFS\_Explained.htm}
+
+%http://lists.nocat.net/pipermail/nocat/2004-June/005019.html
+%http://www.windowsnetworking.com/kbase/WindowsTips/WindowsNT/RegistryTips/Network/TCPNetBIOSBroadcastPerformanceRegistrySettings.html
+
+\section{Installation}
+
+\subsection{À partir des sources}
+
+On peut utiliser la méthode classique de recompilation à partir des sources~:
+
+\begin{verbatim}
+$ ./configure [options]
+$ make
+# make install
+\end{verbatim}
+
+\subsection{Par paquets}
+
+Sous Debian, les paquets principaux à installer sont~:\\
+~\\
+\textbf{samba-common} : fichiers principaux pour Samba\\
+\textbf{samba} : serveur SMB/CIFS\\
+~\\
+
+\emph{Quelques dépendances~:}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+libc6 :& librairies "GNU C"\\
+\hline
+libacl1 :& librairie pour les ACL (Access control list)\\
+\hline
+libattr1 :& librairie pour les attributs spécifiques\\
+\hline
+libcupsys2-gnutls10 :& librairies CUPS (Common UNIX Printing System)\\
+\hline
+libkrb53 :& librairies Kerberos\\
+\hline
+libldap2 :& librairies OpenLDAP\\
+\hline
+\end{tabular}
+\end{center}
+~\\
+
+\section{Configuration}
+
+On peut donc installer le logiciel Samba sur des machines Linux/Unix. Cela permet de faire passer notre machine pour un serveur SMB/CIFS sur un réseau Microsoft. Concrètement, cela offre aux machines Windows les fonctionnalités suivantes~:\\
+
+\begin{itemize}
+\item serveur de fichiers
+\item partage d'imprimantes
+\item serveur d'authentification
+\item serveur WINS
+\end{itemize}
+~\\
+
+Pour configurer Samba depuis une interface web, on peut utiliser
+\texttt{swat} qui est intégré à Samba. Sous Debian, on devra installer
+le paquet \texttt{swat} et activer le service grâce au superserveur
+\texttt{inetd}. Pour cela, il faut décommenter une ligne dans le fichier
+\texttt{/etc/inet.conf} ~:
+
+\begin{verbatim}
+# update-inetd --enable swat
+\end{verbatim}
+
+On aura donc la ligne suivante dans le fichier \texttt{/etc/inet.conf}~:
+\begin{verbatim}
+swat stream tcp nowait.400 root /usr/sbin/tcpd /usr/sbin/swat
+\end{verbatim}
+
+On peu également utiliser \texttt{xinetd} et on aura dans le fichier \texttt{xinet.conf}~:
+
+\begin{verbatim}
+service swat
+{
+	port = 901
+	socket_type = stream
+	wait = no
+	only_from = localhost
+	user = root
+	server = /usr/sbin/swat
+	log_on_failure += USERID
+	disable = no
+}
+\end{verbatim}
+
+Et l'on pourra se connecter à l'interface grâce à un navigateur web sur l'adresse \textit{http://serveur-samba:901} et en précisant son mot de passe \textit{root}. Notons que l'on peut restreindre les postes qui peuvent se connecter (notamment par \texttt{iptables}) ou encore sécuriser la connexion en utilisant \texttt{stunnel}.\\
+~\\
+On notera que l'utilisation de swat peut être incompatible avec
+certaines configurations, sous peine de perdre une partie du fichier de
+configuration \texttt{smb.conf}.\\
+~\\ 
+On peut également utiliser le module Samba de Webmin\footnote{\url{http://www.webmin.com/}} (paquet \texttt{webmin-samba}) qui permet également une configuration par interface graphique.\\
+~\\
+
+Ces interfaces de configuration ne font que modifier automatiquement le fichier de configuration principal qui est \texttt{smb.conf}. Afin de maîtriser complètement la configuration et éventuellement accéder à des options non disponibles depuis une interface graphique, on éditera \texttt{smb.conf} pour y spécifier les options qui nous conviennent. 
+
+\subsection{Serveur de fichiers}
+
+Pour une utilisation en serveur de fichiers avec authentification, on utilisera la configuration suivante~:
+
+\begin{verbatim}
+[global]
+workgroup: NOM_DOMAINE
+netbios name: NOM_MACHINE
+server string: Mon ptit serveur samba
+security = user
+guest account = nobody
+
+[public]
+comment = Partage public
+path = /samba/tmp
+public = yes
+browseable = yes
+writable = yes
+\end{verbatim}
+
+Pour ne pas avoir d'authentification, il suffira de changer l'option "security = user" (orienté authentification) en "security = share" (orienté partage public). Une autre option disponible est "security = domain" qui s'utilise si le serveur Samba est client d'un autre contrôleur de domaine.\\
+
+\textbf{Remarque~:} en mode USER, un mot de passe sera demandé depuis Windows pour tous les partages (même "guest ok"). On peut éviter cela en utilisant l'option "map to guest". Notez que cette option n'est pas nécessaire pour les clients "smblient" qui n'auront pas besoin de mot de passe en mode USER pour les partages publics~!\\
+
+Il reste ensuite à gérer les droits en se servant des droits UNIX et des options relatives aux droits pour les partages (public, writeable, read only, create mode, write list, etc.) Bien noter que les droits UNIX sont prioritaires sur les droits Samba.
+
+\subsection{Contrôleur de domaine}
+
+L'utilisation de Samba en tant que contrôleur de domaine permet de centraliser les authentifications pour les ouvertures de session Windows. Il peut également permettre de stocker les profils utilisateurs.\\
+
+Pour gérer uniquement les authentifications pour les sessions, on utilisera la configuration suivante~:\\
+
+\begin{verbatim}
+[global]
+workgroup = SAMBATEST2
+netbios name = MACHINE2
+server string = bla
+security = user
+guest account = nobody
+domain logons = yes
+preferred master = yes
+logon path = 
+logon home =
+\end{verbatim}
+
+Attention, il faut ajouter chaque machine que l'on veut joindre au domaine (voir plus bas).\\
+~\\
+
+On gérera donc les utilisateurs directement sur le serveur Samba (voir plus bas). On pourra bien sûr utiliser en plus des partages de fichiers, sachant que l'authentification de session sera utilisée pour accéder à ces partages (donc pas de login ni mot de passe à retaper).\\
+
+Note~: un message d'avertissement peut-être affiché lors de la première connexion d'un utilisateur. Il signale simplement qu'aucun répertoire utilisateur n'est présent localement et qu'il va en créer un.\\
+
+Pour gérer le stockage des profils utilisateurs, on ajoutera des partages pour stocker ces répertoires. Attention, la gestion des profils pour Windows 9x/Me diffère de NT/200x/XP. On utilisera la configuration suivante~:\\
+
+\begin{verbatim}
+[global]
+workgroup = SAMBATEST2
+netbios name = MACHINE2
+server string = bla
+security = user
+guest account = nobody
+domain logons = yes
+preferred master = yes
+logon path = \\%L\ntprofiles
+logon home = \\%L\9xprofiles
+logon script = %U.bat
+
+[netlogon]
+        comment = Repertoires scripts
+        path = /samba/netlogon
+        browseable = No
+
+[9xprofiles]
+        comment = Profils Windows 9x
+        path = /samba/9xprofiles/%U
+        browseable = No
+        read only = No
+[ntprofiles]
+        comment = Profils Windows NT
+        path = /samba/ntprofiles/%U
+        browseable = No
+        read only = No
+\end{verbatim}
+
+On pourra lancer un script à la connexion d'un utilisateur avec l'option "logon script". Ce script peut même être différent selon les utilisateurs (par exemple en le nommant "\%U.bat")
+
+\section{Gestion des utilisateurs}
+
+%NTLM : http://davenport.sourceforge.net/ntlm.html
+%=> en gros, client envoie son mot de passe au serveur pour s'authentifier
+
+%NTLM remplacé par Kerberos depuis Windows 2000 (mais toujours présent)
+%http://www.microsoft.com/windows2000/techinfo/howitworks/security/kerberos.asp
+%http://www.windowsitlibrary.com/Content/617/06/1.html
+
+La gestion des utilisateurs au niveau de Samba peut se faire de différentes façons~: fichier smbpasswd, stockage TDB, serveur MySQL, annuaire LDAP, NIS+, etc. On spécifie ce choix grâce à l'option "passdb backend" qui permet ainsi respectivement smbpasswd, tdbsam, mysql, ldapsam, nisplussam. Par défaut, c'est smbpasswd.\\
+~\\
+On pourra administrer la base de données d'utilisateurs avec la commande "pedit" (uniquement accessible à root) ou "smbpasswd" (semblable à la fameuse commande "passwd")~.\\
+
+Exemples~:
+
+\begin{verbatim}
+# smbpasswd -a user 
+# pdbedit -L -v user
+\end{verbatim}
+
+
+\subsection{Utilisation avec smbpasswd ou tdbsam}
+
+Les utilisateurs SAMBA doivent être des utilisateurs UNIX si l'on choisit l'option smbpasswd (par défaut) ou tdbsam. Ils pourront ainsi avoir un mot de passe différent du compte UNIX pour Samba.\\
+
+Avec smbpasswd, ils seront stockés dans un fichier de mots de passe ressemblant à \textit{/etc/passwd}.\\
+~\\
+Exemple de fichier \texttt{smbpasswd}~:
+\begin{verbatim}
+nobody:65534:NO PASSWORDXXXXXXXXXXXXXXXXXXXXX:
+NO PASSWORDXXXXXXXXXXXXXXXXXXXXX:[NU         ]:LCT-00000000:
+
+Administrator2:0:01FC5A6BE7BC6929AAD3B435B51404EE:
+0CB6948805F797BF2A82807973B89537:[U          ]:LCT-42B1A64E:
+\end{verbatim}
+
+Avec tdbsam, il s'agira d'un fichier TDB (Trivial DataBase), c'est à dire un fichier binaire qui stocke les données. Sous Debian ce fichier est passdb.tdb dans le répertoire \texttt{/var/lib/samba/}\\
+~\\
+
+On gérera les utilisateurs grâce à la commande \texttt{smbpasswd}.
+Ainsi, \texttt{smbpasswd -a user} ajoute l'utilisateur user à la base d'utilisateurs Samba. La commande \texttt{smbpasswd -d user} désactive l'utilisateur user; \textbf{-e} réactive ou encore \textbf{-n} met un mot de passe nul (si c'est possible grâce à l'option \textit{null passwords = yes}).
+
+\subsection{Gestion des machines}
+
+Toute machine devant être intégrée au domaine doit être ajoutée. La machine sera gérée comme un utilisateur spécial~: elle sera donc stockée de la même façon que les utilisateurs. Il suffit tout simplement de préciser qu'il s'agit d'une machine.\\
+
+Si l'on gère les utilisateurs avec smbpasswd ou tdbsam, on pourra ajouter un groupe UNIX spécifique au système.\\
+
+Exemple d'ajout d'un machine pour une authentification smbpasswd ou tdbsam~:
+
+\begin{verbatim}
+# addgroup pcwin
+# adduser --ingroup pcwin --shell /dev/false --no-create-home \
+--force-badname nom_client$
+# smbpasswd -m -a nom_client$
+\end{verbatim}
+
+\subsection{Utilisation avec OpenLDAP}
+~\\
+
+Sur le serveur OpenLDAP, il faut ajouter un schéma spécifique. Ainsi dans le fichier \texttt{slapd.conf}~:
+
+\begin{verbatim}
+include         /etc/ldap/schema/samba.schema
+
+index cn                      pres,sub,eq
+index sn                      pres,sub,eq
+## required to support pdb_getsampwnam
+index uid                     pres,sub,eq
+## required to support pdb_getsambapwrid()
+index displayName             pres,sub,eq
+
+index   sambaSID              eq
+index   sambaPrimaryGroupSID  eq
+index   sambaDomainName       eq
+index   default               sub
+\end{verbatim}
+
+On n'oublie pas de lancer \texttt{slapindex} et de relancer OpenLDAP.
+
+\begin{verbatim}
+# slapindex -f slapd.conf && /etc/init.d/slapd restart
+\end{verbatim}
+
+Notons que sous Debian, le schema \texttt{samba.schema} se trouve dans le paquet \textit{samba-doc}
+
+
+Sur le serveur Samba, il faut avoir un fichier \texttt{smb.conf} ressemblant à~:
+
+\begin{verbatim}
+passdb backend = ldapsam:ldap://127.0.0.1
+ ldap admin dn = "cn=Manager,dc=evolix,dc=net"
+ ldap suffix = dc=evolix,dc=net
+ ldap filter = (uid=%u)
+ ldap delete dn = no
+ ldap user suffix = ou=People
+ ldap group suffix = ou=Groups
+ ldap machine suffix = ou=Computers
+ ldap passwd sync = yes
+ obey pam restrictions = no
+\end{verbatim}
+
+Si l'on utilise un utilisateur LDAP pour se connecter au serveur OpenLDAP, on stocke son mot de passe de la façon suivante~:
+\begin{verbatim}
+# smbpasswd -w <pass-bind-LDAP>
+\end{verbatim}
+
+
+Il faut maintenant stocker les données Samba (utilisateurs, groupes, machines) sur le serveur OpenLDAP. Il est notamment important de connaître le "Domain SID" du serveur Samba. On l'obtient en faisant~:
+
+\begin{verbatim}
+# net rpc info
+\end{verbatim}
+~\\
+(ou \texttt{net getlocalsid})
+~\\
+Dans un premier temps, on va créer les branches LDAP qui vont accueillir les données Samba. On crée donc un fichier \texttt{create.ldif}~: 
+
+\begin{verbatim}
+dn: ou=People,dc=evolix,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=evolix,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: Groups
+
+dn: ou=Computers,dc=evolix,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: Computers
+\end{verbatim}
+
+Voici les données pour avoir un groupe UNIX et Samba dans l'annuaire LDAP :\\
+
+\texttt{groups.ldif}~:
+\begin{verbatim}
+dn: cn=Domain Admins, ou=Groups, dc=evolix, dc=net
+sambaSID: S-1-5-21-982778770-3942000634-2231700997-512
+gidNumber: 512
+displayName: Domain Admins
+sambaGroupType: 2
+memberUid: Administrator
+memberUid: Administrator2
+description: Netbios Domain Administrators
+objectClass: posixGroup
+objectClass: sambaGroupMapping
+cn: Domain Admins
+\end{verbatim}
+
+Ensuite, voici les données pour avoir un utilisateur UNIX et Samba dans l'annuaire LDAP :\\ 
+ 
+\texttt{user.ldif}~:
+\begin{verbatim}
+dn: uid=user, ou=People, dc=evolix, dc=net
+sambaLMPassword: 01FC5A6BE7BC6929AAD3B435B51404EE
+sambaPrimaryGroupSID: S-1-5-21-982778770-3942000634-2231700997-513
+displayName: System User
+sambaLogonScript: user.cmd
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: sambaSamAccount
+objectClass: shadowAccount
+objectClass: top
+userPassword:: e1NTSEF9ZzJENnA1MWdGdHN3M3JwcWpXeDFLTEM2OS9veU5UY3U=
+sambaLogonTime: 0
+sambaHomeDrive: H:
+uid: user 
+uidNumber: 1001
+cn: user
+sambaLogoffTime: 2147483647
+sambaPwdLastSet: 1118938985
+sambaAcctFlags: [U]
+loginShell: /bin/bash
+sambaProfilePath: \\%L\profiles\user
+gidNumber: 1000
+sambaPwdMustChange: 1127492585
+sambaNTPassword: 0CB6948805F797BF2A82807973B89537
+sambaPwdCanChange: 0
+gecos: System User
+sambaSID: S-1-5-21-982778770-3942000634-2231700997-7002
+description: System User
+homeDirectory: /home/user
+sambaKickoffTime: 2147483647
+sn: user
+sambaHomePath: \\%L\homes\user
+\end{verbatim}
+
+Enfin voici les données pour avoir une machine  UNIX et Samba dans l'annuaire LDAP.\\ 
+ 
+\texttt{pc.ldif}~:
+\begin{verbatim}
+dn: uid=my-pc$, ou=Computers, dc=evolix, dc=net
+sambaPrimaryGroupSID: S-1-5-21-982778770-3942000634-2231700997-2201
+displayName: MY-PC$
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: sambaSamAccount
+uid: my-pc$
+uidNumber: 1000
+cn: my-pc$
+sambaPwdLastSet: 1120480412
+loginShell: /bin/false
+sambaAcctFlags: [W          ]
+gidNumber: 600
+sambaPwdMustChange: 2147483647
+sambaPwdCanChange: 1120480412
+sambaNTPassword: 1429C7104734306334FA33DD43642F60
+gecos: Computer
+sambaSID: S-1-5-21-982778770-3942000634-2231700997-3000
+description: Computer
+homeDirectory: /dev/null
+sn: my-pc$
+\end{verbatim}
+
+Pour gérer cela de façon plus conviviale, on peut utiliser \texttt{smbldap-tools}, un ensemble de scripts qui permet d'initialiser et administrer les utilisateurs, groupes et machines. Les fichiers de configuration sont \texttt{smbldap.conf} et \texttt{smbldap\_bind.conf}.\\
+
+\texttt{smbldap.conf}~:
+
+\begin{verbatim}
+SID="MON-SID"
+suffix="dc=evolix,dc=net"
+usersdn="ou=People,${suffix}"
+computersdn="ou=Computers,${suffix}"
+groupsdn="ou=Groups,${suffix}"
+[...]
+\end{verbatim}
+
+\texttt{smbldap\_bind.conf}~:
+
+\begin{verbatim}
+masterDN="cn=Manager,dc=evolix,dc=net"
+masterPw="XXX"
+\end{verbatim}
+
+On peut ensuite faire fontionner le script d'initialisation~:
+
+\begin{verbatim}
+# smbldap-populate
+\end{verbatim}
+
+Ce script crée un certain nombre d'utilisateurs (Administrator, nobody), de groupes (Administrators, Backup Operaters, Domain Admins, Domain Guests, Domain Users, Print Operators, Replicators) et de branches (Computers, Groups, Idmap, People, sambaDomainName).\\
+~\\
+Pour ajouter un utilisateur et vérifier ses données~:\\
+~\\
+\begin{verbatim}
+# smbldap-useradd -a user
+# smbldap-usershow user
+\end{verbatim}
+
+Un certain nombre d'options sont facultatives et permettent d'ajouter des précisions par rapport aux directives du fichier \texttt{smb.conf}~: \textit{userSmbHome} pour \texttt{logon home}, \textit{userProfile} pour \texttt{logon path}, \textit{userScript} pour \texttt{logon script} et \textit{userHomeDrive} pour \texttt{logon drive}.\\
+~\\
+
+Ajout d'une machine~:
+
+\begin{verbatim}
+# smbldap-useradd -w my-pc2$
+\end{verbatim}
+
+Ajout d'un groupe~:
+
+\begin{verbatim}
+# smbldap-groupadd -a group
+\end{verbatim}
+
+\section{Intégration des clients Windows}
+
+\subsection{Windows 98}
+
+Mettre "Ouvrir la session sur un domaine Windows NT" dans la boîte "Client pour les réseaux Microsoft".\\
+~\\
+
+La modification d'une clé de la base de registre peut parfois être nécessaire~:
+\begin{verbatim}
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VNETSUP]
+"EnablePlainTextPassword" = dword:00000001
+\end{verbatim}
+
+\subsection{Windows NT 4}
+
+Il faut parfois modifier la clé de la base de registre suivante~:
+
+\begin{verbatim}
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Rdr\Parameters]
+"EnablePlainTextPassword" = dword:00000001
+\end{verbatim}
+
+\subsection{Windows 2000}
+
+
+Selon les cas, une clé de la base de registre peut devoir être changée~:
+
+\begin{verbatim}
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet001\Services\LanmanWorkstation\Parameters]
+"EnablePlainTextPassword" = dword:00000001
+\end{verbatim}
+ 
+Modifier le domaine puis mettre login/passwd d'un utilisateur avec l'UID UNIX égal à 0.\\ 
+
+\subsection{Windows XP}
+
+Notons tout d'abord que la version \textit{Home edition} ne permet pas de se joindre à un domaine. Ensuite, l'intégration se passe comme avec \textit{Windows 2000}  à l'exception près que la modification de la clé de la base de registre soit souvent être modifiée.\\
+~\\
+
+Pour Windows XP SP1, une clé de la base de registre doit parfois être modifiée~:
+\begin{verbatim}
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Netlogon\Parameters]
+"requiresignorseal" = dword:00000000
+\end{verbatim}
+
+D'autres clés doivent éventuellement être modifiées mais la nécessité semble aléatoire selon les installations de Windows.\\
+
+\textit{Lien~:}
+\url{http://www.gcolpart.com/howto/samba.php4}\\
+
+\section{Options avancées de Samba}
+
+\subsection{section [global]}
+
+\begin{verbatim}
+# nom du domaine
+workgroup = SAMBATEST
+# nom NetBIOS
+netbios name = MASTER
+# aliases NetBIOS
+netbios aliases = BOSS
+# NT Description    
+server string = %h server (Samba %v)
+
+# serveur WINS
+wins support = yes
+time server = yes 
+;wins server = w.x.y.z
+
+dns proxy = no
+name resolve order = wins host lmhosts bcast
+;disable netbios = yes
+
+# logs
+log file = /var/log/samba/log.%m
+max log size = 1000
+log level = 2
+;   syslog only = no
+syslog = 0
+panic action = /usr/share/samba/panic-action %d
+
+# authentification
+security = user
+passdb backend = tdbsam
+
+null passwords = no
+obey pam restrictions = no
+encrypt passwords = true
+
+guest account = nobody
+invalid users = root
+
+# PDC
+# local master server (sinon elections)
+local master = yes
+# niveau pour les "master elections"
+os level = 33
+# domain master server (ne pas utiliser si déjà NT DC)  
+domain master = yes
+
+# serveur auth pour clients Win95
+domain logons = yes
+# force an election on startup
+preferred master = yes
+# serveur WINS
+wins support = Yes
+# NT time server
+time server = Yes
+
+logon path = \\%L\ntprofiles
+logon home = \\%L\9xprofiles
+logon script = %U.cmd
+
+# réseau
+socket address = 192.168.2.34
+socket options = TCP_NODELAY 
+SO_RCVBUF=8192 SO_SNDBUF=8192
+
+;hosts allow = 192.168.0. EXCEPT 192.168.0.35
+;hosts deny = ALL
+
+# partage
+preserve case = yes
+short preserve case = yes
+case sensitive = no
+;acl compatibility = Auto
+;nt acl support = yes
+veto  files  = /*Security*/*.tmp/*root*/
+\end{verbatim}
+
+\subsection{section [partage]}
+
+Options disponibles pour un partage~:
+
+\begin{verbatim}
+[partage]
+path = /bla/bla
+browseable = no
+
+guest ok = no
+read only = yes
+writeable = no
+read list = @smbgroup
+write list = root
+valid users = @sambausers @smbgroup root
+;invalid users =
+only user = no
+
+admin users = 
+;force user = nobody
+;force group =
+;create mode = 774
+;directory mode = 2774
+create mask = 
+directory mask =
+security mask = 
+force create mode =
+force directory mode =
+force directory security mode =
+force security mode =
+
+hide unreadable = yes
+hide unwriteable files = yes
+
+;nt acl support =
+;inherit permissions = yes
+;inherit owner = yes
+;inherit acls = yes
+
+case sensitive
+default case
+short preserve case
+fake oplocks
+dos filetimes
+dos filetime resolution
+veto files
+hide dot files
+hide files
+
+\end{verbatim}
+
+Voici différents partages~:\\
+~\\
+
+\textbf{partage public}
+
+\begin{verbatim}
+[public]
+path = /samba/public
+browseable = yes
+writeable = yes
+create mode = 777
+directory mode = 777
+\end{verbatim}
+
+\textbf{partage pour un groupe}
+
+\begin{verbatim}
+[groupe]
+path = /samba/groupe
+browseable = yes
+writeable = yes
+create mode = 770
+directory mode = 770
+\end{verbatim}
+
+\textbf{partage uniquement accessible à un utilisateur en lecture}
+
+\begin{verbatim}
+[backup]
+path = /home
+browseable = no
+writable = no
+admin users = backup
+valid users = backup
+\end{verbatim}
+
+
+\section{Clients SMB/CIFS pour Unix/Linux}
+
+%\url{http://jcifs.samba.org/}
+
+Une machine Unix/Linux peut aussi se comporter en tant que client SMB/CIFS. Le serveur pourrait aussi bien être un serveur Samba qu'une machine Windows. Sous Linux, cela se fait en utilisant conjointement le module SMBFS du noyau (éventuellement téléchargeable séparamment) et des outils supplémentaires (il en existe plusieurs) que nous allons passer en revue ci-dessous~:
+~\\
+
+\textbf{Paquet samba (ou samba-common)}
+
+\begin{verbatim}
+/usr/bin/smbclient : client SMB/CIFS FTP-like
+/usr/bin/smbtar : backup de partages SMB/CIFS
+/usr/bin/rpcclient : outil pour exécuter des fonctions MS-RPC
+/usr/bin/smbspool : client d'imprimante SMB
+/usr/bin/smbtree : navigateur SMB/CIGS en mode texte
+/usr/bin/smbcacls : manipulation des ACLs
+/usr/bin/smbcquotas : manipulation des quotas
+/usr/bin/net : outil d'aministration de serveurs SMB/CIFS distants 
+\end{verbatim}
+
+\textbf{Utilisation}~:
+~\\
+ 
+Lister les partages disponibles~:
+
+\begin{verbatim}
+# smbclient -L MY-PC -U Administrateur
+\end{verbatim}
+
+Connexion à un partage~:
+
+\begin{verbatim}
+# smbclient //MY-PC/blabla -U Administrateur
+\end{verbatim}
+
+On peut utiliser des commandes FTP comme ls, cd, lcd, get, put, etc.\\
+~\\
+Si il s'agit d'une imprimante, on peut imprimer un fichier Postscript en
+utilisant la commande :
+
+\begin{verbatim}
+> print fichier.ps
+\end{verbatim}
+ 
+Changement de mot de passe~:
+
+\begin{verbatim}
+# smbpasswd -r MY-PC -U Administrateur
+\end{verbatim}
+
+Sauvegarde et restauration de partage Windows~:
+
+\begin{verbatim}
+# smbtar -v -s MY-PC -x "blabla" -u Administrateur -p pass
+# smbtar -v -r -s MY-PC -x "blabla" -u Administrateur -p pass
+\end{verbatim}
+
+Lister utilisateurs, groupes, heure distante, reboot, etc~:
+
+\begin{verbatim}
+# /usr/bin/net -I 192.168.4.109 -U Administrateur user
+# /usr/bin/net -I 192.168.4.109 -U Administrateur group
+# /usr/bin/net -I 192.168.4.109 -U Administrateur time
+# /usr/bin/net -I 192.168.4.109 -U Administrateur rpc SHUTDOWN
+\end{verbatim}
+
+\textbf{Paquet smbfs}
+
+\begin{itemize}
+\item /sbin/mount.cifs : monter les partages CIFS
+\item /usr/bin/smbmount : monter les partages SMB
+\item /usr/bin/smbumount : démontage partages SMB
+\item /usr/bin/smbmnt : outil d'aide pour les montages SMB
+\end{itemize}
+~\\
+
+\textbf{Utilisation}~:
+\begin{verbatim}
+# mount -t smbfs //MY-PC/blabla /mnt/partage -o username=Administrateur
+# umount /mnt/partage
+
+# smbmount //MY-PC/blabla /mnt/partage
+# smbumount /mnt/partage
+\end{verbatim}
+
+D'autres outils, notamment des outils graphiques utilisant les commandes précédentes, permettent de faire un certain nombre de manipulations avec un serveur SMB/CIFS.\\
+
+\begin{itemize}
+\item xsmbrowser (smbclient) : client graphique
+\item linneighborhood (smbclient ou smbfs) : client graphique
+\item komba2 (smbclient ou smbfs) : client KDE graphique
+\item smb4k (smbclient ou smbfs) : client KDE graphique
+\item tksmb (smbclient ou smbfs) : client graphique en Tk
+\item jags (smbclient ou smbfs) : client graphique en GTK
+\end{itemize}
+~\\
+Il existe également un certain nombre d'outils associés à Samba~:\\
+
+\begin{itemize}
+\item smbc (libsmbclient) : commande en mode texte
+\item smbget (libsmbclient) : outil Wget-like
+\item smb2www (smbclient) : client permetant l'accès depuis une
+application tierce
+\item smb-nat (outil) : outil de sécurité pour serveur SMB/CIFS
+\end{itemize}
+
+%\url{http://people.via.ecp.fr/~alexis/formation-linux/samba.html}

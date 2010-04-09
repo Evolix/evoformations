@@ -1,0 +1,92 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\section{NFS}
+
+\subsection{Présentation}
+
+NFS signifie \textit{Network File System}. Ce protocole permet de partager des systèmes de fichiers en réseau, rendant ainsi leurs utilisations transparentes, comme si ceux-ci étaient présent localement.\\
+
+La procédure est la suivante~:
+
+\subsection{Mise en place}
+
+\begin{itemize}
+\item La machine hôte du système de fichiers doit dreeser des autorisations selon un certain nombre de critères (adresses ip de la machine cible, droits etc.); ceci est réalisé via le fichier "exports".\\
+
+\item La machine cible monte le dit système de fichiers afin de pouvoir le lire / écrire, en indiquant ou celui-ci se trouve (hôte source) et quel est le point de montage
+\end{itemize}
+
+\subsection{Caractéristiques techniques}
+
+Le protocole NFS est basé sur la communication RPC (Remore Procedure Call). Un système NFS se compose de plusieurs éléments~:
+
+\begin{itemize}
+\item le serveur nfsd qui va permettre de recevoir les requêtes RCP des clients et les gérer
+\item le démon mountd qui met à disposition les système de fichiers et gère les points de montage
+\item le client nfs qui va faire une demande d'accès au système de fichier
+\item éventuellement, un démon rwhod gérant les résultats collectés par who
+\item le démon "portmapper" qui fait la conversion entre le numéro de port utilisé par RPC et le numéro de port utilisé par DARPA
+\end{itemize}
+~\\
+Le système NFS utilise un certains nombres de ports, voici les principaux~:
+
+\begin{itemize}
+\item portmap : \textit{111/tcp, 111/udp}
+\item nfs : \textit{2049/tcp, 2049/udp}
+\item mountd : \textit{872/udp, 872/tcp, 875/udp, 875/tcp}
+\end{itemize}
+~\\
+Les paquets réseau utilisés par NFS peuvent dans certains cas être quelque peu spéciaux. Par exemple, les serveurs NFS ont tendance à envoyer des paquets avec le bit DF (Don't Fragment) à 1, et ce même pour des paquets en réalités fragmentés; ceux-ci sont en général supprimés par le premier firewall intermédiaire rencontré.
+
+\subsection{Exemple de mise en place}
+
+Tout d'abord, nous devons ajouter sur la machine serveur un enregistrement du système de fichiers qui va être mis à disposition. On ajoutera par exemple dans /etc/exports :
+
+\begin{verbatim}
+/home/debian -alldirs -network 192.168.1.0 -mask 255.255.255.0
+\end{verbatim}
+
+D'autres options sont également très utilisées, comme "root-squash" qui permet de différencier le root de la cible et le root de la source, ou RW / RO qui permettent de spécifier les droits à utiliser sur les systèmes de fichiers partagés par NFS.\\
+
+Lancer à présent les services suivants : portmap - nfsd - mountd.\\
+
+Pour la partie client, il faut à présent indiquer à notre hôte ce que l'on veut monter, en l'occurrence notre système de fichiers /home/debian. Pour cela, ajoutons au fichier /etc/fstab une ligne semblable à :
+
+\begin{verbatim}
+serveur_nfs:/home/debian /home/debian_client nfs rw 0 0
+\end{verbatim}
+
+Il est à noter que le serveur apparaissant sous le nom "serveur\_nfs" doit posséder un enregistrement DNS; vous pouvez celà-dit également spécifier l'IP, à votre convenance.\\
+
+Celà-dit, même si la version 4 de NFS est jugée plus sure, ce type de services peut s'avérer dangereux, pour le serveur comme pour le client. Il peut donc être judicieux de mettre en place un système de restrictions basé sur TCP Wrappers. Par exemple~:\\
+
+Dans le fichier /etc/hosts.deny, on refuse tout par défaut~:
+
+\begin{verbatim}
+portmap:ALL
+lockd:ALL
+mountd:ALL
+rquotad:ALL
+statd:ALL
+\end{verbatim}
+
+Ceci signifie que l'on refuse par défaut (un peu à la manière d'un firewall) tout ce qui touche au RPC et à NFS. Puis, on dresse une liste d'autorisation, dans le fichier /etc/hosts.allow~:
+
+\begin{verbatim}
+portmap:192.168.1.1
+lockd:192.168.1.1
+mountd:192.168.1.1
+rquotad:192.168.1.1
+statd:192.168.1.1
+\end{verbatim}
+
+Enfin, afin de vous assurez du bon fonctionnement de votre système NFS,
+vous pouvez utiliser la commande 'rpcinfo' afin de détecter
+d'éventuelles anomalies au niveau du fonctionnement RPC. Le montage des
+volumes NFS peut être réalisé de façon automatique par des démons comme
+\textit{amd} et \textit{autofs}.

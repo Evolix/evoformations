@@ -1,0 +1,1202 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Les annuaires}
+~\\
+\section{Les services d'annuaire en général}
+~\\
+
+\subsection{Définitions}
+
+\begin{itemize}
+\item{\textbf{Annuaire}} :Définition (Larousse) : \textsc{Annuaire n.m. (lat. annuus, annuel). Ouvrage publié chaque année, donnant la liste des membres
+d'une profession, des abonnés à un service, etc. Annuaire du téléphone.}\\
+Exemples : Annuaire téléphonique (pages jaunes, pages blanches), Guide Michelin (guide rouge, etc.), 
+
+\item{\textbf{Annuaire électronique}}: Définition : \textsc{ Possibilité de mise-à-jour directement pour la consultation en ligne.}\\
+Exemples : pagesjaunes.fr, DMOZ (Open Directory Project), Listes des utilisateurs sur un ordinateur (fichier /etc/passwd sous Unix)
+
+\item{\textbf{Service d'annuaire}}: Définition : \textsc{ Service réseau, Architecture client/serveur}\\
+Exemples :  Annuaire des développeurs Debian, Annuaires dans les universités françaises, 
+\end{itemize}
+
+~\\
+Note : en anglais, annuaire se dit "directory". 
+
+
+%\subsection{Annuaires distribués}
+
+%Dans les cas où l'on doit stocker une grande quantité d'informations, une base centralisée est non raisonable.
+%TODO
+%éviter la duplication des données
+%Répartition en fonction du temps de réponse => accès simple et rapide
+
+%\textit{Exemples : état civil, Annuaire distribué des adresses de l'Internet (DNS)}
+
+
+\subsection{Exemples}
+
+%Mettre des schémas DNS (voir Oreilly Bind) :
+%Déléguation d'autorité
+
+\subsubsection{DNS}
+
+Le service DNS (Domain Name System) permet la conversion de noms de domaine en adresses IP (et inversement). On parlera de "nom pleinement qualifié" pour désigner un nom de domaine complet (typiquement sousdomaine.domaine.tld).\\
+Il est plus facile pour l'être humain de retenir des noms que des numéros : il a donc été décidé d'associer des noms de domaine aux adresses IP. Au départ, un simple fichier HOSTS.TXT rassemblait les correspondances entre les adresses IP et les noms. Mais rapidement, ce système est devenu ingérable et il fut décidé d'opter pour une base de données distribuées en arbre (similaire au système de fichier UNIX) : la racine est gérée par l'ICANN\footnote{\url{http://www.icann.org/}} et les sous-domaines de la racine (TLD) sont délégués à des organismes : par exemple, chaque pays se voit confier un TLD (fr pour la France, us pour les États-Unis, uk pour la Grande-Bretagne, etc.). Ces organismes permettent ensuite à certaines sociétés, sous certaines conditions, de revendre des sous-domaines. À chaque sous-domaine acheté est associé un ou plusieurs serveurs DNS maître. Il est conseillé d'utiliser un serveur maître primaire et un serveur maître secondaire (ou serveur esclave) qui se synchronise sur le serveur primaire.\\
+
+\textbf{Serveur DNS}\\
+Un serveur DNS est (souvent) maître pour un certain nombre de noms de domaines, c'est-à-dire qu'il a autorité sur plusieurs zones. Il peut ainsi résoudre un certains nombres de demandes (il contient les informations grâce à des fichiers) ou déléguer des sous-zones à d'autres serveurs de domaine. Le serveur répond donc aux requêtes où il a autorité (en répondant directement ou en redirigeant vers le serveur ayant autorité) ou bien se redirige vers un serveur "racine" capable lui-même de rediriger vers les serveurs appropriés.\\
+Au niveau réseau, un serveur DNS écoute sur le port 53 en TCP et UDP.\\
+
+\textbf{Resolvers DNS}\\
+Un résolver, ou client DNS, peut formuler deux types de demandes à un serveur DNS~:
+
+\begin{itemize}
+\item{les demandes en mode récursif} qui demandent une résolution complète au serveur DNS, l'obligeant à faire lui-même les requêtes pour apporter la réponse
+\item{les demandes en mode itératif} qui demandent une réponse sans générer de requête de la part du serveur (sera donc sovent redirigé vers un serveur racine ou délégué)
+\end{itemize}
+
+\textit{Exemple de résolution "classique"}\\
+Le résolveur adresse une requête en mode récursif : le serveur local envoie une requête en mode itératif à un serveur de nom faisant autorité sur la demande. Il essaiera le serveur le plus à même de répondre. Dans le pire des cas il contactera un serveur "racine" et suivra les références jusqu'à obtenir une réponse complète (généralement par le serveur de nom s'occupant du réseau où se trouve la machine).\\
+Une fois la réponse trouvée, le serveur local envoie la réponse au résolveur.\\
+Attention, il faut noter que les applications ou les systèmes ont souvent leur propre cache DNS.\\
+~\\
+\textit{Types d'enregistrement}\\
+Bien que le principal but soit de convertir un nom de domaine en adresse IP, il existe différents types d'enregistrement au niveau d'un serveur DNS. L'enregistrement principal est l'enregistrement A qui associe directement un nom de domaine à une adresse IP mais il enexiste d'autres : l'enregistrement CNAME (qui lie un nom de domaine vers un autre nom de domaine), MX (qui permet de spécifier plusieurs serveurs SMTP avec différentes priorités), NS (qui spécifie les serveurs de noms), TXT (qui permet d'avoir un champ texte), PTR (pour les enregistrements invers), etc. Il existe également des enregistrements pour IPv6 où il faut à priori utiliser les enregistrements AAAA (il peut exister également des enregistrements A6).\\
+~\\
+\textit{Résolution inverse}\\
+ La résolution d'une adresse en nom n'est pas triviale car le processus de résolution devrait connaître à peu près toutes les branches de l'arbre pour pouvoir répondre, (sans compter que plusieurs noms pointent souvent vers la même adresse). L'idée a donc été de développée un sous-domaine pour les adresses. Ce sous-domaine est in-addr.arpa et peut contenir toutes les adresse IP existantes (elles sont inversées afin de partir des feuilles jusqu'à la racine). Ainsi, pour qu'une adresse IP fasse l'objet d'une résolution inverse, elle doit avoir un enregistrement dans ce sous-domaine.\\
+~\\
+\textbf{Mémoire cache et durée de vie}\\
+En plus des différents mécanismes de résolution, l'utilisation d'une mémoire-cache accélère efficacement ces résolutions. En effet, lorsqu'un serveur de nom effectue une requête récursive il obtient de nombreuses informations (résolutions complètes, serveurs faisant autorité, etc.). Il va donc stocker ces informations afin de pouvoir répondre plus rapidement à de prochaines requêtes utilisant ces informations, et ainsi éviter d'interroger de nouveau les serveurs concernés. Il conserve en fait ces données pendant un temps fixé par le serveur DNS où il a été cherché ses données. Les serveurs DNS ayant des données qui varient fréquemment adapteront donc cette durée appelée TTL (Time To Live).\\
+~\\
+
+\textit{Les outils}\\
+L'outil "historique" pour provoquer une résolution DNS est \textit{nsloookup}.
+Sous Unix, on trouvera les outils \textit{host} et \textit{dig}.\\
+~\\
+Exemple d'une requête avec dig~:\\
+
+\begin{verbatim}
+$ dig @192.168.1.4 cmi.univ-mrs.fr +norecurse +notcp \
++noquestion +noauthority +noadditional MX
+
+; <<>> DiG 9.3.1 <<>> @192.168.1.4 cmi.univ-mrs.fr
++norecurse +notcp +noquestion +noauthority +noadditional MX
+; (1 server found)
+;; global options:  printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 4914
+;; flags: qr ra; QUERY: 1, ANSWER: 1, AUTHORITY: 3, ADDITIONAL: 2
+
+;; ANSWER section:
+cmi.univ-mrs.fr.        86236   IN      MX      10 gyptis.univ-mrs.fr.
+
+;; Query time: 6 msec
+;; SERVER: 192.168.1.4#53(192.168.1.4)
+;; WHEN: Sun Nov  6 19:56:15 2005
+;; MSG SIZE  rcvd: 157
+
+\end{verbatim}
+
+
+\subsubsection{Arborescence des systèmes de fichiers Unix}
+
+schémas avec /bin, /boot, /etc, /usr, /var, etc.
+
+Avantages de la répartition en répertoires :
+- Nombre de fichiers limités par répertoires
+- Performance (accès plus rapide, recherche optimisée, etc.)
+
+\subsubsection{Gestion des utilisateurs}
+
+On peut voir les fichiers qui stocke les utilisateurs et des renseignements
+sur eux (et même leurs mots de passe) comme un annuaire~:
+
+Extrait d'un fichier /etc/passwd~:
+
+\begin{verbatim}
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+\end{verbatim}
+
+NIS/NIS+ est un service standard Unix qui permet de partager
+des fichiers/annuaires pour toutes les machines d'un réseau :
+
+\begin{verbatim}
+/etc/passwd
+/etc/group
+/etc/hosts
+/etc/aliases
+/etc/protocols
+/etc/services
+\end{verbatim}
+
+LDAP/Active Directory
+
+
+\section{Protocole LDAP}
+
+\subsection{Historique}
+
+X.500, standard promulgué par l'OSI\footnote{International Organization for Standardization} et l'ITU-T\footnote{International Telecommunication Union-Telecommunication Standardization Sector}, définit :
+
+- DAP (Directory Access protocol) : protocole de communication DUA<->DSA
+- DSP (Directory System Protocol) : protocole de communication entre DSAs
+- DISP (Directory Information Shadowing Protocol) : protocole de synchronisation/réplication entre DSAs
+- DOP (Directory Operational Bindings Management Protocol) : protocole de gestion de liaison opérationnelle d'annuaire
+
+
+DIB (Directory Information Base) : objets, classes d'objet, OID
+DIT (Directory Information Tree) : noeud, feuille, alias, DN, RDN, 
+Modèles clients (DUA) / serveurs (DSA) : connexion, opération, réplication, droits, authentification
+
+
+% Schémas d'après http://www.sysium.com/ldap.html
+% http://sec.cs.kent.ac.uk/x500book/
+
+Ces protocoles standards et ouverts ont été normalisés au début des années 1990.
+S'appuyant sur des couches réseaux aujourd'hui peu répandues (modèle OSI), on
+ne retrouve directement ces protocoles que dans des applications spécifiques
+(armée, gouvernement, etc.). Néanmoins, ces protocoles ont posés les fondements
+de toutes les applications d'annuaires modernes.
+
+
+LDAP est dérivé du protocole DAP X.500, c'est-à-dire le protocole de communication entre un DUA et DSA.
+Il s'agit d'une version simplifiée (d'où l'appelation "Light") principalement tirée du fait
+qu'elle s'appuye sur la couche réseau TCP/IP, version simplifiée et répandue du modèle réseau d'OSI.
+C'est l'IETF (Internet Engineering Task Force) qui centralise les travaux sur LDAP et publie les
+spécifications dans des RFCs. La dernière version de LDAP est la version 3.
+
+
+\subsection{Vocabulaire}
+
+\textbf{Schéma}\\ 
+Un schéma est une définition de classes d'objets, d'attributs et leur syntaxe. Chaque serveur utilisant un schéma spécifique ou des extensions doit l'enregistrer notamment pour obtenir un OID.\\
+
+Exemple de définition d'attributs~:
+
+\begin{verbatim}
+attributetype ( 1.3.6.1.4.1.18413.21.3.10 NAME 'postfixTransport'
+        DESC 'transport for Postfix'
+        EQUALITY caseExactIA5Match
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{20} SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.18413.21.3.20 NAME 'isActive'
+        DESC 'an account is active or not'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE )
+\end{verbatim}
+
+SYNTAX (1.3.6.1.4.1.1466.115.121.1.x)~:
+
+\begin{verbatim}
+7 = Boolean
+8 = Certificat
+15 = Directory String
+26 = IA5 String 
+27 = INTEGER
+50 = Telephone Number
+\end{verbatim}
+
+EQUALITY :
+
+\begin{verbatim}
+telephoneNumberMatch
+integerMatch
+booleanMatch
+caseExactIA5Match
+caseIgnoreIA5Match
+\end{verbatim}
+
+
+\textit{Liens~:}\\
+\url{http://www.openldap.org/doc/admin22/schema.html}\\
+\url{http://www.iana.org/cgi-bin/enterprise.pl}\\
+\url{http://www.rfc-editor.org/rfc/rfc2252.txt}\\
+
+EQUALITY type
+SYNTAX type
+
+\textbf{Objectclass}\\
+Les classes d'objet, définies dans un schéma par un nom et OID (Object IDentifier), modélisent des objets définissant un certain nombres d'attributs obligatoires ou facultatifs. Elles peuvent être de plusieurs types~:\\
+- structurelle çad correspondant à la description d'objets basiques~: personnes, groupes, etc.
+- auxiliaire càd correspondant à des informations complémentaires à des objets de classe "structure"
+- abstraite càd désignant des objets basiques de LDAP comme 'top' ou 'alias'
+
+Les ObjectClass forment une hiérarchie.  Prenons l'exemple de la classe d'objet "person" : elle est définie en tant que "SUP top STRUCTURAL", c'est à dire que c'est une classe structurelle en dessous de la classe abstraite 'top'. L'ObjectClass 'top' est toujours tout en haut. En pratique, il n'est pas nécessaire de le préciser mais il sera toujours là (même si il n'apparait pas). Les classes abstraites sont implicitement là~!\\
+
+\textbf{OID (Object IDentifier)}\\
+Un OID est une séquence de nombres entiers séparés par des points normalisée dans la RFC 2256. L'OID doit être unique afin de permettre une compatibilité entre les applications. C'est l'IANA\footnote{Internet Assigned Numbers Authority} qui est responsable de leur attribution et chaque entreprise peut obtenir un OID.\\
+
+\textit{Lien~:} \url{http://www.isi.edu/cgi-bin/iana/enterprise.pl}\\
+
+\textbf{attribut}\\
+Les attributs, définis dans un schéma, sont rattachés à une classe d'objet. Un attribut définit une certaine syntaxe et des contraintes pour des données~: on peut rapprocher l'attribut LDAP du type de données d'une base de données.\\
+
+\textbf{entrée (ou objet)}\\ 
+Il s'agit d'un ensemble de données entrées formant un noeud dans l'arbre. Elle est définit de manière unique par un DN. Elle contient un ou plusieurs attributs. Une donnée est rattachée à un attribut. On peut avoir plusieurs valeurs pour un attribut.\\
+
+un objet doit être identifié de manière unique
+son adresse permet de retrouver l'objet
+un objet peut avoir plusieurs noms
+
+
+\textbf{DN (Distinguish Name)}\\
+Le DN est une suite de valeurs (\textit{code = valeur}, où \textit{code} est l'un des attributs de l'entrée et \textit{valeur} est la valeur associée à l'attribut dans l'entrée) séparées par des virgules. L'ordre est important : on remonte l'arbre (le suffixe se trouve donc à gauche). Le DN définit une entrée unique pour un annuaire LDAP. Exemple~: \textit{cn=Manager,dc=evolix,dc=net}\\
+
+\textbf{RDN (Relative DN)}\\
+
+
+%(on remonte vers le suffixe) 
+
+\textbf{suffixe}\\
+Il s'agit du DN du domaine. Il est souvent calqué sur un nom de domaine appartenant à la structure. Exemple : \textit{dc=evolix,dc=net}\\
+
+\textbf{CN (Common Name)}\\
+Il s'agit simplement d'un attribut (obligatoire) appartenant à la classe d'objet person. Il est souvent utilisé comme premier code dans le DN d'une entrée correspiondant à une personne. Mais l'on peut tout aussi bien utiliser un autre attribut (uid est également souvent utilisé).\\
+
+
+DIT
+Un DSA est un serveur de l'architecture LDAP/X.500
+Un DUA est un client LDAP/X.500
+
+
+\subsection{Protocole d'accès}
+
+Capture de trame LDAP
+
+Commentaires sur le protocole.
+
+
+\subsection{RFCs à propos de LDAP}
+
+RFC 1777 : LDAPv2
+RFC 2251 : LDAPv3
+
+RFC 2252 : syntaxe des attributs
+RFC 2254 : filtres de recherche LDAP
+RFC 2255 : format des URLs LDAP
+
+
+\subsection{Principes des schémas LDAP}
+
+attributs
+Syntaxe attributs
+Classes d'objects
+Arborescence des classes d'objet
+
+
+\subsection{Format LDIF}
+
+Ldap Data Interchange Format
+
+RFC 2849
+
+Représentation sous forme de fichier texte des données
+présentes dans un annuaire.
+
+Syntaxe pour gérer des ajouts, modifications, suppressions.
+
+
+
+\subsubsection{Les modèles LDAP}
+
+modèle = services offerts par un serveur LDAP
+
+La RFC 2251 définit deux modèles :
+
+\subsubsection{Modèle protocole}
+\subsubsection{Modèle données}
+
+Néanmoins, certains ouvrages présentent quatres modèles :
+
+\subsubsection{Modèle d'information}
+\subsubsection{Modèle de nommage}
+\subsubsection{Modèle fonctionnel}
+\subsubsection{Modèle de sécurité}
+
+
+\subsection{Annuaires LDAP vs Bases de données}
+
+\subsubsection{Accès en lecture (consultation)}
+
+
+\subsubsection{Modèle hiérachique (arborescence)}
+
+Pour stocker un grand nombre de données et pouvoir y accéder de façon optimisée,
+il faut séparer les données. Les séparer dans plusieurs branches du même niveau
+revient à les répartir dans différentes tables. Mais si l'on prend en considération
+que le nombre de branches est important, il devient nécessaire d'également séparer ces
+branches. On entre donc dans un modèle hierarchique impossible à avoir avec une base
+de données classique (pas de hiérarchie entre les tables).
+
+
+\subsubsection{Possibilité d'une modèle distribué}
+
+
+\subsubsection{Sécurité (authentification, gestion des droits)}
+
+
+\subsubsection{Orientée objet}
+
+
+\subsubsection{etc.}
+
+
+\subsection{Vue du marché LDAP}
+
+\subsubsection{Logiciels serveurs LDAP}
+
+OpenLDAP
+
+
+MS Active Directory
+
+% http://mi.cnrs-orleans.fr/Security/Win2k/ActiveDirectory/ActiveDirectory1.htm
+
+Novell eDirectory
+
+etc.
+
+\subsubsection{Logiciels compatibles LDAP}
+
+Microsoft Outlook
+
+
+Apache
+
+
+ProFTPD
+
+
+Applications WEB
+
+\subsubsection{Logiciels clients LDAP}
+
+Il existe plusieurs logiciels clients pour visualiser, insérer, modifier, supprimer, etc. des données issues d'un annuaire LDAP~:
+
+\begin{itemize} 
+
+\item \textbf{LDAP Browser/Editor} logiciel graphique en Java permettant
+de visualiser, modifier et rechercher aisément. Import et export au
+format LDIF sont pratiques.\\
+\textit{Lien~:} \url{http://www-unix.mcs.anl.gov/~gawor/ldap/}
+
+\item \textbf{PhpLDAPadmin} interface web en PHP permettant d'effectuer de nombreuses opérations aisément.\\
+\textit{Lien~:} \url{http://phpldapadmin.sourceforge.net/}
+
+\end{itemize}
+
+Voir aussi les clients proprios (notam. Microsoft)
+
+
+\section{Champs d'applications des annuaires LDAP}
+
+\subsection{Service d'authentification}
+
+\subsubsection{L'authentification avec LDAP}
+
+simple\_bind
+simple\_bind\_s
+
+\subsubsection{Utilisation dans un logiciel}
+
+
+
+\subsubsection{Exemple avec Windows/Active Directory}
+
+
+
+\subsubsection{Exemple avec Linux/libnss}
+
+
+
+\subsubsection{Exemple avec Apache}
+
+
+\subsubsection{Autres exemples}
+
+
+
+\subsubsection{Utilisation avec SASL}
+
+
+
+\subsubsection{Un pas vers la SSO}
+
+
+
+
+\subsection{Service de stockage d'informations}
+
+\subsubsection{Informations stockées avec LDAP}
+
+\subsubsection{Utilisation dans un logiciel}
+
+\subsubsection{Stockage de profils}
+
+\subsubsection{Contrôle d'accès aux données}
+
+\subsubsection{Exemple avec un carnet d'adresses}
+
+\subsubsection{LDAP et les langages de programmation}
+
+
+
+
+%\section{Méta-annuaire LDAP}
+%Annuaire d'annuaire
+
+\section{Architecture et mise en place}
+
+%http://www.sysium.com/fr/offres-ldap/annuaire-ldap/demarche-ldap.html
+
+\subsection{Concevoir un cahier des charges}
+
+Respect des conventions
+Lister applications
+Lister contenu
+
+\subsubsection{Audit de l'existant}
+
+\subsubsection{Expression des besoins}
+
+\subsubsection{Définition du contenu et architecture}
+
+\subsubsection{Choix techniques}
+
+\subsubsection{Ajout de schémas personnalisés}
+
+Applications clients
+Utiliser schémas existants
+Étendre ou ajouter des schémas
+
+\subsubsection{Politique de sécurité}
+
+ACLs
+
+\subsubsection{Test et recette}
+
+Vérifications
+Benchmarks
+
+
+\subsection{Utilisation et administration}
+
+\subsubsection{Gestion des données}
+
+\subsubsection{Logiciels client LDAP}
+
+\subsubsection{Import/export données}
+
+\subsubsection{Utilisation avec SSL/TLS}
+
+\subsubsection{Réplication}
+
+\subsubsection{Sauvegarde}
+
+
+\section{Application pratique}
+
+
+\subsection{Mise en place d'un annuaire LDAP}
+
+\subsubsection{Installation}
+
+\subsubsection{Configuration}
+
+\subsubsection{Gestion des droits}
+
+\subsubsection{Installation des schémas}
+
+\subsubsection{Sécurité}
+
+
+\subsection{Utilisation d'un annuaire LDAP}
+
+\subsubsection{Installation des outils nécessaires}
+
+\subsubsection{Configuration}
+
+\subsubsection{Écriture des fichiers au format LDIF}
+
+\subsubsection{Ajout/modification/suppression données}
+
+\subsubsection{Recherche de données}
+
+%\subsection{Utilisation avec TLS}
+
+\subsubsection{Focus sur l'authentification LDAP}
+
+\newpage
+\section{OpenLDAP}
+~\\
+\subsection{Présentation}
+~\\
+LDAP (Lightweight Directory Access Protocol) est un protocole pour accéder à un service d'annuaire. Les annuaires permettent de partager des informations, telles que des coordonnées d'entités ou personnes ou encore des données système. Un annuaire est une base de données spécifique structurée dans une arborescence hiérarchique. Un annuaire est censé être largement plus performant en consultation qu'un système de gestion de bases de données classique. LDAP peut servir d'annuaire pour gérer des coordonnées, pour servir des applications (SMTP, Groupware, etc.) ou pour gérer l'authentification (UNIX, Apache, IMAP, etc.)\\
+~\\
+\textit{Liens~:}\\
+
+\url{http://www-sop.inria.fr/semir/personnel/Laurent.Mirtain/ldap-livre.html}\\
+\url{http://www.cru.fr/ldap/}\\
+\url{http://www.quesaco.org/astuces.php?targt=ldap}\\
+\url{http://www.fefe.de/tinyldap/}\\
+\url{http://www.commentcamarche.net/ldap/}\\
+\url{http://www.lifl.fr/~boulet/formation/syst-dist/exposes2003-2004/ldap/}\\
+
+http://www.computerbooksonline.com/chapters/ldapchap.htm
+http://www.editions-eyrolles.com/Livre/9782212115048/annuaires-ldap
+http://yolinux.com/TUTORIALS/LinuxTutorialLDAP.html
+
+\subsection{Installation}
+
+\subsubsection{À partir des sources}
+~\\
+
+On peut utiliser la méthode classique de recompilation à partir des sources~:
+
+\begin{verbatim}
+$ ./configure [options]
+$ make depend
+$ make
+# make install
+\end{verbatim}
+
+\subsubsection{Par paquets}
+~\\
+
+Sous Debian, les paquets principaux à installer sont~:
+~\\
+\textbf{slapd} : serveur OpenLDAP\\
+\textbf{libldap} : librairies OpenLDAP\\
+\textbf{ldap-utils} : outils OpenLDAP\\
+~\\
+
+\emph{Dépendances Debian~:}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+libc6 :& librairies "GNU C"\\
+\hline
+libdb4.2 :& librairies "Berkeley v4.2 Database"\\
+\hline
+libgcrypt11 :& librairies cryptographiques LGPL\\
+\hline
+libgnutls11 :& librairies GNU TLS\\
+\hline
+libgpg-error0 :& librairie pour erreurs/messages composants GnuPG\\
+\hline
+libiodbc2 :& gestion pilote iODBC\\
+\hline
+libltdl3 :& librairie libltdl (wrapper dlopen pour GNU libtool)\\
+\hline
+libsasl2 :& librairies SASL v2\\
+\hline
+libslp1 :& librairies OpenSLP\\
+\hline
+libwrap0 :& librairies TCP wrapper de Wietse Venema\\
+\hline
+zlib1g :& librairies de compression gzip\\
+\hline
+perl :& fameux language interprêté de Larry Wall\\
+\hline
+\end{tabular}
+\end{center}
+~\\
+
+
+
+\subsection{Configuration}
+~\\
+Le répertoire \textit{/etc/ldap/schema/} contient les schémas LDAP disponibles.\\
+~\\
+Certains schémas sont présents par défaut.\\
+Il est aussi possible d'en ajouter ou d'en définir manuellement.\\
+~\\
+\textit{Lien~:} \url{http://www.openldap.org/doc/admin22/schema.html}\\
+~\\
+\texttt{ldap.conf} est le fichier de configuration pour toutes les applications clientes faisant appel aux bibliothèques OpenLDAP (dans le paquet Debian libldap2). Parmi celles-ci se trouvent, non exhaustivement, Sendmail, Pine, Balsa, Evolution, Gnome Meeting, etc. Voici un exemple de ce fichier~:\\
+
+\begin{verbatim}
+BASE    dc=evolix,dc=net
+URI 127.0.0.1
+\end{verbatim}
+~\\
+\texttt{slapd.conf} est le fichier de configuration pour le démon slapd~:\\
+
+\begin{verbatim}
+#modules
+modulepath      /usr/lib/ldap
+moduleload      back_bdb
+backend bdb
+
+#schemas
+include         /etc/ldap/schema/core.schema
+include         /etc/ldap/schema/cosine.schema
+include         /etc/ldap/schema/nis.schema
+include         /etc/ldap/schema/inetorgperson.schema
+include         /etc/ldap/schema/misc.schema
+
+#options
+schemacheck     on
+pidfile         /var/run/slapd.pid
+argsfile        /var/run/slapd.args
+replogfile      /var/lib/ldap/replog
+loglevel        0
+
+#base
+database        bdb
+suffix          "dc=evolix,dc=net"
+directory       "/var/lib/ldap"
+index 		objectClass eq
+lastmod 	on
+
+\end{verbatim}
+
+
+Les données LDAP sont dans le répertoire \texttt{/var/lib/ldap/} sous Debian~:\\
+
+\begin{verbatim}
+# ls /var/lib/ldap/
+__db.001  __db.003  __db.005   dn2id.bdb     log.0000000001
+__db.002  __db.004  DB_CONFIG  id2entry.bdb  objectClass.bdb
+\end{verbatim}
+
+
+\subsection{Gestion des droits}
+
+Pour gérer les droits d'accès à l'annuaire LDAP, on écrit des règles dites ACL (Access Control List) dans le fichier de configuration pour le démon slapd \textit{slapd.conf}. Voici un exemple~:\\
+\begin{verbatim}
+access to attribute=userPassword
+        by dn="cn=admin3,dc=evolix,dc=net" write
+        by anonymous auth
+        by self write
+        by * none
+
+access to dn.children="ou=Clients,dc=evolix,dc=net" 
+        by dn.regex="cn=admin,ou=Clients,dc=evolix,dc=net" write
+        by dn.children="ou=People,dc=evolix,dc=net" write
+        by users none
+        by * none
+
+access to *
+        by dn.regex="cn=admin,dc=evolix,dc=net" write
+        by users read
+        by * none
+
+# Administrateur "en dur" (voir slappasswd)
+rootdn "cn=admin2,dc=evolix,dc=net"
+rootpw {SSHA}ez1NjoyNPknjuKrORzXpem16h/tGgee7
+\end{verbatim}
+
+Remarquons qu'on peut utiliser un administrateur "en dur" (\texttt{rootdn} dans le fichier \texttt{slapd.conf}) qui aura alors un accès à toutes les ressources (les lignes lui attribuant des droits sont inutiles). Mais on peut tout à fait utiliser un utilisateur LDAP classique~!
+~\\
+Pour écrire des règles ACL, on précise donc une entité LDAP et ensuite on précise des droits pour des entités LDAP~:
+
+\begin{verbatim}
+access to dn.<scope-style>=<DN> attrs=[attributs]
+	by <entité LDAP> <droit LDAP>
+\end{verbatim}
+
+Lorsque l'on fait une opération sur une certaine entité de l'annuaire LDAP, les droits sont déterminés par le premier entité LDAP rencontré. Ainsi, on précisera toujours les droits par défaut à la fin.\\
+~\\
+
+Exemple typique d'une règle ACL~:
+
+\begin{verbatim}
+access to dn.children="ou=Clients,dc=evolix,dc=net" attrs=telephoneNumber
+        by dn.regex="cn=admin,ou=Clients,dc=evolix,dc=net" write
+        by dn.children="ou=People,dc=evolix,dc=net" write
+	by users read
+	by * none
+\end{verbatim}
+
+Droits LDAP~:
+
+\begin{verbatim}
+none 	=0 	no access
+auth 	=x 	needed to bind
+compare =cx 	needed to compare
+search 	=scx 	needed to apply search filters
+read 	=rscx 	needed to read search results
+write 	=wrscx 	needed to modify/rename
+\end{verbatim}
+
+Entités LDAP~:
+
+\begin{verbatim}
+* 		All, including anonymous and authenticated users
+anonymous 	Anonymous (non-authenticated) users
+users 		Authenticated users
+self 		User associated with target entry
+dn[.<basic-style>]=<regex> 	Users matching a regular expression
+dn.<scope-style>=<DN> 		Users within scope of a DN
+\end{verbatim}
+
+\begin{verbatim}
+dn[.<basic-style>]= dn.regex, dn.exact
+dn.<scope-style> = dn.base, dn.one, dn.subtree, dn.children
+\end{verbatim}
+
+On peut utiliser une liste d'attributs en ajoutant attr=<attributs>\\
+On peut utiliser un filtre en ajoutant filter=<filtre>\\
+
+Exemple~:
+
+\begin{verbatim}
+to dn.one="ou=People,dc=evolix,dc=net" filter=(gidNumber=2000)
+\end{verbatim}
+
+
+Attention la syntaxe du fichier \texttt{slapd.conf} est importante~!
+Par exemple, il ne faut pas insérer de commentaires dans les règles ACL.
+Ainsi l'exemple suivant est non valable~:
+
+\begin{verbatim}
+access to *
+# commentaires
+        by * none
+\end{verbatim}
+
+
+\textit{Lien~:}
+\url{http://www.openldap.org/doc/admin22/slapdconfig.html\#Access\%20Control}
+
+\subsection{Utilisation}
+
+On crée le domaine et éventuellement son administrateur (si non présent).\\
+À noter que sous Debian, cette opération est automatiquement faite à l'installation (questions posées via debconf)\\
+~\\
+Contenu du fichier \texttt{domaine.ldif}~:\\
+
+\begin{verbatim}
+dn: dc=evolix, dc=net
+objectclass: top
+objectclass: dcObject
+objectClass: organization
+o: exemple
+dc: evolix 
+description: LDAP Evolix
+
+dn: cn=admin,dc=evolix,dc=net
+objectclass: organizationalRole
+cn: admin
+\end{verbatim}
+
+\begin{verbatim}
+# ldapadd -x -h solaris -D "cn=admin2,dc=evolix,dc=net" -W -f domaine.ldif
+Enter LDAP Password:
+adding new entry "dc=evolix,dc=net"
+adding new entry "cn=admin2,dc=evolix,dc=net"
+\end{verbatim}
+~\\
+On crée ensuite un annuaire.\\
+~\\
+\texttt{create.ldif}~:\\
+
+\begin{verbatim}
+dn: ou=annuaire,dc=evolix,dc=net
+objectClass: organizationalUnit
+ou: annuaire
+description: Annuaire Evolix 
+\end{verbatim}
+
+\begin{verbatim}
+# ldapadd -x -D "cn=admin2,dc=evolix,dc=net" -W -f create.ldif
+Enter LDAP Password:
+adding new entry "ou=annuaire, dc=evolix, dc=net"
+\end{verbatim}
+~\\
+\textbf{Remarque} : il est conseillé d'utiliser \texttt{slapaddd -x -D [...] fichier.ldif plutot que slapdadd < fichier.ldif} afin d'éviter des erreurs de syntaxes.\\
+Éventuellement pour des fichiers LDIF importants, la deuxième méthode est plus rapide.\\
+
+On remplit l'annuaire avec des données. Par exemple, avec le fichier \texttt{entree.ldif}~:\\
+~\\
+\begin{verbatim}
+dn: cn=Gregory, ou=annuaire, dc=evolix, dc=net
+objectClass: person
+objectClass: inetOrgPerson
+cn: Gregory
+sn: reg
+telephoneNumber: 06 98 86 00 00
+\end{verbatim}
+
+
+\begin{verbatim}
+ldapadd -x -D "cn=admin2,dc=evolix,dc=net" -W -f entree2.ldif
+\end{verbatim}
+
+Dans cet exemple, on utilise le mot de passe "en dur" dans le fichier \texttt{slapd.conf}.\\
+~\\
+On peut également utiliser~:
+
+\begin{verbatim}
+# slapadd < entree.ldif
+\end{verbatim}
+
+~\\
+Pour une recherche dans la table, on peut utiliser le client \texttt{ldapsearch}. Par exemple~:\\
+
+\begin{verbatim}
+$ ldapsearch -x -b "ou=annuaire,dc=evolix,dc=net" -D \
+"cn=admin2,dc=evolix,dc=net" -W -h 192.168.1.5
+\end{verbatim}
+
+Quelques options disponibles~:
+
+\begin{verbatim}
+-L : renvoie les résultat au format LDIFv1 
+-LL : désactive les commentaires 
+-LLL : désactive l'affichage de la version de LDIF
+-h <host> : permet de se connecter à un serveur distant 
+(par défaut, il s'agit de localhost)
+\end{verbatim}
+
+~\\
+Pour faire des modifications en mode console, on peut utiliser un \texttt{ldapmodify}. Par exemple, prenons le fichier \texttt{modif.ldif}~:
+
+\begin{verbatim}
+dn: cn=Gregory, ou=annuaire, dc=evolix, dc=net
+changetype: modify
+replace: telephoneNumber
+telephoneNumber: 04 98 86 00 00
+\end{verbatim}
+
+
+Au lieu de spécifier \texttt{remplace:}, on peut mettre \texttt{add:} (il est possible de mettre plusieurs valeurs pour le même atribut) ou \texttt{delete:} (bien sûr sans mettre de valeur pour l'attribut supprimé).\\
+On peut ensuite effectuer effectivement les modifications~:
+~\\
+\begin{verbatim}
+$ ldapmodify -x -D "cn=admin2,dc=evolix,dc=net" -W -f /tmp/modif.ldif
+\end{verbatim}
+
+On notera que diverses informations sur les changements sont retenues si l'option \texttt{lastmod on} est présente dans le fichier \texttt{slapd.conf}~: la date de modification (\texttt{modifyTimestamp}), l'auteur de la modification (\texttt{modifiersName}), etc.\\
+
+~\\
+Pour la suppression, on peut également procéder en utilisant un fichier LDIF. Par exemple, voici un fichier \texttt{suppr.ldif}~:
+
+\begin{verbatim}
+cn=Gregory, ou=annuaire, dc=evolix, dc=net
+\end{verbatim}
+
+Les modifications effectives seront faites par la commande \texttt{ldapdelete}~:
+
+\begin{verbatim}
+$ ldapdelete -x -D "cn=root,dc=evolix,dc=net"  -W -f /tmp/suppr.ldif
+\end{verbatim}
+
+On peut également faire directement~:
+
+\begin{verbatim}
+$ ldapdelete -x -D "cn=admin2,dc=evolix,dc=net" -W \
+"cn=Gregory,ou=annuaire, dc=evolix, dc=net"
+\end{verbatim}
+~\\
+
+Bien sûr, toutes ces opérations peuvent être automatisées à l'aide Shellscripts ou bien à l'aide d'autres clients en Perl, PHP, Java... (voir ci-après)
+
+\subsubsection{Exemples d'utilisation}
+~\\
+
+\textbf{Carnet d'adresses}\\
+~\\
+
+Pour une utilisation en tant que carnet d'adresses, on peut se connecter grâce à des clients mail comme Outlook, Mozilla-Thunderbird, etc.\\
+~\\
+
+\textbf{Comptes Unix}\\
+~\\
+
+L'utilisation en tant qu'annuaire d'utilisateurs/mots de passe peut se faire sous Linux en utilisant la librairie NSS (Name Service Switch)\footnote{\url{http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html}} et PAM (Pluggable Authentication Modules)\footnote{\url{http://www.kernel.org/pub/linux/libs/pam/}}.\\
+~\\
+Sous Debian GNU/Linux, on fera~:
+
+\begin{verbatim}
+# aptitude install ldap-utils libnss-ldap libpam-ldap
+\end{verbatim}
+
+Pour utiliser notre annuaire en plus des comptes UNIX classiques, on précisera dans le fichier \texttt{/etc/nsswitch.conf}~:
+
+\begin{verbatim}
+passwd:         compat ldap
+group:          compat ldap
+shadow:         compat ldap
+\end{verbatim}
+~\\
+
+On précise les paramètres de l'annuaire LDAP dans le fichier \texttt{/etc/libnss-ldap.conf}~:
+
+\begin{verbatim}
+host IP_serveur_LDAP
+base dc=evolix,dc=net
+ldap_version 3
+#binddn cn=unix,dc=evolix,dc=net
+#bindpw XXX
+#rootbinddn cn=adminunix,dc=evolix,dc=net
+\end{verbatim}
+
+Attention, ces fichiers doivent être lisibles par tous les utilisateurs. Si l'on doit préciser \texttt{binddn} et \texttt{bindpw}, on prendra bien garde à ce que l'utilisateur LDAP précisé ne puisse accéder aux données LDAP utiles uniquement en lecture. Pour \texttt{root} on peut préciser un utilisateur LDAP différent grâce à la directive \texttt{rootbinddn} et le mot de passe sera stocké dans le fichier \texttt{/etc/ldap.secret} accessible en lecture uniquement à \texttt{root}.\\ 
+
+On vérifiera que cela fonctionne correctement en faisant~:\\
+
+\begin{verbatim}
+$ getent passwd
+\end{verbatim}
+
+Ensuite, pour pouvoir utiliser ces données à partir d'applications, on modifie le fichier \texttt{/etc/pam\_ldap.conf} qui est de syntaxe similaire au fichier \texttt{libnss-ldap.conf}~:\\
+
+\begin{verbatim}
+host IP_serveur_LDAP
+base dc=evolix,dc=net
+ldap_version 3
+#binddn cn=unix,dc=evolix,dc=net
+#bindpw XXX
+#rootbinddn cn=adminunix,dc=evolix,dc=net
+pam_password crypt
+\end{verbatim}
+~\\
+
+Afin d'optimiser less requêtes les plus fréquentes, on indexe les valeurs qui vont être demandées le plus souvent. Dans le fichier \texttt{slapd.conf}~:
+
+\begin{verbatim}
+index uidNumber               eq
+index gidNumber               eq
+index memberUid               eq
+\end{verbatim}
+
+Et on doit ensuite le faire prendre en compte à OpenLDAP en utilisant la commande \texttt{slapindex}~:\\
+
+\begin{verbatim}
+# slapindex -f slapd.conf && /etc/init.d/slapd restart
+\end{verbatim}
+
+On peut également installer \texttt{nscd} (Name Service Cache Daemon) qui utilise un système de cache utilisateur afin d'optimiser les requêtes vers un annuaire. Notons qu'il faut prendre gare au cache de \texttt{nscd}  lors de changement (on devra souvent relancer \texttt{nscd}).\\
+~\\
+
+\textbf{Postfix}\\
+~\\
+Les bases de données d'utilisateurs et de leurs paramètres d'un serveur de messagerie électronique peuvent être stockés dans une base de données externe et notamment un annuaire LDAP.\\
+~\\
+Dans le fichier \texttt{main.cf} de Postfix, on utilisera une configuration type~:\\
+\begin{verbatim}
+alias_maps = [autres bases] ldap:ldapbla
+ldapbla_server_host = [serveur ldap]
+ldapbla_search_base = [dn de base]
+ldapbbla_result_attribute = [type de champs à chercher]
+#ldapaliases_bind = yes
+#ldapaliases_bind_dn = cn=postfix,dc=evolix,dc=net
+#ldapaliases_bind_pw = XXX
+ldapaliases_query_filter = (mail=%s)
+ldapaliases_result_attribute = uid
+ldapaliases_debuglevel = 0
+\end{verbatim}
+
+Par défaut, Postfix regarde le(s) attribut(s) \texttt{mailacceptinggeneralid} pour déterminer à qui le mail est destiné (on peut spécifier un mail "entier" ce qui permet de différencier \textit{alias@domain1.tld} de \textit{alias@domain1.tld}). Ensuite, il regarde le(s) attribut(s) \texttt{maildrop} pour déterminer à qui distribuer le mail. On change cela grâce aux directives \texttt{query\_filter} et \texttt{result\_attribute} dans Postfix.
+
+On peut aussi préciser un nom de fichier où l'on mettra ces directives. Par exemple~:
+\begin{verbatim}
+alias_maps = [autres bases] ldap:/etc/postfix/ldap-aliases.cf
+\end{verbatim}
+
+Dans le fichier \texttt{/etc/postfix/ldap-aliases.cf} on mettra les mêmes directives que celles précisées ci-dessus sans le suffixe \textit{ldapbla\_}.\\
+
+~\\
+Pour notre exemple, on aura des entrées LDAP ressemblant à~:\\
+
+\begin{verbatim}
+dn: uid=pnom,[dn de base]
+objectClass: inetOrgPerson
+objectClass: inetLocalMailRecipient
+objectClass: posixAccount
+sn: Nom
+givenName: Prenom Nom
+mail: pnom@domain.tld
+mail: prenom.nom@domain.tld
+cn: Prenom Nom
+displayName: Prenom Nom
+uid: pnom
+userPassword: XXXX
+uidNumber: 1006
+gidNumber: 1000
+homeDirectory: /home/pnom/
+\end{verbatim}
+
+Il est aussi envisageable d'avoir des entrées correspondant uniquement à des aliases (et non rattachés à un utilisateur) et notamment préciser un alias de collecte pour un domaine (\texttt{mailacceptinggeneralid: @domain.tld}).\\
+~\\
+
+%http://archives.neohapsis.com/archives/postfix/1999-q4/1358.html
+
+
+\textbf{Apache}\\
+~\\
+
+On peut utiliser l'authentification Apache avec un annuaire OpenLDAP. Il existe plusieurs modules pour utiliser LDAP avec  Apache. Pour Apache2, un module \textit{mod\_auth\_ldap} est intégré par défaut\footnote{\url{http://httpd.apache.org/docs-2.0/mod/mod\_auth\_ldap.html}}. Voici un exemple de configuration~:
+
+\begin{verbatim}
+AuthName "Acces Prive"
+AuthType Basic
+AuthLDAPEnabled on
+AuthLDAPURL ldap://127.0.0.1/ou=people,dc=evolix,dc=net?uid?one
+AuthLDAPAuthoritative on
+require valid-user
+\end{verbatim}
+
+\textbf{Diverses applications}\\
+~\\
+
+De nombreuses applications permettent d'utiliser une base OpenLDAP pour le stockage de données et/ou l'authentification. Typiquement, une application comme Egroupware permet l'utilisation d'une base OpenLDAP pour l'authentification des utilisateurs et pour le stockage des contacts. Plus globalement, un annuaire LDAP est souvent utilisé comme un serveur d'authentification~: toutes les applications d'une structure l'utilisent pour authentifier les utilisateurs. Centraliser l'authentification offre de nombreux avantages~: un mot de passe identique pour toutes les applications, facilité d'administration pour gérer ajout/changement, etc. Par contre, le serveur OpenLDAP est dans ce cas extrêmement critique car si il est défaillant, toutes les applications peuvent être inutilisables~! Ainsi, il peut être important d'avoir une politique de sauvegarde et de tolérance de panne.
+
+
+\subsection{Utilisation avec TLS}
+
+Afin de sécuriser les connexions entre le client et le serveur (chiffrement et authentification), on peut utiliser TLS (Transport Layer Security). TLS utilise des certificats X.509. Il peut être essentiel de ne pas transporter des données non chiffrées surtout lorsqu'un serveur OpenLDAP est utilisé en tant que serveur d'authentification. Ainsi, si on utilise LDAP en mode classique, les mots de passe circulent en clair~!\\
+~\\
+
+Pour utiliser un certificat sur le serveur OpenLDAP, il nous faut obtenir un certificat X.509 et une clé privée. Selon la politique de sécurité en place au sein de sa structure, on utilisera un certificat signé par une autorité de certification ou bien généré par une PKI (Public Key Infrastructure) interne. On peut également générer un certificat auto-signé.\\
+~\\
+On rappelle la procédure de génération d'un certificat auto-signé~:\\
+~\\
+
+On crée une "demande" de certificat en se basant sur des paramètres aléatoires ainsi qu'une clé privée \texttt{privkey.pem} protégée par un mot de passe~:
+
+\begin{verbatim}
+$ openssl req -new > demande.csr
+\end{verbatim}
+
+Si l'on veut supprimer ce mot de passe de protection (utile dans le cas d'un serveur), on ajoute l'argument \texttt{-out cleprivee.pem} et l'on obtient une clé privée \texttt{cleprivee.pem} non protégée~:
+
+\begin{verbatim}
+$ openssl rsa -in privkey.pem -out cleprivee.pem
+\end{verbatim}
+
+Enfin, on génère le certificat basé sur la demande et signé par la clé privée~:
+
+\begin{verbatim}
+$ openssl x509 -in demande.csr -out certificat.pem -req -signkey 
+cleprivee.pem -days 365
+\end{verbatim}
+
+On peut ensuite ajouter les lignes suivantes dans le fichier \texttt{slapd.conf}~:
+\begin{verbatim}
+TLSCertificateFile /path/to/certs/certificat.pem
+TLSCertificateKeyFile /path/to/certs/cleprivee.pem
+\end{verbatim}
+
+On peut ensuite redémarrer le serveur OpenLDAP.\\
+~\\
+
+Du côté du client, il faut posséder le certificat pour pouvoir se connecter au serveur avec TLS. On veillera à utiliser un moyen sûr pour transporter le certificat serveur jusqu'au client afin d'assurer également l'authentification lors de la connexion. Pour se connecter avec le client console (paquet \textit{ldap-utils}), on crée un fichier \texttt{~/.ldaprc} qui contiendra le chemin vers le certificat serveur~:
+
+\begin{verbatim}
+TLS_CACERT /path/to/cert/certificat.pem
+\end{verbatim}
+
+On peut ensuite se connecter en utilisant l'option \texttt{-ZZ}. Par exemple~:
+
+\begin{verbatim}
+$ ldapsearch -x -b "dc=formations,dc=evolix,dc=fr" -D \
+"cn=admin,dc=formations,dc=evolix,dc=fr" -LL uid -h \
+ldap.formations.evolix.fr -ZZ -W
+\end{verbatim}
+
+On note qu'il est obligatoire d'utiliser le nom de domaine du serveur présent dans le certificat. Sinon la connexion en TLS est impossible~!\\
+~\\
+
+De même, on peut utiliser TLS avec des clients LDAP.\\
+
+\newpage
+
+\subsection{Annuaires distribués}
+
+\subsubsection{Liens entre annuaire}
+
+Le but est de lier différentes branches d'annuaires distincts. Les liaisons possibles sont le service referral (apparu dans la norme LDAPv3) et le chaînage de données (qui ressemble à des requêtes DNS récursives).
+
+Pour le service referral, cela consiste à un serveur \texttt{example.com} de déléguer une branche, par exemple \texttt{dc=myref,dc=example,dc=com}, à un autre serveur, par exemple \texttt{bis.example.com}.
+
+\texttt{example.com} comportera une entrée du type~:
+
+\begin{verbatim}
+dn: dc=myref,dc=example,dc=com
+objectClass: referral
+objectClass: extensibleObject
+dc: myref
+ref: ldap://bis.example.com/dc=myref,dc=example,dc=com
+\end{verbatim}
+
+\texttt{bis.example.com} pourra également pointer vers \texttt{example.com} pour les entrées non définies. Dans ce cas, on précisera dans le fichier \texttt{slapd.conf}~:
+
+\begin{verbatim}
+referral ldap://example.com/
+\end{verbatim}
+
+Il faut utiliser l'option \texttt{-M} pour contrôler ces informations sans "suivre" les referral. Par exemple, pour supprimer un referral~:
+
+\begin{verbatim}
+ldapdelete -M -x -D "cn=admin,dc=example,dc=com" -W "dc=myref,dc=example,dc=com"
+\end{verbatim}
+
+\subsubsection{Réplication}
+
+Dans cette architecture, il y a un serveur OpenLDAP maître et un serveur OpenLDAP esclave. La gestion des réplications est faite grâce au daemon slurpd (Standalone LDAP Update Replication Daemon) sur le serveur OpenLDAP maître.~\\
+
+\textit{Lien~:}
+\url{http://www.openldap.org/doc/admin22/config\_repl.gif}\\
+~\\
+Sur le serveur maître~:\\
+~\\
+\texttt{slapd.conf}\\
+\begin{verbatim}
+replogfile /var/lib/ldap/replog
+replica uri=ldap://ldap2.evolix.net:389
+binddn="cn=Replicator,dc=evolix,dc=net"
+bindmethod=simple credentials=secret
+\end{verbatim}
+~\\
+Sur le serveur esclave~:\\
+~\\
+
+\texttt{slapd.conf}
+\begin{verbatim}
+rootdn  "cn=Replicator,dc=evolix,dc=net"
+rootpw {SSHA}UflDkKSi+YdiQ+5OUrM1uJsJKZDSO++W
+updatedn "cn=Replicator,dc=evolix,dc=net"
+updateref "ldap://ldap.evolix.net"
+\end{verbatim}
+
+Les modifications LDAP sont stockées dans le replogfile qui est vidé par slurpd. Si le serveur esclave est disponible, elles lui sont ensuite envoyés. Si aucun accès en écriture n'est possible, les modificatiosn sont rejetés et conservés dans des fichiers \texttt{.rej}. À noter que la première fois les données LDAP doivent être importés manuellement sur le serveur esclave.
+
+
+\subsection{Clients OpenLDAP}
+~\\
+
+Il existe plusieurs logiciels clients pour visualiser, insérer, modifier, supprimer, etc. des données dans une base OpenLDAP~:
+~\\
+\begin{itemize} 
+\item \textbf{ldap-utils} commandes en mode console (ldapadd, ldapcompare, ldapdelete, ldapmodify, ldapmodrdn, ldappasswd, ldapsearch, ldapwhoami)
+
+\item \textbf{LDAP Browser/Editor} logiciel graphique en Java permettant
+de visualiser, modifier et rechercher aisément. Import et export au
+format LDIF sont pratiques.\\
+\textit{Lien~:} \url{http://www-unix.mcs.anl.gov/~gawor/ldap/}
+
+\item \textbf{GQ} logiciel graphique en GTK permettant de visualiser aisément.\\
+\textit{Lien~:} \url{http://biot.com/gq/}
+
+\item \textbf{PhpLDAPadmin} interface web en PHP permettant d'effectuer de nombreuses opérations aisément.\\
+\textit{Lien~:} \url{http://phpldapadmin.sourceforge.net/}
+
+\end{itemize}
+
+% voir le package Debian 'cpu'
+
+
+% http://www.urec.cnrs.fr/cours/Applis/x500/
+% http://www.sysium.com/ldap.html

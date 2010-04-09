@@ -1,0 +1,209 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\section{Focus sur Debian GNU/Linux}
+
+\subsection{Méthodes d'installation}
+
+Il existe donc diverses méthodes d'installation\footnote{\url{http://www.debian.org/distrib/}}~: \\
+~\\
+\begin{itemize}
+\item{{\emph{À partir de CD-ROM (ou DVD-ROM)\footnote{\url{http://www.debian.org/CD/}}}}}\\
+Pour obtenir un jeu de CD-ROM (ou DVD-ROM) de Debian, on passera par l'un des revendeurs\footnote{\url{http://www.debian.org/CD/vendors/}} ou par le réseau en téléchargeant des images\footnote{\url{http://www.debian.org/distrib/cd}}.\\
+Les moyens de téléchargement sont sur des images complètes par HTTP/FTP sur des mirroirs\footnote{\url{http://www.debian.org/CD/http-ftp/}}, une construction d'image grâce à l'outil Jigdo\footnote{\url{http://atterer.net/jigdo/}} qui télécharge séparément tous les fichiers du CD-ROM (ou DVD-ROM)\footnote{\url{http://www.debian.org/CD/jigdo-cd/}} ou encore grâce au Peer-to-peer comme le système BitTorrent\footnote{\url{http://www.debian.org/CD/torrent-cd/}}.\\
+
+\item{{\emph{À partir des disquettes\footnote{\url{http://www.debian.org/distrib/floppyinst}}}}}\\
+On peut amorcer une installation de Debian à partir d'un nombre très réduit de disquettes 
+(pratique notamment en cas d'absence de lecteur CD-ROM utilisable). 
+Deux disquettes sont nécessaires pour débuter l'installation (disquettes Root et Rescue) 
+puis quatre autres pour charger le noyau et ses modules.\\
+
+\item{{\emph{À partir du réseau}}}\\
+Suite à l'installation à partir de disquettes ou à partir d'un CD-ROM minimal, on poursuit souvent l'installation par le réseau pour installer le système de base ainsi que les logiciels supplémentaires. En téléchargeant directement les paquets sur internet ou sur un mirroir local, il suffit donc d'une image minimale pour installer Debian GNU/Linux. Néanmoins, il est préférable de ne pas installer directement par internet car il faudrait ne pas connecter un serveur avant de l'avoir totalement sécurisé (et parce que les versions des paquets installés par défaut peuvent comporter des failles de sécurité). On préférera des mirroirs locaux, voir par exemple apt-proxy\footnote{\url{http://apt-proxy.sourceforge.net/}} ou apt-move\footnote{\url{http://ptitlouis.dyndns.org/~ptitlouis/doc/}}.\\
+~\\
+On peut également amorcer complètement l'installation de Debian par le réseau\footnote{\url{http://www.debianplanet.com/node.php?id=818}} si l'on possède un périphériphérique réseau amorçable.\\
+~\\
+\end{itemize}
+
+{\textit{Remarques sur les possibilités d'installation}}\\
+
+Les possibilités d'installation de Debian sont nombreuses. On notera que le programme debootstrap\footnote{\url{http://www.debian.org/releases/stable/i386/ch-rescue-boot.fr.html\#s-dbootstrap-intro}} permet d'installer Debian à partir d'un système de fichiers, qu'une installation automatisée est possible en passant l'argument \textsl{preseed}\footnote{\url{http://d-i.alioth.debian.org/manual/fr.i386/ch04s07.html}} à l'amorce de l'installation par CD-ROM (ou DVD-ROM) et que la personnalisation de l'installation est possible.
+\\
+(voir \url{http://people.debian.org/~osamu/hackdi/}) \\
+
+%TODO
+%http://thierrylhomme.developpez.com/cfengine.html
+%http://www.informatik.uni-koeln.de/fai/fai-guide-fr/
+%utiliser Kickstart pour Ubuntu Hoary
+
+
+\subsection{Installation et réglages de base}
+
+La version stable de Debian est toujours celle à privilégier
+pour de nouvelles installations. Dans certains cas, dans les mois
+précédents la sortie de la future version stable, celle-ci peut
+être installé si le serveur n'est pas trop critique. Dans ces
+périodes charnières, il faut bien prendre en compte qu'il existera
+toujours des administrateurs qui affirmeront le contraire. Il faut donc
+essayer de se faire un avis objectif à partir de plusieurs serveurs de
+test avant toute décision importante.\\
+~\\
+%http://lists.debian.org/debian-devel-announce/2004/08/msg00001.html
+%http://ftp-master.debian.org/testing/hints/freeze
+%http://bugs.debian.org/release-critical/
+
+Voici les recommandations que nous faisons à nos clients~:\\
+~\\
+\textit{Pour un serveur en production}\\
+~\\
+Nous conseillons d'utiliser Debian stable, à moins de vraiment nécessiter beaucoup de fonctionnalités présentes dans la prochaine version stable, et dans ce cas la version Debian testing peut être envisagée. \\
+~\\
+\textit{Pour un serveur en semi-production}\\
+~\\
+Dans un environnement non critique et dans l'optique est de préparer une future mise en production, Debian testing peut être utilisée si la version stable date de plus de 12 à 18 mois ; sinon l'utilisation de Debian stable reste à privilégier. \\
+~\\
+\textit{Pour un poste de travail}\\
+~\\
+Nous conseillons l'utilisation de Debian testing (voire unstable) afin d'avoir des versions récentes (mais néanmoins testées) des logiciels de bureautique. Cela permet de passer de façon souple vers la prochaine version stable lors de sa sortie et de l'utiliser pendant quelques mois avant de rebasculer vers Debian testing. \\
+~\\
+\textbf{Installation de Debian}\\
+~\\
+Revenons brièvement sur l'installation de Debian gérée par le Debian-Installeur\footnote{\url{http://www.debian.org/devel/debian-installer/}}~: \\
+\begin{itemize}
+\item{Démarrage, détection des cartes réseau, des paquets udebs (.udeb est un format particulier de paquet pour l'installeur)}
+\item{Chargement éventuel de pilotes ou firmware}
+\item{Outils de partitionnement, installation de base}
+\item{Détection avancée des périphériques grâce à discover\footnote{\url{http://d-i.alioth.debian.org/manual/fr.i386/index.html}} ce qui permet de charger automatiquement les modules adéquats}
+\item{Installation de GRUB, redémarrage}
+\item{Configuration de base}
+\end{itemize}
+~\\
+
+Après cette installation, on procédera à une mise-à-jour générale (sur un miroir local si possible), une installation d'outils pratiques, une compilation du noyau puis une sécurisation. Voici quelques outils pratiques à installer~: ssh vim less mailx metche sudo munin log2mail apt-listchanges apticron evocheck\\
+
+\subsection{Système de packages Debian}
+
+L'installation de nouveaux logiciels Open Source sous environnement Linux peut toujours se faire selon la méthode classique de recompilation des sources. Néanmoins cette méthode est peu aisée pour la gestion des dépendances, des mises-à-jour, etc. Ainsi les distributions utilisent souvent des systèmes de paquetage. Debian utilise des paquets à l'extension \texttt{.deb} qui fournissent non seulement les binaires précompilés (le plus souvent) mais également des méthodes de gestion pour faciliter la manipulation de ces paquets. \\
+
+
+L'utilitaire basique de manipulation des paquets Debian porte le nom de \texttt{dpkg}. Il est important de bien maîtriser les différentes options de \texttt{dpkg} :
+\begin{verbatim}
+dpkg --unpack : 
+\end{verbatim}
+le paquet est dépaqueté mais n'est pas configuré
+\begin{verbatim}
+dpkg --configure
+\end{verbatim}
+configuration d'un paquet
+\begin{verbatim}
+dpkg -i
+\end{verbatim}
+installation complète
+\begin{verbatim}
+dpkg -r 
+\end{verbatim}
+supression du paquet
+\begin{verbatim}
+dpkg -r -P
+\end{verbatim}
+suppression complète (fichiers de configuration compris)
+\begin{verbatim}
+dpkg -L 
+\end{verbatim}
+affiche la liste des fichiers appartenant au paquet
+\begin{verbatim}
+dpkg -S 
+\end{verbatim}
+recherche un fichier dans les paquets installés
+\begin{verbatim}
+dpkg -l
+\end{verbatim}
+liste tous les paquets installés sur le système.
+\begin{verbatim}
+dpkg --get-selections / --set-selections
+\end{verbatim}
+Donne/installe la/une liste des paquets installés
+~\\
+Debian possède un programme de gestion avancée de paquets appelé APT (Advanced Packaging Tool).\\
+Ce système gère les paquets d'après une liste (Packages.gz) et permet de gérer les dépendances, les mises-à-jour particulières ou globales ou encore les conflits. Le fichier qui référence toutes les sources de paquets disponibles est \texttt{/etc/apt/sources.list}. On peut gérer le contenu de ce fichier à l'aide de la fonction \texttt{apt-setup}. \\
+~\\
+Exemple de fichier \texttt{/etc/apt/sources.list} pour Debian Etch :\\
+\begin{verbatim}
+deb http://security.debian.org/ etch/updates main contrib non-free
+deb ftp://ftp2.fr.debian.org/debian etch main contrib non-free
+deb-src ftp://ftp2.fr.debian.org/debian etch main contrib non-free
+\end{verbatim}
+~\\
+\texttt{dselect} est l'outil de gestion des paquets historique (dpkg a une dépendance envers dselect~!). Son utilisation n'est pas forcément aisée pour les novices. \\
+~\\
+Lien : \url{http://www.debian.org/releases/woody/i386/dselect-beginner}\\
+~\\
+La commande \texttt{apt-get} est une interface pour APT. Voici quelques commandes souvent utilisées~: \\
+~\\
+\texttt{apt-get update}\\
+Cette commande resynchronise les informations sur les fichiers disponibles à partir des endroits spécifiés dans le \texttt{sources.list}. Cette commande récupère donc les fichiers Packages.gz et les analyse de manière à rendre disponibles les informations concernant les nouveaux paquets.\\
+~\\
+\texttt{apt-get upgrade}\\
+Cette commande met à jour tous les paquets dont une version plus récente est disponible sans supprimer de paquets, ni en ajouter. \\
+~\\
+\texttt{apt-get dist-upgrade}\\
+Cette commande met à jour les paquets (comme upgrade) en utilisant une gestion intelligente des changements de dépendances. Ainsi des paquets pourront être supprimés et des nouveaux paquets pourront être installés.\\
+~\\
+\texttt{apt-get install <paquet>}\\
+Cette commande installe le paquet <paquet> ainsi que toutes ses dépendances nécessaires.
+\begin{verbatim}
+apt-get remove --purge <paquet>
+\end{verbatim}
+Cette commande supprime le paquet <paquet> ainsi que tous ceux qui en dépendent.\\
+~\\
+\texttt{apt-get clean}\\ 
+Cette commande supprime les paquets installés du répertoire de cache d'APT (libère de l'espace disque). On peut également utiliser autoclean qui va supprimer uniquement les paquets les plus anciens et inutiles.\\
+~\\
+
+D'autres interfaces utilisent APT~:\\
+~\\
+\begin{itemize}
+\item[{\textbf{aptitude}}]
+Outil de gestion des paquets directement au-dessus d'APT. Il peut être utilisé comme alternative à apt-get (les "commandes apt-get" sont acceptées) et offre certains avantages supplémentaires\footnote{\url{http://www.debian.org/doc/manuals/reference/ch-package.fr.html\#s-aptitude}} (par exemple, aptitude retient les dépendances installées et les supprime lorsqu'elles ne sont plus nécessaires). Le Debian-Installeur utilise d'ailleurs aptitude et l'utilisation de cet outil est désormais recommandée. \\
+~\\
+\item[{\textbf{synaptic}}]
+Outil graphique de gestion des paquets en GTK+ basé sur APT. Il permet d'utiliser la plupart des fonctions (recherche, installation, mise-à-jour, etc.)\\
+\end{itemize}
+~\\
+Enfin de nombreux outils supplémentaires existent pour gérer les paquets~:
+~\\
+\begin{itemize}
+\item[{\textbf{apt-cache}}] utilitaire permettant d'obtenir un certain nombre d'informations sur les paquets et le cache d'APT.\\
+\item[{\textbf{apt-file}}] utilitaire permettant d'effectuer des recherches dans le système de paquets d'APT. À la différence d'apt-cache, on peut rechercher des informations précises (noms des fichiers du paquet) sur l'ensemble des paquets même si ils ne sont pas installés.\\
+Exemple : \texttt{apt-file search stdio.h}\\
+\item[{\textbf{apt-listbugs}}] outil qui liste automatiquement les bogues critiques avant d'installer les nouveaux packages, et, si des bogues critiques sont référencés, qui vous demande de confirmer ou non la mise à jour. Il permet de "blacklister" les paquets ayant des bogues critiques et donc de ne pas les installer.\\
+\item[{\textbf{apt-show-versions}}] liste des paquetages installés.\\
+\item[{\textbf{apticron}}] script pour signaler les mises-à-jour disponibles.\\
+\end{itemize}
+~\\
+Lien : \url{http://www.debian.org/doc/manuals/apt-howto/}\\
+~\\
+
+\newpage
+
+\emph{Problèmes dans la gestion des paquets}\\
+~\\
+Bien connaître le système de gestion de paquets Debian est une condition nécessaire pour un administrateur. Ainsi, s'il arrive un problème lors de l'installation ou la mise-à-jour (assez rare avec la version stable), on pourra déboguer les conflits. On gardera à l'esprit quelques commandes essentielles à utiliser avec précaution :\\ 
+\begin{verbatim}
+# apt-get -f install
+\end{verbatim}
+commande qui tente de corriger les éventuels problèmes lors d'une installation ou mise-à-jour
+\begin{verbatim}
+# dpkg --ignore-depends --force-all
+\end{verbatim}
+commande qui permet de forcer l'installation d'un paquet
+\begin{verbatim}
+# dpkg --configure -a
+\end{verbatim}
+commande qui relance les étapes de configuration de tous les paquets présents sur le système
+
+% http://www.cyberdogtech.com/firewalls/

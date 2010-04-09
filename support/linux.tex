@@ -1,0 +1,546 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Systèmes GNU/Linux}
+
+\section{Présentation de Linux}
+
+Linux est un noyau de système d'exploitation de type UNIX créé par Linus
+Torvalds et de nombreux développeurs. \\
+
+Tout ordinateur inclue un ensemble basique de programmes appelé système
+d'exploitation. Le programme le plus important d'un système d'exploitation est
+appelé le noyau : il est chargé dans la mémoire physique (RAM) quand le système
+démarre et contient les instructions nécessaires à l'ordinateur pour
+fonctionner. Les autres programmes permettent d'interagir avec l'ordinateur
+mais ils sont moins importants car les possibilités d'interaction avec
+l'ordinateur sont déterminées par le noyau. \\
+
+Le 5 octobre 1991, Linus Torvalds, un informaticien finlandais, annonce sur un
+forum Usenet la disponibilité du système d'exploitation Linux, inspiré de
+Minix.
+
+\begin{verbatim}
+From: Linus Benedict Torvalds (torvalds@klaava.Helsinki.FI)
+Subject: Free minix-like kernel sources for 386-AT
+Newsgroups: comp.os.minix
+Date: 1991-10-05 08:53:28 PST
+
+Do you pine for the nice days of minix-1.1, when men were men and wrote
+their own device drivers? Are you without a nice project and just dying
+to cut your teeth on a OS you can try to modify for your needs? Are you
+finding it frustrating when everything works on minix? No more all-
+nighters to get a nifty program working? Then this post might be just
+for you
+
+As I mentioned a month ago, I'm working on a free version of a
+minix-lookalike for AT-386 computers. It has finally reached the stage
+where it's even usable (though may not be depending on what you want),
+and I am willing to put out the sources for wider distribution. It is
+just version 0.02 (+1 (very small) patch already), but I've successfully
+run bash/gcc/gnu-make/gnu-sed/compress etc under it. 
+
+Sources for this pet project of mine can be found at nic.funet.fi
+(128.214.6.100) in the directory /pub/OS/Linux. The directory also
+contains some README-file and a couple of binaries to work under linux
+(bash, update and gcc, what more can you ask for . Full kernel
+source is provided, as no minix code has been used. Library sources are
+only partially free, so that cannot be distributed currently. The
+system is able to compile "as-is" and has been known to work. Heh.
+Sources to the binaries (bash and gcc) can be found at the same place in
+/pub/gnu. 
+
+[...]
+
+I can (well, almost) hear you asking yourselves "why?". Hurd will be
+out in a year (or two, or next month, who knows), and I've already got
+minix. This is a program for hackers by a hacker. I've enjouyed doing
+it, and somebody might enjoy looking at it and even modifying it for
+their own needs. It is still small enough to understand, use and
+modify, and I'm looking forward to any comments you might have.
+
+I'm also interested in hearing from anybody who has written any of the
+utilities/library functions for minix. If your efforts are freely
+distributable (under copyright or even public domain), I'd like to hear
+from you, so I can add them to the system. I'm using Earl Chews estdio
+right now (thanks for a nice and working system Earl), and similar works
+will be very wellcome. Your (C)'s will of course be left intact. Drop me
+a line if you are willing to let me use your code.
+
+Linus
+\end{verbatim}
+
+Linux est multi-tâches, multi-utilisateurs et compatible Unix (il respecte les
+normes POSIX). Conçu au départ pour les machines de type Intel x86, Linux est
+maintenant disponible pour les architectures PowerPC, Alpha, MIPS, Sparc, etc. \\
+
+Les sources de Linux sont disponibles (sous licence GPL) et l'explosion
+d'Internet a permis un mode de développement innovant~: de nombreux
+développeurs (bénévoles ou rémunérés par des entreprises) participent au
+développement de Linux et forment avec tous les utilisateurs une communauté.
+Linux est d'ailleurs l'un des exemples les plus connus de logiciel libre.\\
+
+L'un des objectifs du projet GNU est d'avoir un système d'exploitation
+complètement libre. Or, de très nombreux outils ont été développés par le
+projet GNU (GCC, Bash, etc.) mais Hurd, noyau développé par le projet GNU,
+tardant à sortir, Linux a été adopté par le projet GNU en 1993 pour être le
+noyau du système prôné par le projet GNU. L'ensemble formé par les outils du
+projet GNU et du noyau Linux est souvent appelé système GNU/Linux.\\
+
+Une distribution est un système GNU/Linux avec un certain de nombre de choix et
+d'outils mis à disposition pour gérer au mieux les logiciels et leurs
+configurations. Il existe un grand nombre de distributions adaptées à un usage
+(ou un matériel) spécifique. Les distributions généralistes les plus connues
+sont Red Hat, Debian, Mandriva, SuSe, Gentoo, Slackware, Fedora.
+
+\section{Méthode d'installation}
+
+Il existe diverses méthodes d'installation~: \\
+
+Dans les années 1990, on installait un système GNU/Linux à l'aide de
+(nombreuses) disquettes. Aujourd'hui la méthode d'installation la plus répandue
+est d'utiliser un jeu de CD-ROM ou un DVD-ROM téléchargé sur Internet par HTTP ou
+FTP. D'autres méthodes existent selon les distributions et peuvent s'avérer
+très pratiques notamment des installations amorcées par le réseau.~\\
+
+En cas de problème à l'installation d'un système GNU/Linux, voici quelques suggestions~: \\
+~\\
+\begin{itemize}
+\item{Prendre garde à la fiabilité des périphériques d'amorçage (CD-ROM, DVD-ROM) en vérifiant systématiquement l'empreinte MD5 des CD-ROMs}\\
+\item{Prendre connaissance des paramètres spécifiques d'amorçage du noyau Linux permettant d'éviter certains dysfonctionnements.}\\
+\item{Pour les controleurs RAID ou cartes réseau exotiques (ou récentes), il faudra peut-être charger un module spécifique lors de l'installation.} \\
+\item{Vérifier la compatibilité du matériel. Il existe plusieurs sites dont le "HardWare Howto"\footnote{\url{http://www.tldp.org/HOWTO/Hardware-HOWTO/}} ou encore le "Debian GNU/Linux device driver check page"\footnote{\url{http://kmuto.jp/debian/hcl/}}}\\
+\item{Utiliser les moyens de support communautaire tels que les listes de diffusion ou les canaux IRC. En cas de bogue (ou pas) avec l'installation de Debian, il faut rapporter le bogue pour le pseudo-paquet "installation-reports"\footnote{\url{http://www.debian.org/devel/debian-installer/report-template}}}\\
+\item{Un support professionnel peut également être trouvé auprès de sociétés de services en logiciels libres.}
+\end{itemize}
+~\\
+\textit{Liens~:} \\
+\url{http://www.tldp.org/HOWTO/BootPrompt-HOWTO.html}\\
+\url{http://people.debian.org/~blade/install/preload/index.old.html}\\
+\url{http://www.gnu.org/prep/service.html}\\
+
+\section{Systèmes de fichiers}
+
+Il existe une norme appelée Filesystem Hierarchy Standard\footnote{\url{http://www.pathname.com/fhs/}} à laquelle se conforment certaines distributions. Rappelons la hiérarchie du système de fichiers (cela varie d'une distribution à une autre) d'un système GNU/Linux~: \\
+~\\
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Arborescence & Contenu \\
+\hline
+ bin   &    Binaires (exécutables) des commandes essentielles \\
+\hline
+ boot  &    Fichiers statiques pour le chargeur d'amorçage (boot)  \\
+\hline
+dev   &    Fichiers des pilotes de périphériques \\
+\hline
+etc  &     Configuration système propre à la machine \\
+\hline
+home  &    Répertoires personnels des utilisateurs \\
+\hline
+lib    &   Bibliothèques partagées et modules noyaux essentiels \\
+\hline
+mnt,media & Points de montage pour les montages temporaires \\
+\hline
+proc,sys & Répertoire virtuel pour les informations systèmes \\
+\hline
+root  &    Répertoire personnel de l'utilisateur root \\
+\hline
+sbin   &   Exécutables système essentiels \\
+\hline
+tmp  &     Fichiers temporaires \\
+\hline
+usr   &    Hiérarchie secondaire \\
+\hline
+var  &     Données variables \\
+\hline
+opt   &    Suites applicatives additionnelles \\
+\hline
+srv   &    Données pour les services \\
+\hline
+\end{tabular}
+\end{center}
+~\\
+
+\section{Partitionnement}
+
+\textbf{Conseils de partitionnement} \\
+~\\
+Pour une machine de type serveur, on appliquera un partitionnement\footnote{\url{http://www.tldp.org/HOWTO/Partition/}} plus réfléchi qu'un poste de travail (où l'on se contente souvent d'isoler la partition contenant le répertoire home, la partition swap et le système). Il n'existe pas de vérité absolue (cela varie selon l'utilité de la machine et les habitudes des administrateurs) mais on passera en revue certaines recommandations. Voici quelques détails sur la taille des partitions destinées à accueillir certains répertoires~: \\
+
+\begin{itemize}
+\item{/boot/ : partition d'environ 100 Mo}
+\item{/ : partition supérieure à 100 Mo (conseil~: 500 Mo)}
+\item{/tmp : quelques centaines de Mo ou davantage dans des cas particuliers}
+\item{/var : partition supérieure à 250 Mo (conseil~: plusieurs Go si possible)}
+\item{/usr : partition supérieure à 500 Mo (conseil~: quelques Go)}
+\item{/home : à voir selon les quotas et le nombre d'utilisateurs}
+\item{swap : partition supérieure à 16 Mo et inférieure à 2 Go (systèmes 32-bits). On conseille souvent de mettre la même taille (ou le double) de la mémoire physique (sauf pour des applications spécifiques comme Oracle par exemple ou dans les cas de taille très importante de la mémoire physique) et si possible proche du centre du disque.\\
+D'autres espaces spécifiques notamment pour l'espace web, la base de données pourront être créés selon les utilisations.}
+~\\
+\end{itemize}
+
+\textbf{Exemple de partitionnement pour un disque d'environ 40 Go~:} \\
+~\\
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Partition & Rep.montage & Taille  \\
+\hline
+sda1  &  /boot &  100 Mo  \\
+\hline
+sda3  &  /    &   500 Mo \\
+\hline
+sda4  &  /usr &   3 Go  \\
+\hline
+sda6  &  /var &   5 Go \\
+\hline
+sda7  &  /tmp  &  500 Mo \\
+\hline
+sda8  &  /mnt/ftp & 1 Go \\
+\hline
+sda9  &  swap  &  500 Mo \\
+\hline
+sda10 &  /home  &  20 Go \\
+\hline
+\end{tabular}
+\end{center}
+~\\
+\textbf{Programmes de partitionnement} \\
+~\\
+{\emph{fdisk}}\\
+Programme de partitionnement en ligne de commande très répandu. Lire la page de manuel pour en savoir plus. \\
+\textit{Lien :} \url{http://evolix.org/man/fdisk.html} \\
+~\\
+{\emph{cfdisk}}\\
+Programme de partitionnement graphique en console. Il est utilisé par défaut lors de l'installation sous Debian Woody. Son utilisation est plutôt simple et intuitive. \\
+\textit{Lien :} \url{http://evolix.org/man/cfdisk.html} \\
+~\\
+{\emph{sfdisk}}\\
+Programme de partitionnement en ligne de commande. sfdisk a quatre utilisations principales~: liste la taille d'une partition, liste les partitions d'un périphérique, vérifier une partition sur un périphérique, et repartitionner un périphérique.\\
+\textit{Lien :} \url{http://evolix.org/man/sfdisk.html} \\
+~\\
+{\emph{parted}}\\
+Programme de partitionnement en ligne de commande. GNU Parted est notamment indispensable pour gérer des partitions sur des volumes d'une taille importante (supérieure à 2 To) en permettant la gestion des tables de partitions GPT\\
+\textit{Lien :} \url{http://www.gnu.org/software/parted/} \\
+
+\section{Gestion des disques}
+~\\
+%\emph{Disques de grande capacité}\\
+%\textit{Lien :} \url{http://www.freenix.org/unix/linux/HOWTO/Large-Disk-HOWTO.html}\\
+%~\\
+\emph{Systèmes multi-disques}\\
+\textit{Lien :} \url{http://tldp.org/HOWTO/Multi-Disk-HOWTO.html}\\
+~\\
+{\it{\bf LVM}}\\
+~\\
+LVM (Logical Volume Manager) permet une gestion plus aisée que l'utilisation classique disques et partitions. Cela permet une plus grande flexibilité pour redimensionner les volumes en fonction des besoins et des nouveaux disques disponibles.\\
+\textit{Lien :} \url{http://www.tldp.org/HOWTO/LVM-HOWTO/} \\
+~\\
+{\it{\bf RAID}}\\
+~\\
+Le RAID (Redundant Arrays of Inexpensive Disks) est une solution bien connue pour obtenir des disques redondants afin de sécuriser les machines demandant une qualité de service élevée. On parlera bien sûr ici de RAID logiciel.\\
+\textit{Lien :} \url{http://www.tldp.org/HOWTO/Software-RAID-HOWTO.html} \\
+~\\
+{\small{Note : Nous recommandons d'utiliser le RAID logiciel et/ou LVM avec prudence pour les répertoires sensibles tels que /boot et le répertoire racine. Une solution de RAID matériel sera à privilégier bien que plus coûteuse.}} \\
+~\\
+\textbf{Choix du système de fichiers journalisé : ext3, ReiserFS, XFS ou JFS} \\
+~\\
+Il existe de nombreuses comparaisons entre ces systèmes de fichiers mais il est difficile d'en tirer des conclusions générales car cela dépend beaucoup de l'utilisation de la machine. La fiabilité de ces systèmes est désormais éprouvée même si la prudence naturelle des administrateurs poussera à conserver ext3\footnote{\url{http://www.zip.com.au/~akpm/linux/ext3/}}, dérivé du système de fichier historique (Extended File System a été implémenté en 1992 et intégré à Linux 0.96c). En terme de performances, il semble se dégager quelques constations comme la performance de ReiserFS\footnote{\url{http://www.namesys.com/}} pour les petits fichiers, un léger gain de XFS\footnote{\url{http://oss.sgi.com/projects/xfs/}} pour la copie de fichiers de grande taille mais une lenteur à l'effacement et la bonne tenue d'ext3 pour des opérations classiques. JFS\footnote{\url{http://www-124.ibm.com/developerworks/oss/jfs/}} semblant légèrement moins performant pour le moment. \\
+~\\
+Sachant la perpétuelle évolution des développements, les conditions dans lesquelles se déroulent les tests et les autres paramètres (processeur, mémoire...) on se gardera bien de tirer des conclusions définitives. Disons simplement que l'utilisation de ext3 est encore assez raisonnable pour des serveurs classiques. En ce qui concerne ext4, il manque encore du recul pour l'utiliser dans des environnements critiques.\\
+~\\
+\textit{\textit{Liens :}}\\
+\url{http://www.linux-france.org/article/sys/ext3fs/Benchmarks/} \\
+\url{http://fsbench.netnation.com/} \\
+~\\
+
+\section{Packages}
+
+Au fil des années, les distributions Linux se sont vu dotées de systèmes de packaging multiples, et sont devenus des moyens très utilisés permettant d'installer des logiciels plus rapidement et plus facilement qu'avec une compilation classique :
+
+\begin{itemize}
+\item le RPM initialement développé par Redhat
+\item les packages Slackware
+\item les packages Debian (.deb)
+\end{itemize}
+
+Pour plus d'informations sur les RPMs, vous pouvez consulter \url{http://www.rpm.org/} et \url{http://www.lilit.be/formations/systeme_fichier/node5.html}.
+
+\section{Configuration réseau}
+
+Au niveau des cartes réseau, il est désormais assez rare de rencontrer des problèmes de pilotes. Une fois les cartes réseau correctement détectées, on procédera à la configuration du réseau. Si un serveur DHCP est présent sur le réseau, la configuration est automatique. On préférera néanmoins une configuration statique pour des raisons de sécurité.  Plus généralement la configuration réseau se définit souvent dans un fichier spécifique selon les distributions. Voici un exemple d'un fichier \texttt{/etc/network/interfaces} pour Debian : \\
+~\\
+\texttt{auto eth0\\
+iface eth0 inet dhcp\\
+~\\
+auto eth1\\
+iface eth1 inet static\\
+address 192.168.12.67\\
+netmask 255.255.255.0\\
+gateway 192.168.12.254}
+~\\
+
+En ce qui concerne la configuration DNS, c'est dans le fichier \texttt{/etc/resolv.conf} qu'on trouvera les adresses des serveurs de nom. On utilisera les outils \texttt{host} et \texttt{dig} pour s'assurer du bon fonctionnement. Voici un exemple de fichier~: \\
+~\\
+\texttt{search domain.tld \\
+nameserver 192.168.12.71 \\
+nameserver 62.4.17.69} \\
+~\\
+Les détails de la configuration réseau et DNS ne sont pas abordés ici, on se référera à de nombreuses documentations disponibles sur Internet ou dans les bonnes bibliothèques. Passons tout de même en revue quelques outils indipensables à tout administrateur réseau~: \\
+
+~\\
+\emph{ifconfig} permet de configurer les interfaces réseau\\
+Exemple : \texttt{ifconfig eth0 192.168.13.47}\\
+ \texttt{ifconfig eth0:0 1.2.3.4 netmask 255.255.0.0}\\
+~\\
+\emph{route} gestion de la table de routage\\
+Exemple : \texttt{route add -net 192.168.100.10/24 gw 192.168.100.1}\\
+~\\
+\emph{ip} gestion avancée de la configuration réseau (routage, périphériques, etc.) \\
+Exemple : \texttt{ip addr add 10.0.0.1/24 dev eth0 label eth01} \\
+~\\
+\emph{netstat} informations avancées sur l'état réseau \\
+Exemple : \texttt{netstat -a -t} \\
+~\\
+\emph{traceroute} pour tester la route vers un hôte du réseau\\
+Exemple : \texttt{traceroute -v google.fr} \\
+~\\
+\textit{\textit{Lien :}} \url{http://perso-info.enst-bretagne.fr/~leroy/Unix/Guide/LinuxReseau.html}\\
+
+\section{Réglages de base}
+
+Revenons sur quelques réglages de base~: \\
+~\\
+\emph{Boot loader} \\
+~\\
+Selon les distributions, le boot loader sera LILO ou Grub. Grub est plus flexible que LILO mais chacun possède des fonctionnalités différentes qui peuvent s'avérer utiles dans certains cas particuliers. Notons que sur un serveur en production, le choix du Boot loader n'est pas essentiel.\\
+~\\
+\emph{Réglage des locales} \\
+~\\
+Les locales sont l'environnement de localisation du système. Cet environnement est utilisé par les programmes pour reconnaître la langue et le jeu de caractères que votre système utilise. On peut choisir ses locales grâce au paquet locales. Actuellement, un choix s'offre entre le codage en ISO ou en UTF-8 (Unicode sur 8 bits). \\
+Bien que de plus en plus d'applications soient compatibles avec le codage unicode, les utilisateurs hésitent souvent à basculer en UTF-8. Pour un serveur, l'importance des locales est assez limitée. Si l'on pourrait rester en ISO-8859-1 ou ISO-8859-15 (extension du codage européen avec le support de l'euro), il n'est désormais plus imprudent d'utiliser de l'UTF-8. \\
+En ce qui concerne le choix de la langue, il peut être judicieux d'utiliser une locale de langue anglaise pour obtenir des messages d'erreur en anglais, ce qui facilite les recherches Internet par exemple. Ainsi, l'utilisation la plus raisonnable semble la locale en\_us.UTF-8 et l'ajout des locales françaises (fr\_FR et fr\_FR.UTF-8) est conseillée (pour PHP ou PostgreSQL par exemple). \\
+~\\
+
+\emph{Réglage du clavier} \\
+~\\
+On pourra utiliser différents claviers. On chargera la table de traduction en utilisant la commande loadkeys. Les tables disponibles sont contenues dans le répertoire /usr/share/keymaps\\
+~\\
+Exemples pour passer en azerty ou en qwerty sur certaines distributions~: \\
+\texttt{\# loadkeys fr-latin0}\\
+\texttt{\# loadkeys us-latin1}\\
+~\\
+Le programme kbdconfig peut aussi proposer une interface pour choisir son type de clavier. \\
+~\\
+\emph{Système de messagerie}\\
+~\\
+Par défaut, un système du type Unix a besoin d'un système de messagerie, ne serait-ce que pour envoyer des alertes système à l'administrateur local. Si l'on n'a pas besoin de serveur de messagerie, on laissera donc un système de mail avec une configuration locale uniquement. \\ 
+~\\
+\emph{Mise à l'heure}\\
+~\\
+Il est souvent essentiel pour un serveur d'être à l'heure. Pour cela le protocole NTP (Network Time Protocol)\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc2030.txt}} permet de se synchroniser sur un serveur de temps. Si l'on possède plusieurs serveurs, il est intéressant d'avoir un serveur NTP\footnote{\url{http://www.ntp.org/}} sur lequel les autres machines locales vont se synchroniser. La synchronisation du serveur de temps ou du serveur isolé se fera sur plusieurs serveurs de temps officiels (certains sont en libre accès comme \texttt{ntp.tuxfamily.net} ou \texttt{swisstime.ee.ethz.ch}, sinon il faut demander un accès en envoyant un courrier électronique) \\
+~\\
+Concrètement, on installe le paquet \textit{ntpdate} et on peut lancer une synchronisation dans un cron avec la commande suivante: \\
+\begin{verbatim}
+ntpdate ntp.evolix.net > /dev/null 2>&1 || echo \ 
+"pas de mise a l'heure `date`" | /usr/bin/mail -s \
+"[alert] ntpdate sur serveur.domain.tld `date`" admin@example.com
+\end{verbatim}
+\textit{Lien :}  \url{http://www.cru.fr/NTP/serveurs\_francais.html} \\
+
+
+\section{Présentation des principales distributions}
+
+\subsection{Red Hat}
+\url{http://www.redhat.com/}\\
+\url{http://www.europe.redhat.com/documentation/rhl9/rhl-ig-x86-fr-9/}\\
+\url{http://www.com.univ-mrs.fr/ssc/info/linux/install_linux.html}\\
+~\\
+
+Red Hat est la plus importante société avec une activité dédiée aux logiciels Open Source.
+
+Fondée en 1993, cette société basée aux États-Unis propose le déploiement d'infrastructures réseau en se basant sur sa distribution : Red Hat Linux. Entrée en bourse en 1999, Red Hat a changé de stratégie en 2003 en se consacrant uniquement au monde professionnel : Red Hat propose désormais une gamme de distributions payantes (Red Hat Entreprise) et se contente de sponsoriser un dérivé de Red Hat : le projet Fedora. La société compte aujourd'hui plus de 700 salariés répartis dans plus de 20 pays.\\
+
+Les versions :
+
+\begin{itemize}
+\item Redhat version 9, plus supportée, plus mise à jour
+\item Redhat Entreprise Advanced Server
+\item Redhat Entreprise Server
+\item Redhat Entreprise Linux WorkStation
+\end{itemize}
+
+Depuis quelques mois, Redhat ne fournit plus directement de versions gratuites. Cette tâche incombe désormais à un groupe de développeurs annexes qui maintient la distribution Fedora. Fedora est une version gratuite de Redhat, qui permet également aux développeurs Redhat de "tester" certaines évolutions à grande échelle avant que celles-ci soient intégrées.\\
+
+L'installation de logiciels peut être réalisée de plusieurs façons~:
+
+\begin{itemize}
+\item via les sources, en les compilant
+\item via un RPM
+\item via \textit{yum}, un système qui ressemble fortement à apt pour les utilisateurs de Debian
+\end{itemize}
+
+Les mises à jour sont assurées sur Fedora par \textit{yum}, ainsi que part \textit{uptodate} comme c'est le cas sur Redhat (utilisation texte ou graphique).\\
+
+La sécurité pour la distribution Redhat est gérée via la page \url{https://www.redhat.com/security/updates/}, où toutes les mises à jour sont disponibles. Des RPMs sont disponibles.
+~\\
+
+\subsection{Mandriva}
+
+\url{http://www.mandrakelinux.com/}\\
+\url{http://www.mandrivalinux.com/fr/fdoc.php3}\\
+\url{http://www.mandrivalinux.com/fr/ftp.php3}\\
+\url{http://fr.wikipedia.org/wiki/Mandriva_Linux}\\
+~\\
+
+Mandriva est le produit d'une entreprise française, MandrakeSoft, créée en 1998. Grâce à une croissance rapide et de nombreux soutiens, la société MandrakeSoft compte plus de 120 salariés et est cotée en bourse. Elle impose sa distribution comme l'une des plus répandues dans le monde. Accessible dans plus de 50 langues, Mandriva est une distribution conviviale et accessible aux débutants. Initialement appelée Mandrake, elle fût rebaptisée Mandriva en 2005 (suite à des problèmes judiciaires concernant le nom et au mariage de MandrakeSoft avec Conectiva, une distribution Linux venant d'Amérique Latine).\\
+
+Les versions actuelles~:
+
+Il existe de très nombreuses versions et 
+Quelques principes : \\
+Les versions "Free" ne contiennent que des logiciels libres, et sont téléchargeables gratuitement.\\
+Les versions "Entreprise" sont, bien qu'Open Source, payantes et bénéficient d'un support spécial par Mandriva. La plupart permettent une inter-opérabilité entre les plates-formes Linux, Windows et Mac.\\
+
+Quelques exemples :\\
+\begin{itemize}
+\item Mandriva Free : C'est tout un système complet livré avec tous les programmes qui peut être téléchargé gratuitement et librement distribuable, et gravé sur un DVD-ROM ou sur 3 CD-ROM.
+\item Mandriva Powerpack : La version en boîte (Powerpack) est payante et fournie avec des manuels imprimés, pour aider les utilisateurs à découvrir le système. Elle inclut également le droit à des services, comme de l'assistance technique.
+\item Mandriva One : version "Live CD" utilisable sans rien installer
+\item Mandriva Flash : version portable autobootable vendue sur une clé USB
+\item Multi Network Firewall (MNF) : version spéciale pour les machines de type routeur/firewall
+\end{itemize}
+
+Pour les problèmes de sécurité, Mandriva regroupe les informations sur \url{http://www.mandriva.com/security/}, et les utilisateurs bénéficient d'une grande réactivité. Ainsi, une liste de diffusion et un flux RSS sont disponibles pour se tenir informé.
+
+\subsection{Gentoo}
+
+\url{http://www.gentoo.org/}\\
+\url{http://www.gentoo.org/doc/fr/handbook/index.xml}\\
+\url{http://www.gentoo.org/doc/fr/gentoo-x86-quickinstall.xml}\\
+~\\
+
+Gentoo est une distribution "orientée source". A l'image des systèmes BSD dont elle dérive, l'utilisateur compile son système et ses logiciels. Cependant, il existe également des paquetages binaires disponibles, afin d'éviter cette phase de compilation.\\
+
+Gentoo a été originairement conçu pour fonctionner sur architecture x86 uniquement. Mais, elle a été portée sur de nombreuses autres architectures en raison de sa haute portabilité. L'installation se fait à partir d'un CD Live et une documentation d'installation et d'utilisation très complète est disponible. Notez qu'il existe un outil appelé Catalyst permettant de faire ses propres distributions basées sur Gentoo.\\
+
+La distribution est très orientée compilation avec un système de "flags" interne, qui permettent d'utiliser certaines caractéristiques majeures, comme X (le serveur graphique), une version précise du compilateur, ou encore le support de tel ou tel protocole dans tous les logiciels installés. La compilation est omniprésente et des outils comme DistCC sont très utilisés afin d'en réduire les coûts. Cette distribution est basée sur le langage Python, utilisé dans la plupart des scripts inhérents à la distribution (démarrage, installation du réseau etc.)\\
+
+Vous pouvez prendre connaissance des failles de sécurité et des éventuels problèmes apparaissant sur la distribution depuis \url{http://www.gentoo.org/security/en/index.xml}. La distribution est également axée sur la sécurité avec un certain nombre de mécanismes intégrés par défaut, et des ouvrages relatifs à la sécurité qui ont été réalisés par l'équipe (Gentoo Security Handbook). Les utilisateurs peuvent également prendre compte des changements oeuvrés par mail (gentoo-announce@gentoo.org).
+
+\subsection{Slackware}
+
+\url{http://www.slackware.org/}\\
+\url{http://www.trustonme.net/didactels/91.html}\\
+~\\
+
+Cette distribution historique et simple a été créée, et est toujours maintenue par Patrick Volkerding (depuis 1993). Elle ne repose que sur peu d'outils de configuration automatisés, les outils traditionnels étant privilégiés. Les deux objectifs principaux sont la simplicité d'utilisation et la rapidité.
+
+Le système de packages est géré grâce aux \textit{slacktools}, remplaçants des \textit{pkgtools} de Slackware. Ils ont pu bénéficier constamment d'améliorations, comme la gestion des dépendances etc. Le système de packaging RPM peut également être utilisé facilement afin d'utiliser des packages plus généralistes.\\
+
+Contrairement à des distributions comme Debian, la compilation du noyau se fait de manière traditionnelle. Rappel~:
+
+\begin{verbatim}
+# make menuconfig
+# make dep
+# make bzImage
+# make modules
+# make modules_install
+\end{verbatim}
+
+Cependant, même si la distribution est relativement à jour, les personnes qui y contribuent sont peu nombreuses, et certaines améliorations peuvent mettre du temps à être incorporées. Le projet Slackware a pour but de rester le plus Unix-like possible.\\
+
+En cas de problème de sécurité, une liste de diffusion dédiée est accessible sur \url{http://www.slackware.org/security/}. Les mises à jour sont faites sous forme de packages à installer.
+
+\subsection{Suse}
+
+\url{http://www.novell.com/linux/suse/}\\
+\url{http://www.novell.com/documentation/suse93/pdfdoc/user93-screen/user93-screen.pdf}\\
+
+Suse est une société allemande qui appartient désormais au groupe Novell. La distribution du même nom est basée sur Slackware et le système de paquets RPM de Redhat. La configuration peut être facilement réalisée par le Centre de Control YAST, qui est passé, depuis plus d'un an sous licence GPL.
+
+Vu l'orientation de Novell sur le monde des réseaux, le rachat de Suse a marqué l'intégration de nombreux protocoles réseau etc.\\
+
+Novell propose actuellement plusieurs versions~:
+
+\begin{itemize}
+\item SUSE LINUX Professional : version professionnelle principalement mise en avant par Novell 
+\item Novell Linux Desktop : version orientée poste de travail
+\item SUSE LINUX Enterprise Server : version spéciale pour les entreprises (certifiée par exemple pour les machines IBM Xseries ou le logiciel Oracle)
+\end{itemize}
+
+Novell propose également de nombreux produits ou services basés sur Linux. On notera des sortes de packages comprenant une distribution Linux et des services~:
+
+\begin{itemize}
+\item Novell Linux Small Business Suite : basée sur Novell Linux Desktop
+\item Novell Open Enterprise Server : basée sur SUSE LINUX Enterprise Server
+\end{itemize}
+~\\
+~\\ 
+Pour les problèmes de sécurité, Suse dispose d'un service en ligne \\
+(à l'adresse \url {http://www.novell.com/linux/security/securitysupport.html}). ~\\
+Une liste des failles ayant affecté Suse est disponible à la même adresse de façon textuelle, ou en flux RSS à l'adresse (\url{http://www.novell.com/linux/security/suse\_security.xml}).
+
+\subsection{Debian}
+
+Le projet Debian a été lancé en août 1993 par Ian Murdock. Debian est alors une nouvelle distribution produite de façon ouverte, dans l'esprit de Linux et de GNU. Debian a la réputation d'être soigneusement et consciencieusement mise en place, maintenue et supportée. Cela a commencé par la constitution d'un petit groupe très soudé de hackers (codeurs) de logiciels libres. Graduellement, le groupe s'est agrandi pour devenir une vaste communauté de développeurs et d'utilisateurs bien organisée\footnote{\url{http://www.debian.org/intro/organization}}. Le projet Debian est basé sur un contrat social\footnote{\url{http://www.debian.org/social\_contract.fr.html}},  des directives définissant les logiciels libres, DFSG - Debian Free Software Guidelines\footnote{\url{http://www.debian.org/social\_contract\#guidelines}} et une constitution\footnote{\url{http://www.debian.org/devel/constitution}} définissant l'organisation du projet. 
+Organisés de façon démocratique, le leader, le comité technique et le secrétaire ainsi que chaque contributeur Debian possèdent un rôle bien défini (responsable de paquets, de projets, etc.). Ainsi Debian n'est pas soumis à des exigences commerciales et se permet d'avoir un avenir serein. Aujourd'hui, on compte près d'un millier de développeurs Debian répartis dans le monde entier\footnote{\url{http://www.debian.org/devel/developers.loc}}, des dizaines de milliers de paquets\footnote{\url{http://www.debian.org/distrib/packages}}, le support de plusieurs 
+architectures\footnote{\url{http://www.debian.org/ports/}} ainsi que des versions utilisant un noyau différent de Linux (GNU/Hurd ou FreeBSD).
+
+\textit{Lien~:} \url{http://www.debian.org/doc/manuals/project-history/} \\
+
+Les versions~:\\
+
+Debian propose trois ou quatre versions de distributions aux utilisateurs. \\
+La distribution "stable" contient la dernière distribution officiellement sortie de Debian. Il s'agit de la dernière production de Debian qu'il est recommandé d'utiliser.\\
+La distribution "testing" contient des paquets en attente d'entrée dans la distribution "stable". Elle contient donc des versions assez récentes des logiciels mais moins bien surveillés par les développeurs Debian.\\
+En pratique, la distribution "testing" passe par une période de gel (freeze) où son évolution est figée et seules les corrections de bogues ou mises-à-jours mineures sont acceptées (on parle parfois de distribution "frozen"). Après de minutieuses vérifications, la version "testing gelée" peut remplacer la version stable. \\
+\\
+La troisième distribution est appelée "unstable". C'est celle sur laquelle se concentre les activités de développement. Elle est utilisée par "les développeurs et par ceux qui aiment vivre sur le fil" car c'est une sorte de laboratoire destiné à tester et corriger les bogues des paquets. Son nom Sid (nom de l'enfant qui casse les jouets dans \textit{Toys Story}) signifie officieusement : Still In Development.\\
+\\
+Les nouveaux paquets des développeurs arrivent en effet directement en unstable après inspection et validation des ftpmasters (les personnes responsables des mises en ligne sur le serveur FTP principal). Chaque mise en ligne est répercutée sur les miroirs en moins de 24h (on peut retouver les nouveaux paquets des développeurs directement dans le répertoire Incoming\footnote{\url{http://incoming.debian.org/}}. Les paquets de la version "unstable" remplissant certains critères (absence de bogues critiques, durée supérieure à 10 jours dans "unstable", support de toutes les architectures et dépendances toutes satisfaites) basculent dans la distribution "testing".\\
+\\
+Dernière distribution plus particulière, il s'agit de la version "experimental" : il s'agit d'une archive mise à la disposition par des développeurs pour avoir des retours d'utilisateurs expérimentés sur des modifications importantes des logiciels (la version "experimental" n'est pas une distribution complète). Cette étape est indépendante du processus de validation des paquets Debian.
+
+On se rend donc compte des précautions qui entourent le statut des paquets Debian. En contrepartie, ce processus prend du temps et les versions de paquets de la distribution "stable" ont souvent du retard par rapport aux dernières versions des logiciels.
+
+Voici le tableau des noms de distribution Debian (tirés du Film Toy Story)~:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+-    & 0.01->1.1 & août 1993->juin 1996 & - \\
+\hline
+Buzz & 1.1 & juin 1996 & Le ranger de l'espace \\
+\hline
+Rex  &   1.2 &    décembre 1996 &  le tyrannosaure \\
+\hline
+Bo   &   1.3 &    juillet 1997  &  La bergère \\
+\hline
+Hamm  &  2.0 &    juillet 1998  &  Le cochon-tirelire \\
+\hline
+Slink &  2.1 &    mars 1999   &    Le chien à ressort \\
+\hline
+Potato & 2.2 &    août 2000  &     Monsieur Patate \\
+\hline
+Woody  & 3.0 &    mai 2002  &      Le cow-boy \\
+\hline
+Sarge  & 3.1 &    juin 2005        &      Le chef des soldats \\
+\hline
+Etch   & 4.0  &   avril 2007      &      L'écran magique \\
+\hline
+Lenny & 5.0 &    mars 2009	&      La paire de jumelles \\  
+\hline
+Squeeze & 6.0 & ? & L'extraterrestre à trois yeux\\
+\hline
+Sid    &  -  & toujours unstable &      L'enfant qui casse les jouets \\
+\hline
+\end{tabular} 
+\end{center}
+
+% http://kernel-handbook.alioth.debian.org/

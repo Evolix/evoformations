@@ -1,0 +1,460 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Introduction à Unix/Linux}
+
+\section{Les débuts}
+
+En 1969, Ken Thompson\footnote{\url{http://www.cs.bell-labs.com/who/ken/}},
+employé dans les laboratoires Bell\footnote{\url{http://cm.bell-labs.com/}},
+développe UNICS (UNiplexed Information and Computing Service), système
+d'exploitation mono-utilisateur écrit en langage assembleur. Rebaptisé UNIX,
+Ken Thompson tenta en 1971 de réécrire le système en langage FORTRAN ou en B.
+Entre-temps Dennis
+Ritchie\footnote{\url{http://cm.bell-labs.com/cm/cs/who/dmr/}}, également
+employé dans les laboratoires de Bell a pris part au projet, et mis au point
+le successeur du langage B : le langage C. UNIX fut donc réécrit en langage C
+et nommé UNIX Time-Sharing System (UTS). UNIX commença également à être diffusé
+hors des laboratoires de Bell. Or les laboratoires de Bell appartiennent à la
+société AT\&T qui ne peut commercialiser autre chose que des équipements
+téléphoniques ou télégraphiques. La décision fut prise de distribuer le système
+UNIX complet avec son code source complet dans les universités puis également
+dans les entreprises. De nombreuses contributions furent apportées par
+l'université de Berkeley (Californie) qui distribua ainsi UNIX BSD (Berkeley
+Software Distribution).\\
+
+Les laboratoires Bell développèrent le système UNIX Time-Sharing System
+jusqu'en octobre 1989 (sa 10ème version).  La branche commerciale d'AT\&T
+développa les premières versions commerciales d'UNIX : System III puis System
+V.\\
+
+Les droits d'UNIX appartenant à AT\&T ont été rachetés par l'entreprise
+Novell\footnote{\url{http://www.novell.com/}}. En 1994, Novell a transféré les
+droits sur la marque UNIX ainsi que les spécifications à
+l'OpenGroup\footnote{\url{http://www.opengroup.org/}}, et a également revendu
+le code source et l'implémentation UNIXWARE (dérivée de System V) à
+l'entreprise SCO\footnote{\url{http://www.sco.com/}}.\\
+
+L'université de Berkeley développa UNIX BSD jusqu'en 1993 (4.4BSD) dont
+dérivent les projets libres NetBSD, FreeBSD et OpenBSD mais également le
+système d'exploitation d'Apple MAC OS X. Du fait de la mise à disposition du
+code source d'UNIX, de nombreux dérivés propriétaires d'UNIX furent développés
+: AIX (IBM), Solaris (Sun Microsystems), HP-UX (Hewlett-Packard), Ultrix (DEC),
+Xenix (Microsoft), Unixware (SCO), Tru64 (DEC), IRIX (SGI), etc.\\
+
+Les systèmes d'exploitation UNIX sont multi-tâches, multi-utilisateurs et en
+général ouverts (code source disponible).\\
+~\\
+\textit{Liens :} \\
+\url{http://fr.wikipedia.org/wiki/UNIX} \\
+\url{http://www.commentcamarche.net/unix/} \\
+\url{http://www.unix.org/} \\
+\url{http://www.levenez.com/unix/} \\
+
+\section{Historique des logiciels libres}
+
+Au commencement de l'informatique, le matériel était volumineux et coûteux. On
+se focalisait surtout sur l'équipement~: les codes des programmes étaient
+disponibles gratuitement et chacun pouvait les améliorer librement. Avec
+l'apparition de la micro-informatique dans les années 1980, les développements
+de logiciels furent de plus en plus nombreux. De nombreuses restrictions
+apparurent sur ces logiciels (licences, accord de non-divulgation) qui étaient
+souvent vendus uniquement sous forme de binaires. En 1984, suite à des
+problèmes liés à ces restrictions, Richard
+Stallman\footnote{\url{http://www.stallman.org/}}, informaticien au
+MIT(Institut de Technologie du Massachusetts), démissionne du laboratoire où il
+travaille pour fonder le projet GNU\footnote{\url{http://www.gnu.org/}}. GNU
+est un acronyme récursif qui signifie GNU's Not Unix (GNU n'est pas Unix).\\
+
+Son ambition est de développer un système d'exploitation complètement libre et
+promouvoir la liberté des logiciels. Ainsi, en 1985 est créée la Free Software
+Fundation (FSF) qui a écrit un grand nombre de paquetages logiciels, notamment
+GNU Compiler Collection (GCC) et Bourne-Again SHell
+(BASH\footnote{\url{http://www.gnu.org/software/bash/}}). Des licences dites
+libres ont également été rédigées, dont la GNU General Public License
+(GPL\footnote{\url{http://www.gnu.org/copyleft/gpl.html}}) qui oblige les
+programmes dérivés à rester avec la même licence.\\
+~\\
+
+D'autres licences dites libres existent comme la licence
+BSD\footnote{\url{http://www.opensource.org/licenses/bsd-license.php}} qui
+permet la réutilisation du code sous la dite licence dans des programmes
+propriétaires. Le terme d'Open Source définit un ensemble de licences moins
+restrictives. L'Open Source
+Initiative\footnote{\url{http://www.opensource.org/licenses/}} publie sur son
+site les licences dites Open Source.
+~\\ 
+
+La définition de liberté pour un logiciel n'est pas forcément triviale et
+diffère selon certains organismes.\\
+~\\
+La Free Software Fundation (FSF) spécifie les 4 libertés pour un logiciel libre~: \\
+\begin{itemize}
+  \item{La liberté d'exécuter le programme, pour tous les usages \textbf{(liberté 0)}.}
+  \item{La liberté d'étudier le fonctionnement du programme, et de l'adapter à vos besoins \textbf{(liberté 1)}. Pour ceci l'accès au code source est une condition requise.}
+  \item{La liberté de redistribuer des copies, donc d'aider votre voisin, \textbf{(liberté 2)}.}
+  \item{La liberté d'améliorer le programme et de publier vos améliorations,
+pour en faire profiter toute la communauté \textbf{(liberté 3)}. Pour ceci
+l'accès au code source est une condition requise.}
+\end{itemize}
+~\\
+\textit{Lien :} \url{http://www.gnu.org/philosophy/free-sw.fr.html} \\
+~\\
+
+\section{Définitions des 'logiciels libres'}
+
+Le projet Debian spécifie ses propres principes du logiciel libre~: \\
+
+\begin{itemize}
+\item{redistribution libre et gratuite}
+\item{distribution du code source}
+\item{aucune discrimination de personne ou de groupe}
+\item{aucune discrimination de champ d'application}
+\item{distribution de licences}
+\item{la licence ne doit pas être spécifique à Debian}
+\item{la licence ne doit pas contaminer d'autres logiciels}
+\end{itemize}
+~\\
+\textit{Lien :} \url{http://www.debian.org/social\_contract#guidelines} \\
+~\\
+L'Open Source Initiative (OSI) spécifie les critères pour un logiciel Open
+Source, inspirés des principes du logiciel libre selon Debian~: \\
+
+
+\begin{itemize}
+  \item{Libre redistribution}
+  \item{Code source}
+  \item{Travaux dérivés}
+  \item{Intégrité du code source de l'auteur}
+  \item{Aucune discrimination envers les personnes ou les groupes}
+  \item{Aucune discrimination envers les champs d'effort}
+  \item{Distribution de la licence}
+  \item{Licence non spécifique d'un produit}
+  \item{Licence non restrictive envers d'autres produits}
+  \item{Licence neutre technologiquement}
+\end{itemize}
+~\\
+\textit{Lien~:} \url{http://opensource.org/docs/definition.php} \\
+~\\
+On se rend compte que la définition d'un logiciel libre est beaucoup plus
+complexe qu'on pourrait le croire. Elle s'appuie notamment sur la notion de
+respect des droits d'auteurs, comme tout écrit, et non sur la notion de brevets
+valables pour les inventions. Il faut noter que la notion de brevets logiciels
+existe désormais dans plusieurs pays (notamment aux États-Unis) et des
+discussions ont lieu au niveau de l'Europe pour l'adoption de ce
+principe.\footnote{\url{http://brevets-logiciels.info/}}\\
+~\\
+Pour bien se rendre compte des subtilités entre les différentes appellations,
+il suffit d'énumérer quelques catégories de logiciels~:
+\footnote{\url{http://www.gnu.org/philosophy/category.fr.jpg}}\\
+\begin{itemize}
+\item{Logiciel libre}
+\item{Logiciel Open source}
+\item{Logiciel du domaine public}
+\item{Logiciel copylefté (sous gauche d'auteur)}
+\item{Logiciel libre non-copylefté}
+\item{Logiciel couvert par la GPL}
+\item{Logiciel privé}
+\item{Logiciel propriétaire}
+\item{Shareware (Partagiciel)}
+\item{Freeware}
+\end{itemize}
+~\\
+
+\textit{Lien :} \url{http://www.gnu.org/licenses/license-list.fr.html}
+
+\begin{itemize}
+\item{\textbf{La licence GNU General Public License
+(GPL)}\footnote{\url{http://www.gnu.org/copyleft/gpl.html}}\\ Cette licence a
+été écrite par la FSF (Free Software Foundation) comptant pour membres Richard
+Stallman et Eben Moglen\footnote{\url{http://emoglen.law.columbia.edu/}}. Elle
+a été écrite pour fixer les conditions légales de distribution des logiciels du
+projet GNU.\\
+Elle fait partie des licences restrictives (notion de copyleft). Il faut aussi
+savoir que c'est probablement la licence libre la plus utilisée aujourd'hui
+(Linux, GCC, KDE, Gnome, etc.).\\
+~\\
+\textit{Liens :} \\
+\url{http://www.gnu.org/copyleft/gpl.html} \\
+\url{http://www.linux-france.org/article/these/gpl.html}\\
+\url{http://fsffrance.org/gpl/gpl.fr.html}\\
+\url{http://crao.net/gpl/}\\
+\item{\textbf{Les licences de type BSD}} \\
+~\\
+La licence BSD originale est une licence simple et permissive (elle n'est pas
+soumise au principe du copyleft). Néanmoins, elle comporte une clause de
+publicité qui a provoqué de nombreux débats (la licence impose un texte à
+mentionner chaque fois que le logiciel est cité). Cette clause a été supprimée
+par la suite dans ce qu'on appelera la licence BSD modifiée.\\
+Cette licence et des variantes de cette dernière sont utilisées notamment par
+les projets FreeBSD, NetBSD, OpenBSD, etc.\\
+Elle ne comporte aucune restriction, ce qui permet à des sociétés comme
+Microsoft de réutiliser le code source placé sous cette licence, ou
+d'inclure dans MacOSX des parties de FreeBSD et d'OpenBSD.\\
+
+L'université de Berkeley développa UNIX BSD jusqu'en 1993 (4.4BSD) dont
+dérivent MAC OS X (Apple) ainsi que de nombreux projets libres comme NetBSD,
+FreeBSD et OpenBSD, etc.\\
+~\\
+Le projet OpenBSD définit un logiciel libre, comme un logiciel sous une licence
+n'apportant aucune restriction. Certaines licences peuvent être acceptées pour
+certaines parties.\\
+
+La capacité à disposer d'un Unix Berkeley librement distribuable permet
+d'avancer sur une base compétitive par rapport aux autres systèmes
+d'exploitation, mais dépend directement de la volonté des différents
+groupes de développement qui échangent des sources, entre-eux et entre
+projets. Comprendre les implications légales qui entourent le concept
+de "copyright" est fondamental afin de pouvoir échanger et redistribuer
+du code source, et somme toute de promouvoir la coopération des
+personnes impliquées.\\
+~\\
+Chaque système se concentre sur des points particuliers, ou du moins en
+théorie :\\
+
+\begin{itemize}
+\item FreeBSD est orienté performances et applications; l'enjeu n'est
+clairement pas de supporter un grand nombre d'architectures
+\item NetBSD mise sur la portabilité avant tout, avec un grand nombre
+d'architectures supportées.
+\item OpenBSD accentue ses efforts de développement sur la sécurité, de
+son système et des applications qui le composent. Une grande attention est portée au niveau des licences.
+\end{itemize}
+
+Il existe également d'autres systèmes BSD moins connus, comme
+DragonflyBSD, etc.
+
+~\\
+\textit{Lien :} \url{http://www.opensource.org/licenses/bsd-license.php} \\
+
+\item{\textbf{La licence Artistique}} \\
+Licence mise en place par le créateur de Perl, Larry Wall. Outre les droits
+d'utilisation, de modification, et de distribution, l'auteur conserve certains
+droits (droit de négocier des arrangements au coup par coup, interdiction de
+diffuser une version entrant en conflit avec la distribution "standard" de
+l'auteur).\\
+~\\
+\textit{Liens :}\\
+{\small
+\url{http://www.opensource.org/licenses/artistic-license.php}\\
+\url{http://www.perl.com/pub/language/misc/Artistic.html}\\
+\url{http://linux-france.org/article/these/licence/artistic/fr-artistic.html}\\
+}
+\\
+\item{\textbf{La GNU Lesser General Public License (LGPL)}} \\
+LGPL signifie Licence publique générale limitée GNU, ou GNU LGPL (pour GNU
+Lesser General Public License) en anglais. Comme la  Licence publique générale
+GNU (ou GNU GPL), elle a été écrite par la Free software foundation. La
+différence avec la GPL est que la LGPL permet de lier un programme tiers non
+libre à une bibliothèque LGPL, sans pour autant révoquer la licence (licence
+non copyleft). Elle est surtout utilisée pour des librairies (elle s'appellait
+initalement Library General Public License) \\
+~\\
+\textit{Lien :} \url{http://www.gnu.org/licenses/lgpl.html} \\
+
+\item{\textbf{Licence Apache}} \\ 
+La licence Apache en est à sa Version 2.0 (approuvée le 21 janvier 2004 par la
+fondation Apache). Tous les projets Apache (dont Ant, Jakarta, ou Cocoon) sont
+sous cette licence. Cette licence est libre, non-copyleft, et compatible GPL
+(en version 1.0 et 1.1, la Apache License n'était pas compatible GPL).\\
+~\\
+\textit{Lien :} \url{http://www.apache.org/licenses/} \\
+
+\item{\textbf{Licence X11 (ou MIT)}} \\
+Cette licence est simple et permissive, sans copyleft, compatible avec la GPL
+de GNU. Les anciennes versions de XFree86 utilisaient cette licence, et
+quelques variantes actuelles de XFree86 l'utilisent également. Les licences
+ultérieures de XFree86 sont distribuées sous la licence XFree86 1.1 (qui est
+incompatible avec la GPL). La licence est parfois appelée «licence du MIT» mais
+ce terme est trompeur : le MIT a publié ses logiciels sous diverses licences.\\
+~\\
+\textit{Liens :} \\
+\url{http://www.x.org/Downloads\_terms.html}\\
+\url{http://www.opensource.org/licenses/mit-license.php}\\
+
+\item{\textbf{Licence Mozilla Public Licence}} \\
+Cette licence n'est pas très stricte en terme de "copyleft"; contrairement à la
+licence X11 elle présente des restrictions complexes qui la rendent
+incompatibles avec la GPL de GNU. Ainsi, on ne peut pas, légalement, lier un
+module couvert par la GPL et un module couvert par la MPL. Pour entrer dans le
+détail, la licence MPL 1.1 permet (section 13) à un programme ou à une portion
+de programme d'offrir le choix entre la MPL et une autre licence. La licence
+d'une partie de programme qui offre le choix de la GPL est alors compatible
+avec la GPL. Les logiciels de Mozilla mais également NVu (création de pages
+Web), Compière (ERP/CRM) sont sous licence MPL. SugarCRM utilise la SPL
+(SugarCRM Public Licence) qui est très proche de la MPL.\\
+~\\
+\textit{Liens :}\\
+\url{http://www.mozilla.org/MPL/} \\
+\url{http://www.sugarcrm.com/home/Public\_License\_FAQ/228/} \\
+
+\item{\textbf{Licence IBM Public License}} \\
+Cette licence en est à sa version 1.0 et est incompatible avec la GPL en raison
+de d'exigences spécifiques. Elle exige notamment que certains droits soient
+accordés en-dehors de ce que la GPL prévoit.\\
+~\\
+\textit{Lien :} \url{http://oss.software.ibm.com/developerworks/opensource/license10.html}} \\
+
+\item{\textbf{Licence Sendmail \footnote{\url{http://www.sendmail.org/}}}}
+~\\
+Il s'agit de la licence du serveur de messagerie électronique éponyme, le plus populaire sur Internet. \\
+~\\
+\textit{Lien :} \url{ftp://ftp.sendmail.org/pub/sendmail/LICENSE} \\
+
+\item{\textbf{Licence Common Public License}} \\
+Licence libre qui n'est pas compatible avec la GPL. La Common Public
+License est incompatible avec la GPL parce qu'elle énonce diverses
+exigences spécifiques qui ne se trouvent pas dans la GPL. Elle exige
+notamment que certaines licences de brevets soient données, ce que la GPL n'exige pas. \\
+~\\
+\textit{Lien :} \url{http://www.eclipse.org/legal/cpl-v10.html} \\
+~\\
+\textbf{\textit{Licences pour un usage particulier}}
+~\\
+\item{\textbf{Licence GNU Free Documentation License}} \\
+Cette licence a été conçue pour les documents sous copyleft. Elle convient pour d'autres catégories d'oeuvres utiles telles que les manuels scolaires ou les dictionnaires, par exemple. Son domaine d'application n'est d'ailleurs pas exclusivement celui des oeuvres textuelles.\\
+~\\
+\textit{Lien :} \url{http://www.gnu.org/copyleft/fdl.html} \\
+
+\item{\textbf{Les licences Creative Commons}} \\
+Des juristes de l'université de Stanford ont créé un ensemble de licences
+destinées aux contenus tels que l'audio, la vidéo, les images, les textes et
+les ressources éducatives. Le but est de faciliter la mise à disposition et le
+partage de ces contenus aux auteurs avec les restrictions qu'ils veulent (usage
+commercial, possibilité de modifications, etc.) Il suffit en effet de
+visualiser deux ou trois pages illustrées d'images explicites sur le site
+Internet pour choisir la licence appropriée. \\
+~\\
+\textit{Liens :} \\
+\url{http://creativecommons.org/} \\
+\url{http://fr.creativecommons.org/} \\
+\url{http://philippe.daigremont.free.fr/CreativeCommons/BD/} \\
+
+\item{\textbf{Licence Art Libre}} \\
+Cette licence libre copyleftée est faite pour les oeuvres artistiques. Elle
+autorise la distribution commerciale, tout en précisant qu'une oeuvre de plus
+grande taille qui inclurait l'oeuvre soumise à la licence doit être elle-même
+libre.\\
+~\\
+\textit{Lien :} \url{http://artlibre.org/licence.php/lal.html}\\
+
+ 
+~\\
+\end{itemize}
+
+\section{Modèle de développement}
+
+Le modèle de développement des logiciels libres connaît un vif succès grâce à
+l'expansion des réseaux et d'Internet dans les années 1990. Ainsi, de nombreux
+projets (dont l'un des plus marquants est Linux) voient le jour avec une
+communauté répartie dans le monde entier. Des logiciels initiés à des buts
+commerciaux basculent également sous des licences libres afin de profiter des
+avantages de la communauté du logiciel libre (beta-testeurs nombreux,
+accroissement de l'équipe de développeurs, politique de sécurité, etc.). Parmi
+les logiciels libres, on distingue donc de nombreux projets issus de
+communautés (Apache, Debian, FreeBSD, NetBSD, Sendmail, etc.) et des projets
+proches d'entreprises commerciales (Mandrake, Red Hat, OpenOffice, etc.). \\
+~\\
+En ce qui concerne l'organisation, la philosophie des logiciels libres basée
+sur l'ouverture n'empêche pas une structuration précise. On peut ainsi dégager
+un modèle de développement typique qui comprend~: \\
+\begin{itemize}
+ \item{Une ou plusieurs personnes responsables globalement du projet (souvent à l'initiative du projet ou élues)}
+ \item{Plusieurs développeurs officiels du projet ayant été acceptés avec précaution}
+ \item{Des contributeurs occasionnels qui font généralement parvenir leurs contributions aux développeurs officiels}
+ \item{Des utilisateurs avancés qui participent activement aux forums, listes de diffusion, canaux IRC}
+ \item{Des utilisateurs de base qui ont à leur disposition, outre le logiciel, une documentation et des moyens d'interaction (demande de fonctionnalités, rapport de bogues)}
+ \item{On note aussi la nécessité de rédacteurs de documentation, de relecteurs, de traducteurs, de webmasters, etc.}
+\end{itemize}
+~\\
+On constate que ce modèle de développement nécessite l'utilisation de nombreux
+outils. Il existe des plateformes mises à la disposition des projets de
+développement proposant un panel d'outils : hébergement de site Web,
+hébergement des courriels électroniques, forums, listes de diffusion, outils de
+développement, miroirs de téléchargements, etc. Parmi ces plateformes, on note
+SourceForge\footnote{\url{http://www.sourceforge.net/}} (plus de 100.000
+projets), FreshMeat\footnote{\url{http://freshmeat.net/}} (plus de 45.000
+projets), Savannah\footnote{\url{http://savannah.gnu.org/}} (plus de 3.000
+projets) ou encore Gna\footnote{\url{https://gna.org/}},
+Tuxfamily\footnote{\url{http://www.tuxfamily.org/}} ou
+Berlios\footnote{\url{http://www.berlios.de/}}. \\
+~\\
+En ce qui concerne les outils de développements collaboratifs, on note le
+logiciel très utilisé CVS\footnote{\url{https://www.cvshome.org/}}
+(mises-à-jour contrôlées, téléchargement souvent public), mais aussi des outils
+plus récents tels que SVN\footnote{\url{http://subversion.tigris.org/}} et
+Arch\footnote{\url{http://www.gnu.org/software/gnu-arch/}} ou encore
+GIT\footnote{\url{http://git.or.cz/}}. Pour la gestion des outils de
+communication, on note les outils de publication web
+(SPIP\footnote{\url{http://www.spip.net/}},
+Wiki\footnote{\url{http://en.wikipedia.org/wiki/Wiki}}), les forums
+(PHPBB\footnote{\url{http://www.phpbb.com/}},
+Phorum\footnote{\url{http://phorum.org/}}), les gestionnaires de listes de
+diffusion (Sympa\footnote{\url{http://www.sympa.org/}},
+Mailman\footnote{\url{http://www.gnu.org/software/mailman/}}), les serveurs IRC
+(Freenode\footnote{\url{http://freenode.net/}},
+Undernet\footnote{\url{http://www.undernet.org/}}), etc. \\
+~\\
+La connaissance de ces outils permet de mieux appréhender la diversité des
+membres de la communauté du logiciel libre. Des règles sont implicites aux
+utilisateurs finaux, à savoir lire la documentation officielle, les FAQ (Foires
+Aux Questions) ainsi que les archives des forums ou listes de diffusion avant
+d'utiliser les outils de communication. On se référera aux documents "Les
+règles de la
+Netiquette"\footnote{\url{http://www.sri.ucl.ac.be/SRI/rfc1855.fr.html}},
+"Comment poser les questions de manière
+intelligente"\footnote{\url{http://www.gnurou.org/documents/smart-questions-fr.html}},
+"Comment signaler efficacement un
+bug"\footnote{\url{http://www.chiark.greenend.org.uk/~sgtatham/bugs-fr.html}}
+ou encore "Comment faire un rapport sans se faire
+lyncher"\footnote{\url{http://www.asktog.com/columns/047HowToWriteAReport.html}}.
+Il faut bien noter l'organisation souvent pyramidale du modèle de
+développement. Ainsi, même s'il est souvent possible de contacter directement
+les responsables d'un projet par courrier électronique, cela se fera avec
+réserve et uniquement pour des questions majeures. Il semble aussi entendu que
+pour obtenir des droits ou des responsabilités dans un projet, les échelons se
+gravissent petit à petit.\\
+~\\
+Les logiciels en eux-mêmes, produits finaux des équipes de développement, sont
+souvent disponibles sous plusieurs formes. Généralement, on distingue une
+version dite stable et une version en cours de développement. La version stable
+est une version ayant subi plusieurs phases de tests et corrections. C'est
+cette version que le projet propose d'installer aux utilisateurs de base et
+c'est encore plus vrai en environnement professionnel.\\
+La version en cours de développement (parfois accessible à partir des outils de
+développements collaboratifs comme CVS) est à réserver aux développeurs, aux
+utilisateurs désirant contribuer en rapportant les erreurs, ou bien aux
+impatients.\\
+Il faut noter que les contraintes imposées à une version stable diffèrent d'un
+projet à un autre. Ce sera également le cas avec les numéros de version, qui
+n'ont plus grande signification du fait des politiques de numérotation
+différentes entre les projets. À l'exception des mentions "Version Beta",
+"Realease Candidate"... qui signifient qu'il s'agit de versions en cours de
+correction et validation avant une sortie officiellement stable. Sans que cela
+soit une règle absolue, on peut néanmoins distinguer certaines règles communes,
+voir par exemple une tentative de formalisation de certaines
+conventions\footnote{\url{http://semver.org/}}.\\
+~\\
+Les utilisateurs de logiciels libres prennent donc part au modèle de
+développement grâce au support communautaire qui leur permet non seulement de
+trouver de l'aide mais de rapporter les erreurs éventuellement rencontrées et
+de demander l'ajout de nouvelles fonctionnalités. Parmi les utilisateurs de
+logiciels, on trouve également de nombreuses structures professionnelles.
+Ainsi, les contraintes engendrées par l'utilisation dans un environnement
+professionnel ont nécessité la création de support commercial pour certains
+logiciels libres. De même, on constate l'apparition de structures spécialisées
+dans le support de solutions libres.\\
+En France, il existe ainsi de nombreuses SS2L (Société de Service en Logiciels
+Libres) réparties sur le territoire. D'une manière générale, l'utilisation des
+logiciels libres dans le monde professionnel est un phénomène en vogue
+actuellement ; il en résulte souvent de nombreux avantages (fiabilité accrue,
+correction de bogues, etc.) pour les logiciels libres concernés. \\
+~\\
+\textit{Liens :} \\
+\url{http://www.gnu.org/prep/SERVICE} \\
+\url{http://www.linux-france.org/article/pro/annuaire/} \\
+

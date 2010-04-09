@@ -1,0 +1,288 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{MySQL}
+~\\
+Lien~: \url{http://www.mysql.com/}
+~\\
+\section{Présentation}
+~\\
+
+MySQL est un serveur de base de données relationnelles SQL (Structured Query Language) multi-thread et multi-utilisateur. MySQL est soumis à la licence GPL ( GNU General Public License) ou à une licence commerciale distribuée par l'entreprise Mysql AB (fondée par les développeurs de MySQL).\\
+~\\
+\section{Installation}
+
+\subsection{À partir des sources}
+~\\
+Il est bien sûr possible de compiler MySQL à partir des sources. Cela permet de compiler uniquement avec les options que l'on a besoin et d'obtenir des binaires pour sa machine. On rappelle la procédure~:\\
+~\\
+\texttt{
+./configure [options]\\
+make\\
+make install\\
+}
+~\\
+\subsection{Par paquet}
+~\\
+Dans la plupart des cas, on utilisera des paquets pour installer MySQL.\\
+
+
+\emph{Paquets principaux~:}\\
+~\\
+\textbf{mysql-common~:} fichiers communs pour MySQL\\
+\textbf{php5-mysql~:} module MySQL pour PHP\\
+~\\
+\emph{Dépendances directes~:}\\
+~\\
+libc6 : librairies "GNU C"\\
+libmysqlclient10 : librairie client mysql\\
+zlib1g : librairies de compression gzip\\
+php4-common : fichiers courants pour php4\\
+
+\section{Administration}
+
+On note bien que les utilisateurs MySQL n'ont rien à voir avec des utilisateurs UNIX.
+~\\
+La première fois, en root, taper~:\\
+~\\
+\texttt{\# mysql}\\
+~\\
+On obtient alors un message ressemblant à~:
+\begin{verbatim}
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 133 to server version: 3.23.49-log
+Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
+mysql>
+\end{verbatim}
+~\\
+Vous êtes donc connecté à votre serveur MySQL.\\
+Déconnectez vous rapidement~:\\
+~\\
+\begin{verbatim}
+mysql> quit
+Bye
+\end{verbatim}
+~\\
+
+On retrouve la main en ligne de commande.\\
+Il faut ABSOLUMENT mettre un mot de passe à root (ou bien lui supprimer les droits, voir ci-après)~:\\
+
+\texttt{\# mysqladmin password "motdepasse"}\\
+~\\
+On peut maintenant se connecter a la base mysql en root sous~:
+
+\begin{verbatim}
+#mysql -p
+Enter password:*****
+mysql> 
+\end{verbatim}
+
+Il est conseillé de créer un utilisateur MySQL nommé adminmysql avec
+tous les droits pour éviter d'utiliser root.\\
+La gestion des permissions des utilisateurs (en fonction de l'hôte de
+connexion) se trouve donc dans la table "user" de la base mysql.
+
+\begin{verbatim}
+| Host            | char(60) binary 
+| User            | char(16) binary 
+| Password        | char(16) binary 
+| Select_priv     | enum('N','Y')
+| Insert_priv     | enum('N','Y')
+| Update_priv     | enum('N','Y')
+| Delete_priv     | enum('N','Y')
+| Create_priv     | enum('N','Y')
+| Drop_priv       | enum('N','Y')
+| Reload_priv     | enum('N','Y')
+| Shutdown_priv   | enum('N','Y')
+| Process_priv    | enum('N','Y')
+| File_priv       | enum('N','Y')
+| Grant_priv      | enum('N','Y')
+| References_priv | enum('N','Y')
+| Index_priv      | enum('N','Y')
+| Alter_priv      | enum('N','Y')
+\end{verbatim}
+
+La gestion des droits des utilisateurs sur des bases de données est
+opérée dans la table db~:
+
+\begin{verbatim}
+| Host            | char(60) binary 
+| Db              | char(64) binary
+| User            | char(16) binary 
+| Select_priv     | enum('N','Y')
+| Insert_priv     | enum('N','Y')
+| Update_priv     | enum('N','Y')
+| Delete_priv     | enum('N','Y')
+| Create_priv     | enum('N','Y')
+| Drop_priv       | enum('N','Y')
+| Grant_priv      | enum('N','Y')
+| References_priv | enum('N','Y')
+| Index_priv      | enum('N','Y')
+| Alter_priv      | enum('N','Y')
+\end{verbatim}
+
+D'autres tables (host, tables\_priv, columns\_priv) permettent d'ajuster plus finement les droits...\\
+
+~\\
+Donc pour créer un utilisateur \texttt{adminmysql} qui a tous les
+droits, on se connecte avec un utilisateur qui a les droits nécessaires
+~:\\
+\begin{verbatim}
+mysql> use mysql
+mysql>  GRANT ALL PRIVILEGES ON *.* TO adminmysql@localhost
+-> IDENTIFIED BY 'mot2passe' WITH GRANT OPTION;}
+\end{verbatim}
+~\\
+
+On vérifie~:
+\begin{verbatim}
+mysql> select * from user where User='adminmysql';}\\
+\end{verbatim}
+
+~\\
+On pourrait même insérer des utilisateurs "manuellement"~:
+\begin{verbatim}
+INSERT INTO user VALUES ('localhost','login',password('motdepasse'),
+'N','N','N','N','N','N','N','N','N','N','N','N','N','N');
+\end{verbatim}
+~\\
+Lors d'interventions sur ces tables de gestion des droits MySQL, on pensera à lancer la commande~:
+\begin{verbatim}
+mysql>  FLUSH PRIVILEGES;
+\end{verbatim}
+
+Ou encore effacer des utilisateurs~:
+
+\begin{verbatim}
+mysql> delete from user where Host='vilain';}
+\end{verbatim}
+
+~\\
+On effacera les entrées que l'on ne désire pas dans cette table en fonction de sa politique de sécurité. On notera sous Debian la présence d'un utilisateur \texttt{debian-sys-maint} qui sert à certains scripts Debian~: il ne doit pas être supprimé~! Au niveau sécurité, le mot de passe est généré à l'installation (stocké dans \texttt{/etc/mysql/debian.cnf}) par la commande~:
+\begin{verbatim}
+perl -e 'print map{("a".."z","A".."Z",0..9)[int(rand(62))]}(1..16)'
+\end{verbatim}
+
+~\\
+Notons qu'il est bien sûr primordial d'interdire la lecture du fichier
+\texttt{/etc/mysql/debian.cnf} Bref, pour administrer notre base MySQL,
+on peut désormais éviter de se connecter en root et faire:\\
+~\\
+\begin{verbatim}
+ # mysql -u adminmysql -p
+Enter password:*****
+mysql> 
+\end{verbatim}
+~\\
+Souvent la principale action à faire par un administreur MySQL est de créer une base de données et un utilisateur ayant tous les droits dessus. Ceci est assez courant pour faire une page en PHP/Mysql ou intégrer un logiciel "tout fait" (forum, chat, etc.)\\
+Pour faire cela, nous allons donc faire en tant qu'adminmysql~:\\
+~\\
+\begin{verbatim}
+mysql> create database forum;
+mysql> grant all privileges on forum.* to moderateur@localhost 
+mysql> identified by 'mot_de_passe_du_moderateur';
+\end{verbatim}
+~\\
+Pour créer un utilisateur en lecture seule sur une base donnée~:
+
+\begin{verbatim}
+mysql> INSERT INTO user (Host,User,Password) VALUES('localhost','readprod',PASSWORD('xxx'))
+mysql> insert into db (Host,Db,User,Select_priv) values ('localhost','production','readprod','Y')
+\end{verbatim}
+
+
+
+
+\section{Sauvegarde}
+~\\
+Il existe diverses méthodes de sauvegarde. On peut par exemple sauvegarder le répertoire contenant les bases : /var/lib/mysql par défaut sous Debian. Il existe également plusieurs outils dont le plus utilisé est le programme \texttt{mysqldump}\footnote{\url{http://www.nexen.net/docs/mysql/annotee/mysqldump.php}}\\
+~\\
+Sauvegarde d'une base :\\
+\begin{verbatim}
+$ mysqldump --opt BASE -u mysqladmin -p > database.sql
+$ mysql -u mysqladmin -p  BASE < database.sql
+\end{verbatim}
+Sauvegarde générale~:\\
+\begin{verbatim}
+$ mysqldump --opt --all-databases -u mysqladmin -p > all_databases.sql
+$ mysql -u mysqladmin -p < all\_databases.sql
+\end{verbatim}
+\textit{Lien~:}
+\url{http://www.nexen.net/docs/mysql/annotee/backup.php}\\
+~\\
+
+\section{Base de programmation}
+~\\
+Voici quelques commandes SQL de base~:
+~\\
+\begin{verbatim}
+mysql> use essai ; 
+\end{verbatim}
+-> utiliser la base de données essai
+\begin{verbatim}
+mysql> create table test (nom type [options],..); 
+\end{verbatim}
+-> créer une table nommé test\\
+~\\
+\textbf{Exemple : }
+\begin{verbatim}
+CREATE TABLE clients_tbl (id INT not null AUTO_INCREMENT, prenom VARCHAR 
+(50) not null , nom VARCHAR (50) not null , ne_le DATE not null , 
+ville VARCHAR (90) not null , enfants INT not null , PRIMARY KEY (id))
+\end{verbatim}
+\begin{verbatim}
+mysql> alter table test add nom type [-options]; 
+\end{verbatim}
+-> ajouter un champ à une table
+\begin{verbatim}
+mysql> alter table test drop nom; 
+\end{verbatim}
+-> effacer un champ à une table
+\begin{verbatim}
+mysql> desc test; 
+\end{verbatim}
+-> décrire la table test
+\begin{verbatim}
+mysql> insert into test values ('a','b',...); 
+\end{verbatim}
+-> remplir la base de donnée
+\begin{verbatim}
+mysql> select * from test; 
+\end{verbatim}
+-> sortir tous les champs de la table test
+\begin{verbatim}
+mysql> delete from teste where (condition) 
+\end{verbatim}
+-> effacer des données
+\begin{verbatim}
+mysql> delete from test; 
+\end{verbatim}
+-> effacer toutes les données de test
+\begin{verbatim}
+mysql> drop table test ; 
+\end{verbatim}
+-> effacer la table test
+~\\
+\textit{Liens~:}\\
+\url{http://nexen.net/docs/mysql/}\\
+\url{http://www.mysql.com/}\\
+~\\
+
+\section{Autres SGBD libres}
+~\\
+Il existe PostGreSQL\footnote{\url{http://www.postgresql.org/}}, moins
+répandu que MySQL sur le web, mais qui propose certaines fonctionnalités
+plus avancées (on le cite parfois en tant qu'alternative à
+Oracle\footnote{\url{http://www.oracle.com/}}).
+SQLite\footnote{\url{http://www.sqlite.org/}} est un autre système de
+gestion de base données libre. SQLite est très léger et stocke ses bases
+dans des fichiers binaires, il est intéressant (plus rapide, moins
+lourd que les autres SGBD, etc.) pour des applications n'opérant que de
+simples requêtes (select, insert etc.).
+
+\newpage
+

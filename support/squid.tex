@@ -1,0 +1,141 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\section{SQUID}
+
+\subsection{Présentation}
+
+Le logiciel Squid (\url{http://www.squid-cache.org}) est le serveur proxy le plus connu et le plus utilisé. Il permet d'opérer un filtrage sur des flux HTTP et/ou FTP en fonction du contenu qui transite ou des sites consultées. Il peut être utile pour accélérer le débit vers les pages déjà consultées (utilisation du cache) ou encore réglementer (ou protéger) la naviguation sur Internet. On peut ainsi filtrer en fonction d'extensions de fichiers, de mots clés, d'URL, etc.\\ 
+
+Squid fonctionne sur toutes les plateformes UNIX, et dispose d'une communauté de développeurs mondiale. De nombreux développements annexes ont été réalisés, comme Squid-Guard ou un module Squid pour Webmin.\\
+
+\subsection{Installation}
+
+Squid est présent dans de nombreuses distributions Linux et systèmes
+Unix en tout genre.\\
+
+Exemple sous Debian, il suffit d'installer les packages \textit{squid -
+squid-common - squid-client} et optionnelement \textit{squid-cgi}.\\
+
+La configuration se fait via le fichier \textit{/etc/squid/squid.conf}.
+
+\subsection{Configuration de base}
+
+\begin{verbatim}
+# Port d'écoute
+http_port 80
+
+# Taille du cache
+cache_mem 16 MB
+\end{verbatim}
+
+\subsection{Gestion des restrictions}
+
+Les restrictions sont opérées sur plusieurs points :
+
+\begin{itemize}
+\item un mécanisme d'ACL (Access Classes Lists) pour restreindre l'accès au serveur proxy
+\item un mécanisme d'ACO (Access Classes Operators) qui permettent de restreindre l'accès à certaines URLs
+\end{itemize}
+~\\
+\noindent Exemple d'ACL :
+
+\begin{verbatim}
+# on n'autorise que les machines du sous-réseau
+acl CLIENTS src 192.168.1.0/255.255.255.0
+http_access allow CLIENTS
+http_access deny all
+
+# ports sécurisés
+acl Safe_ports port 80 443
+http_access deny !Safe_ports
+\end{verbatim}
+~\\
+\noindent Exemple d'ACO :
+
+\begin{verbatim}
+acl url_mp3 url_regex -i \.mp3$
+http_access deny url_mp3
+\end{verbatim}
+
+\subsection{Authentification}
+
+Le logiciel Squid permet de nombreux modes de fonctionnement. Entre autres, il est possible de donner lieu à une utilisation authentifiée. Seul un utilisateur doté d'un login et d'un mot de passe pourra utiliser les ressources de Squid.\\
+
+Pour celà, il faut par exemple rajouter dans la configuration :
+
+\begin{verbatim}
+acl Users proxy_auth REQUIRED
+http_access deny !Users
+
+# choix de la méthode, exemple
+authenticate_program /usr/lib/squid/ncsa_auth /usr/lib/squid/passquid
+\end{verbatim}
+
+Le choix du mode d'authentification vous appartient, vous avez en effet le choix entre :
+
+\begin{itemize}
+\item \textit{ncsa\_auth} qui utilise un fichier d'utilisateurs Squid, remplis par exemple via la commande htpasswd
+\item \textit{smb\_auth} pour utiliser une base Samba
+\item \textit{ldap\_auth} pour utiliser une base LDAP
+\item \textit{pam\_auth} pour utiliser l'authentification PAM
+\end{itemize}
+~\\
+
+\subsubsection{Exemple : ncsa\_auth}
+
+Dans le cas de \textit{ncsa\_auth}, vous avez donc à créer votre fichier d'utilisateurs :
+
+\begin{verbatim}
+Dans squid.conf :
+/usr/lib/squid/ncsa_auth
+
+Création du fichier d'utilisateurs :
+htpasswd -c /etc/squid/users utilisateur_test motdepasse_test
+
+Ce qui donne :
+utilisateur_test:QXgxhYPbn
+\end{verbatim}
+
+\subsubsection{Exemple : ldap\_auth}
+
+La directive à utiliser afin d'activer le support LDAP est :
+
+\begin{verbatim}
+acl aclname ldap_auth (((static | dynamic) group) | username) ...
+\end{verbatim}
+
+\begin{verbatim}
+Dans squid.conf :
+
+# serveur LDAP à joindre
+auth_param basic program /usr/lib/squid/squid_ldap_auth -u uid -b
+ou=test,ou=evolix,o=evolix,c=fr -h ldap.evolix.fr -p 389
+
+# paramètres
+auth_param basic children 5
+auth_param basic realm Squid proxy-caching web server
+
+# temps d'authentification
+auth_param basic credentialsttl 2 hours
+\end{verbatim}
+
+\subsection{Modèle distribué}
+
+Il est également possible de "cascader" plusieurs serveurs cache. Pour se faire, le fichier de configuration squid.conf doit être configuré dans cette optique. Les différents serveurs Squid peuvent par la suite communiquer normalement ou via le protocole \textit{ICP}.\\
+~\\
+Exemple :
+
+\begin{verbatim}
+cache_peer_domain peer1.domaine.com pper2.domaine.com
+
+cache_peer peer.domaine.com parent 80 7 no-query proxy-only
+
+neighbor_type_domain peer3.domaine.com parent peer4.domaine.com
+\end{verbatim}
+
+Enfin, Squid utilise plusieurs journaux afin de rendre compte des différentes/accès qui ont été réalisés (access.log etc.).
