@@ -101,9 +101,97 @@ Et voici quelques explications sur les paramètres:
 
 \subsection{Gestion du cache}
 
+En se positionnant entre le client et le serveur applicatif, Varnish permet de
+lire et surcharger si besoin les entêtes HTTP de contrôle du cache. Par défaut,
+celle ci sont lues et pris en compte, mais on peut redéfinir le comportement
+dans la configuration.
+
+Voici quelques exemples d'utilisation typique:
+
+\paragraph{Forcer le TTL pour certains contenu}
+\begin{verbatim}
+sub vcl_fetch {
+    if (req.url ~ "\.(png|gif|jpg)$") {
+        set beresp.ttl = 5d;
+        set beresp.http.magicmarker = "1";
+    }
+}
+
+sub vcl_deliver {
+    if (resp.http.magicmarker) {
+        unset resp.http.magicmarker;
+        set resp.http.Age = "0";
+      }
+}
+\end{verbatim}
+\texttt{beresp.http.magicmarker} permet de marquer l'objet pour pouvoir ensuite
+remettre son age à 0 (dans \texttt{vcl\_deliver}.
+
+Pour que le changement de TTL le soit également coté client, on réécrit le
+header HTTP \emph{Cache-Control} en ajoutant (dans le premier \texttt{if}:
+\begin{verbatim}
+set beresp.http.cache-control = ``max-age=432000'';
+\end{verbatim}
+
+\paragraph{Indiquer si un object provient du cache ou pas dans les headers HTTP}
+\begin{verbatim}
+sub vcl_deliver {
+        if (obj.hits > 0) {
+                set resp.http.X-Cache = "HIT";
+        } else {
+                set resp.http.X-Cache = "MISS";
+        }
+}
+\end{verbatim}
+
 \subsection{Gestion du load-balancing}
 
+Tout d'abord, il faut définir au moins un backend pour que l'ensemble puisse
+fonctionner correctement. Cela se fait à l'aide de la directive
+\texttt{backend}, comme ceci:
+\begin{verbatim}
+backend www00 {
+    .host = "192.0.2.8";
+    .port = "80";
+}
+
+backend www01 {
+    .host = "192.0.2.14";
+    .port = "80";
+}
+\end{verbatim}
+
+Il est ensuite possible de grouper ces backends dans un cluster, appelé
+\emph{director} dans le langage de Varnish:
+\begin{verbatim}
+director baz round-robin {
+    { .backend = www00; }
+    { .backend = www01; }
+}
+\end{verbatim}
+
+Et enfin, on indique dans quel cas il sera utilisé (dans l'exemple il sera
+utilisé dans tous les cas):
+\begin{verbatim}
+sub vcl_recv {
+    if (req.http.host ~ "^.*$") {
+        set req.backend = baz;
+    }
+}
+\end{verbatim}
+
+Il s'agit ici de la configuration la plus simple possible. Maintenant, il peut
+être intéressant d'ajuster certains paramètres:
+\begin{itemize}
+  \item poids
+  \item max connection
+  \item s/round-robin/client et critères pour sticky
+\end{itemize}
+
 \subsection{Gestion du failover}
+
+probe sur les backend
+saint et grace mode
 
 \section{Administration}
 
