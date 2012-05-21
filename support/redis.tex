@@ -87,9 +87,7 @@ gestion de comptes, mais un unique mot de passe défini en clair dans le fichier
 de configuration de Redis. Il sera alors nécessaire, après chaque connexion à la
 base, d'exécuter la commande Redis \texttt{AUTH} suivie du mot de passe.
 
-Étant donné que Redis est capable de traité un nombre très élevé de requêtes par
-seconde, les attaques par brute-force se font plus rapide et il est donc
-conseillé de définir un mot de passe très long.
+Étant donné que Redis est capable de traiter un nombre très élevé de requêtes par seconde, les attaques par brute-force se font plus rapide et il est donc conseillé de définir un mot de passe très long.
 
 \section{Utilisation}
 
@@ -100,13 +98,13 @@ Voici un aperçu de l'utilisation de Redis:
   \item Ajout d'une entrée:
     \begin{verbatim}redis> set foo 3
 OK\end{verbatim}
-  \item Ajout de plusieurs entrée:
+  \item Ajout de plusieurs entrées:
     \begin{verbatim}redis> mset un 1 deux 2 trois 3 quatre 4
 OK\end{verbatim}
   \item Récupération d'une entrée:
     \begin{verbatim}redis> get foo
 (nil)\end{verbatim}
-  \item Listage des clé:
+  \item Listage des clés:
     \begin{verbatim}redis> keys *
 1) "un"
 2) "foo"
@@ -137,9 +135,9 @@ intéressantes: un master peut avoir plusieurs slave, et un slave peut être
 master d'un autre slave (ce qui permet de faire de la réplication
 cascadée).
 
-Après ça mise en place, la réplication se passe en deux temps. Premièrement, le
+Après sa mise en place, la réplication se passe en deux temps. Premièrement, le
 master va envoyer l'intégralité de sa base de données au(x) slave(s). Les
-données seront alors créés sur le disque, puis chargé en mémoire. Une fois que
+données seront alors créés sur le disque, puis chargées en mémoire. Une fois que
 les données sont identiques entre le master et le(s) slave(s), le master
 transmet au(x) slave(s) les modifications qui sont effectuées. Les commandes
 transmises sont les mêmes que pour interagir avec le master.
