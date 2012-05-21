@@ -1,9 +1,6 @@
-% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
-%  Permission is granted to copy, distribute and/or modify this document
-%  under the terms of the GNU Free Documentation License, Version 1.2
-%  or any later version published by the Free Software Foundation;
-%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2005-2010 Evolix . Tous droits reserves.%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Apache}
 
@@ -84,10 +81,10 @@ Pour la compilation en elle-même, on applique donc la procédure classique. On va
 On télécharge les sources mais également le hash MD5 des sources ainsi que la signature PGP (et les clés des développeurs Apache) de ces sources~:
 
 \begin{verbatim}
-$ wget apache\_x.y.z.tar.gz
-$ wget apache\_x.y.z.tar.gz.md5
+$ wget apache_x.y.z.tar.gz
+$ wget apache_x.y.z.tar.gz.md5
 $ wget KEYS
-$ wget apache\_x.y.z.tar.gz.asc
+$ wget apache_x.y.z.tar.gz.asc
 \end{verbatim}
 
 On vérifie le bon déroulement du téléchargement des sources en comparant le résultat des commandes suivantes~:
@@ -148,12 +145,12 @@ Par exemple, sur un système Debian~:\\
 ~\\
 \textbf{Pour Apache 2 :}
 ~\\
-\texttt{ aptitude install apache2-mpm-prefork}\\
+\texttt{apt-get install apache2-mpm-prefork}\\
 ~\\
 \emph{Paquets principaux :}\\
 ~\\
 \begin{itemize}
-\item[apache2.2-common :] modules de base, documentations et icones pour Apache
+\item[apache2.2-common :] modules de base, documentations et icones pour Apache\\
 ~\\
 \textit{Plusieurs choix pour Apache MPM (Multi-Processing Module) :}
 ~\\
@@ -405,7 +402,7 @@ Dans \textbf{<Directory ...></Directory>} :\\
 ~\\
 \textbf{- Gestion des accès}\\
 ~\\
-\url{http://httpd.apache.org/docs-2.0/mod/mod\_access.html}\\
+\url{http://httpd.apache.org/docs-2.2/mod/mod\_access.html}\\
 ~\\
 
 \begin{verbatim}
@@ -733,7 +730,7 @@ Ce module permet d'exécuter des scripts Perl. Il offre de nombreux avantages par
 
 \subsection{mod\_auth}
 
-Lien:\url{http://httpd.apache.org/docs-2.0/mod/mod\_auth.html}\\
+Lien:\url{http://httpd.apache.org/docs-2.2/mod/mod\_auth.html}\\
 ~\\
 Exemple :\\
 ~\\
@@ -760,13 +757,13 @@ Souvent dans un fichier .htaccess\\
 
 \subsection{mod\_proxy}
 ~\\
-Lien~: \url{http://httpd.apache.org/docs-2.0/mod/mod\_proxy.html}\\
+Lien~: \url{http://httpd.apache.org/docs-2.2/mod/mod\_proxy.html}\\
 ~\\
 Ce module implémente un proxy/cache pour Apache. Il gère les fonctionnalités de proxy pour FTP, CONNECT (pour SSL), HTTP/0.9, et HTTP/1.0.\\
 
 \subsection{mod\_rewrite}
 ~\\
-Lien : \url{http://httpd.apache.org/docs-2.0/mod/mod\_rewrite.html}\\
+Lien : \url{http://httpd.apache.org/docs-2.2/mod/mod\_rewrite.html}\\
 \begin{verbatim}
 RewriteEngine On
 
@@ -797,7 +794,7 @@ RewriteRule ^/(.*) http://%{SERVER_NAME}/$1 [L,R]
 
 \subsection{mod\_dav}
 ~\\
-Lien : \url{http://httpd.apache.org/docs-2.0/mod/mod\_dav.html}\\
+Lien : \url{http://httpd.apache.org/docs-2.2/mod/mod\_dav.html}\\
 ~\\
 mod\_dav et mod\_dav\_fs
 ~\\
@@ -811,7 +808,7 @@ DAVLockDB /var/lock/apache2/DAVLock/DAVLockDB
 ~\\
 SSLEngine On\\
 ~\\
-Lien:\url{http://httpd.apache.org/docs-2.0/mod/mod\_ssl.html}\\
+Lien:\url{http://httpd.apache.org/docs-2.2/mod/mod\_ssl.html}\\
 ~\\
 
 On rappelle la procédure de génération d'un certificat auto-signé~:\\
@@ -904,7 +901,7 @@ Permet de spécifier que l'on se réfère à l'option ServerName pour déterminer les
 
 \section{Optimisation}
 ~\\
-Lien:\url{http://httpd.apache.org/docs-2.0/misc/perf-tuning.html}\\
+Lien:\url{http://httpd.apache.org/docs-2.2/misc/perf-tuning.html}\\
 \begin{verbatim}
 HostnameLookups off
 <Files ~ ".(html|cgi)$">
@@ -928,7 +925,7 @@ Pour améliorer la sécurité d'Apache, on peut installer mod\_security~:
 # aptitude install libapache2-mod-security2
 \end{verbatim}
 
-Avec le fichier de configuration conf.d/mod-security2.conf resemblant à :
+Avec le fichier de configuration \texttt{conf.d/mod-security2.conf} resemblant à :
 
 \begin{verbatim}
 # enable mod_security

@@ -1,9 +1,6 @@
-% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
-%  Permission is granted to copy, distribute and/or modify this document
-%  under the terms of the GNU Free Documentation License, Version 1.2
-%  or any later version published by the Free Software Foundation;
-%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2005-2011 eVoLiX. Tous droits reserves.%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Systèmes GNU/Linux}
 
@@ -103,19 +100,20 @@ Il existe diverses méthodes d'installation~: \\
 
 Dans les années 1990, on installait un système GNU/Linux à l'aide de
 (nombreuses) disquettes. Aujourd'hui la méthode d'installation la plus répandue
-est d'utiliser un jeu de CD-ROM ou un DVD-ROM téléchargé sur Internet par HTTP ou
-FTP. D'autres méthodes existent selon les distributions et peuvent s'avérer
-très pratiques notamment des installations amorcées par le réseau.~\\
+est d'utiliser un jeu de CD-ROM ou DVD-ROM (ou plus récemment via un périphérique
+USB) téléchargé sur Internet par HTTP ou FTP. D'autres méthodes existent selon
+les distributions et peuvent s'avérer très pratiques notamment des installations
+amorcées par le réseau.~\\
 
 En cas de problème à l'installation d'un système GNU/Linux, voici quelques suggestions~: \\
 ~\\
 \begin{itemize}
-\item{Prendre garde à la fiabilité des périphériques d'amorçage (CD-ROM, DVD-ROM) en vérifiant systématiquement l'empreinte MD5 des CD-ROMs}\\
+\item{Prendre garde à la fiabilité des périphériques d'amorçage (CD-ROM, DVD-ROM, périphérique USB) en vérifiant systématiquement l'empreinte MD5 ou SHA1}\\
 \item{Prendre connaissance des paramètres spécifiques d'amorçage du noyau Linux permettant d'éviter certains dysfonctionnements.}\\
 \item{Pour les controleurs RAID ou cartes réseau exotiques (ou récentes), il faudra peut-être charger un module spécifique lors de l'installation.} \\
 \item{Vérifier la compatibilité du matériel. Il existe plusieurs sites dont le "HardWare Howto"\footnote{\url{http://www.tldp.org/HOWTO/Hardware-HOWTO/}} ou encore le "Debian GNU/Linux device driver check page"\footnote{\url{http://kmuto.jp/debian/hcl/}}}\\
 \item{Utiliser les moyens de support communautaire tels que les listes de diffusion ou les canaux IRC. En cas de bogue (ou pas) avec l'installation de Debian, il faut rapporter le bogue pour le pseudo-paquet "installation-reports"\footnote{\url{http://www.debian.org/devel/debian-installer/report-template}}}\\
-\item{Un support professionnel peut également être trouvé auprès de sociétés de services en logiciels libres.}
+\item{Un support professionnel peut également être trouvé auprès de sociétés de services en logiciels libres... comme Evolix ;-)}
 \end{itemize}
 ~\\
 \textit{Liens~:} \\
@@ -248,7 +246,7 @@ Le RAID (Redundant Arrays of Inexpensive Disks) est une solution bien connue pou
 ~\\
 {\small{Note : Nous recommandons d'utiliser le RAID logiciel et/ou LVM avec prudence pour les répertoires sensibles tels que /boot et le répertoire racine. Une solution de RAID matériel sera à privilégier bien que plus coûteuse.}} \\
 ~\\
-\textbf{Choix du système de fichiers journalisé : ext3, ReiserFS, XFS ou JFS} \\
+\textbf{Choix du système de fichiers journalisé : ext3/ext4, ReiserFS, XFS ou JFS} \\
 ~\\
 Il existe de nombreuses comparaisons entre ces systèmes de fichiers mais il est difficile d'en tirer des conclusions générales car cela dépend beaucoup de l'utilisation de la machine. La fiabilité de ces systèmes est désormais éprouvée même si la prudence naturelle des administrateurs poussera à conserver ext3\footnote{\url{http://www.zip.com.au/~akpm/linux/ext3/}}, dérivé du système de fichier historique (Extended File System a été implémenté en 1992 et intégré à Linux 0.96c). En terme de performances, il semble se dégager quelques constations comme la performance de ReiserFS\footnote{\url{http://www.namesys.com/}} pour les petits fichiers, un léger gain de XFS\footnote{\url{http://oss.sgi.com/projects/xfs/}} pour la copie de fichiers de grande taille mais une lenteur à l'effacement et la bonne tenue d'ext3 pour des opérations classiques. JFS\footnote{\url{http://www-124.ibm.com/developerworks/oss/jfs/}} semblant légèrement moins performant pour le moment. \\
 ~\\
@@ -310,7 +308,12 @@ Exemple : \texttt{netstat -a -t} \\
 \emph{traceroute} pour tester la route vers un hôte du réseau\\
 Exemple : \texttt{traceroute -v google.fr} \\
 ~\\
-\textit{\textit{Lien :}} \url{http://perso-info.enst-bretagne.fr/~leroy/Unix/Guide/LinuxReseau.html}\\
+\emph{mtr} un traceroute plus convivial
+Exemple : \texttt{mtr google.fr} \\
+~\\
+\emph{tcpdump} l'outil ultime pour capturer les trames réseau\\
+Exemple : \texttt{tcpdump -s2000 -XX -w mydump.pcap -i eth0 port 80 and tcp} \\
+~\\
 
 \section{Réglages de base}
 
@@ -502,7 +505,10 @@ La distribution "testing" contient des paquets en attente d'entrée dans la distr
 En pratique, la distribution "testing" passe par une période de gel (freeze) où son évolution est figée et seules les corrections de bogues ou mises-à-jours mineures sont acceptées (on parle parfois de distribution "frozen"). Après de minutieuses vérifications, la version "testing gelée" peut remplacer la version stable. \\
 \\
 La troisième distribution est appelée "unstable". C'est celle sur laquelle se concentre les activités de développement. Elle est utilisée par "les développeurs et par ceux qui aiment vivre sur le fil" car c'est une sorte de laboratoire destiné à tester et corriger les bogues des paquets. Son nom Sid (nom de l'enfant qui casse les jouets dans \textit{Toys Story}) signifie officieusement : Still In Development.\\
-\\
+
+% TODO : parler de CUT ?%
+% Le projet CUT pour Constantly Usable Testing a pour objectif de permettre de rendre Debian testing continuellement installable et utilisable.%
+
 Les nouveaux paquets des développeurs arrivent en effet directement en unstable après inspection et validation des ftpmasters (les personnes responsables des mises en ligne sur le serveur FTP principal). Chaque mise en ligne est répercutée sur les miroirs en moins de 24h (on peut retouver les nouveaux paquets des développeurs directement dans le répertoire Incoming\footnote{\url{http://incoming.debian.org/}}. Les paquets de la version "unstable" remplissant certains critères (absence de bogues critiques, durée supérieure à 10 jours dans "unstable", support de toutes les architectures et dépendances toutes satisfaites) basculent dans la distribution "testing".\\
 \\
 Dernière distribution plus particulière, il s'agit de la version "experimental" : il s'agit d'une archive mise à la disposition par des développeurs pour avoir des retours d'utilisateurs expérimentés sur des modifications importantes des logiciels (la version "experimental" n'est pas une distribution complète). Cette étape est indépendante du processus de validation des paquets Debian.
@@ -536,9 +542,9 @@ Etch   & 4.0  &   avril 2007      &      L'écran magique \\
 \hline
 Lenny & 5.0 &    mars 2009	&      La paire de jumelles \\  
 \hline
-Squeeze & 6.0 & février 2011 & L'extraterrestre à trois yeux\\
+Squeeze	& 6.0 & février 2011 & L'extraterrestre à trois yeux \\
 \hline
-Wheezy & 7.0 & ?? & Le pingouin\\
+Wheezy & 7.0 & ? & Le pingouin au noeud papillon \\
 \hline
 Sid    &  -  & toujours unstable &      L'enfant qui casse les jouets \\
 \hline

@@ -1,9 +1,6 @@
-% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
-%  Permission is granted to copy, distribute and/or modify this document
-%  under the terms of the GNU Free Documentation License, Version 1.2
-%  or any later version published by the Free Software Foundation;
-%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2005 eVoLiX. Tous droits reserves.%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Focus sur Debian GNU/Linux}
 
@@ -33,12 +30,11 @@ On peut également amorcer complètement l'installation de Debian par le réseau\fo
 
 Les possibilités d'installation de Debian sont nombreuses. On notera que le programme debootstrap\footnote{\url{http://www.debian.org/releases/stable/i386/ch-rescue-boot.fr.html\#s-dbootstrap-intro}} permet d'installer Debian à partir d'un système de fichiers, qu'une installation automatisée est possible en passant l'argument \textsl{preseed}\footnote{\url{http://d-i.alioth.debian.org/manual/fr.i386/ch04s07.html}} à l'amorce de l'installation par CD-ROM (ou DVD-ROM) et que la personnalisation de l'installation est possible.
 \\
-(voir \url{http://people.debian.org/~osamu/hackdi/}) \\
 
 %TODO
 %http://thierrylhomme.developpez.com/cfengine.html
 %http://www.informatik.uni-koeln.de/fai/fai-guide-fr/
-%utiliser Kickstart pour Ubuntu Hoary
+%utiliser Kickstart pour Ubuntu
 
 
 \subsection{Installation et réglages de base}
@@ -131,44 +127,44 @@ Donne/installe la/une liste des paquets installés
 Debian possède un programme de gestion avancée de paquets appelé APT (Advanced Packaging Tool).\\
 Ce système gère les paquets d'après une liste (Packages.gz) et permet de gérer les dépendances, les mises-à-jour particulières ou globales ou encore les conflits. Le fichier qui référence toutes les sources de paquets disponibles est \texttt{/etc/apt/sources.list}. On peut gérer le contenu de ce fichier à l'aide de la fonction \texttt{apt-setup}. \\
 ~\\
-Exemple de fichier \texttt{/etc/apt/sources.list} pour Debian Etch :\\
+Exemple de fichier \texttt{/etc/apt/sources.list} pour Debian Squeeze :\\
 \begin{verbatim}
-deb http://security.debian.org/ etch/updates main contrib non-free
-deb ftp://ftp2.fr.debian.org/debian etch main contrib non-free
-deb-src ftp://ftp2.fr.debian.org/debian etch main contrib non-free
+deb http://security.debian.org/ squeeze/updates main contrib non-free
+deb http://mirror.evolix.org/debian squeeze main contrib non-free
+deb-src http://mirror.evolix.org/debian squeeze main contrib non-free
 \end{verbatim}
 ~\\
 \texttt{dselect} est l'outil de gestion des paquets historique (dpkg a une dépendance envers dselect~!). Son utilisation n'est pas forcément aisée pour les novices. \\
 ~\\
 Lien : \url{http://www.debian.org/releases/woody/i386/dselect-beginner}\\
 ~\\
-La commande \texttt{apt-get} est une interface pour APT. Voici quelques commandes souvent utilisées~: \\
+La commande \texttt{aptitude} est une interface pour APT. Voici quelques commandes souvent utilisées~: \\
 ~\\
-\texttt{apt-get update}\\
+\texttt{aptitude update}\\
 Cette commande resynchronise les informations sur les fichiers disponibles à partir des endroits spécifiés dans le \texttt{sources.list}. Cette commande récupère donc les fichiers Packages.gz et les analyse de manière à rendre disponibles les informations concernant les nouveaux paquets.\\
 ~\\
-\texttt{apt-get upgrade}\\
+\texttt{aptitude safe-upgrade}\\
 Cette commande met à jour tous les paquets dont une version plus récente est disponible sans supprimer de paquets, ni en ajouter. \\
 ~\\
-\texttt{apt-get dist-upgrade}\\
+\texttt{aptitude full-upgrade}\\
 Cette commande met à jour les paquets (comme upgrade) en utilisant une gestion intelligente des changements de dépendances. Ainsi des paquets pourront être supprimés et des nouveaux paquets pourront être installés.\\
 ~\\
-\texttt{apt-get install <paquet>}\\
+\texttt{aptitude install <paquet>}\\
 Cette commande installe le paquet <paquet> ainsi que toutes ses dépendances nécessaires.
 \begin{verbatim}
 apt-get remove --purge <paquet>
 \end{verbatim}
 Cette commande supprime le paquet <paquet> ainsi que tous ceux qui en dépendent.\\
 ~\\
-\texttt{apt-get clean}\\ 
+\texttt{aptitude clean}\\ 
 Cette commande supprime les paquets installés du répertoire de cache d'APT (libère de l'espace disque). On peut également utiliser autoclean qui va supprimer uniquement les paquets les plus anciens et inutiles.\\
 ~\\
 
 D'autres interfaces utilisent APT~:\\
 ~\\
 \begin{itemize}
-\item[{\textbf{aptitude}}]
-Outil de gestion des paquets directement au-dessus d'APT. Il peut être utilisé comme alternative à apt-get (les "commandes apt-get" sont acceptées) et offre certains avantages supplémentaires\footnote{\url{http://www.debian.org/doc/manuals/reference/ch-package.fr.html\#s-aptitude}} (par exemple, aptitude retient les dépendances installées et les supprime lorsqu'elles ne sont plus nécessaires). Le Debian-Installeur utilise d'ailleurs aptitude et l'utilisation de cet outil est désormais recommandée. \\
+\item[{\textbf{apt-get}}]
+C'est l'ancien outil qui est petit à petit remplacé par \texttt{aptitude} : toujours utilisable, il est notamment toujours très partique pour les commandes \texttt{apt-get source} ou \texttt{apt-get -f install}.
 ~\\
 \item[{\textbf{synaptic}}]
 Outil graphique de gestion des paquets en GTK+ basé sur APT. Il permet d'utiliser la plupart des fonctions (recherche, installation, mise-à-jour, etc.)\\

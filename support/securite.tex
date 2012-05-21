@@ -1,103 +1,136 @@
-% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
-%  Permission is granted to copy, distribute and/or modify this document
-%  under the terms of the GNU Free Documentation License, Version 1.2
-%  or any later version published by the Free Software Foundation;
-%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2005-2011 eVoLiX. Tous droits reserves.%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Administration Système et Sécurité}
+\chapter{Administration Système et Réseau}
 
-La sécurité informatique englobe non seulement la sécurité réseau pour se prémunir d'attaque locale ou extérieure, mais également la sécurité physique, la gestion des utilisateurs, des droits, des journaux et des sauvegardes.\\
+\section{Gestion des droits}
 
-\section{Sécurité physique}
-
-\textbf{Au niveau des infrastructures} \\
+Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers : les fichiers, les répertoires, les liens symboliques, les fichiers-périphériques.\\
 ~\\
-Même si les gens ont plutôt tendance à l'oublier, la sécurité physique de la machine est très importante. Il est nécessaire qu'un disque dur ne soit pas en évidence, prêt à être volé avec toutes les informations qu'il contient. Il est important que l'alimentation d'un serveur soit protégée, et qu'il ne suffise pas juste au pirate de débrancher le cordon à la prise pour que des dizaines de couches de sécurité logicielles soient anéanties.\\
-
-\textbf{Au niveau de l'utilisation} \\
-~\\
-Lorsque vous tapez un mot de passe, il n'est pas superflu de vous assurer que personne ne soit penché ou dessus de votre épaule, ou qu'aucun élément d'écoute a été rajouté (keylogger logiciel ou physique).
-
-\section{Sécurité au démarrage}
-
-\textbf{Au niveau du BIOS} \\
-~\\
-Une première méthode de sécurisation consiste à autoriser uniquement le disque dur à démarrer. Il faut aussi définir un mot de passe au niveau du BIOS empêchant de changer les paramètres de ce dernier pour un démarrage sur un autre périphérique dans l'espoir de pouvoir ensuite avec différents outils accéder aux données du disque dur.\\
-
-Il est également possible d'avoir des protections complexes, comme une authentification mutuelle entre le BIOS et le disque, mais ces protections sont rarement mises en place.\\
-
-\textbf{Au niveau du Boot Loader}\\
-~\\
-\emph{Lilo}\\
-Le fichier de configuration principal est lilo.conf (\textit{/etc/lilo.conf})\\
-Dans ce fichier la possibilité est donnée de mettre en place un mot de passe par l'ajout de la ligne : \texttt{password = motdepasse}.
-A remarquer que contrairement à grub que l'on va décrire, une modification de lilo.conf pour être prise en compte doit être suivie de la commande \texttt{\#lilo} exécutée en tant que root.\\
-~\\
-\emph{Grub}\\
-De même que précedemment il est possible avec grub d'ajouter un mot de passe qui peut même être crypté~:\\
-\\
-Lancer le shell GRUB~:\\
-~\\
-\texttt{\# grub}\\
-\texttt{grub> md5crypt}\\
-~\\
-entrez votre mot de passe :\\
-\\
-Password: *********\\
-Encrypted: {\small{\$1\$gxRBf0\$pe0rH7/nG9KPJLvc.XV7V.}}\\
-~\\
-puis, copiez le mot de passe crypté dans votre fichier de configuration \texttt{/boot/grub/menu.lst}~:
+Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).\\
+On peut changer l'utilisateur par la commande:
 \begin{verbatim}
-password --md5 $1$gxRBf0$pe0rH7/nG9KPJLvc.XV7V.
+$ chown <new_user> fichier
 \end{verbatim}
-L'argument password peut être utilisé pour restreindre certaines entrées; dans ce cas il est inséré juste sous la ligne "title" à  démarrer. \\
 ~\\
-Dans le fichier \textit{/etc/inittab} permet à un utilisateur physique de redémarrer la machine. Vous pouvez donc supprimer cette ligne~:\\
-\texttt{ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now}
+On peut changer le groupe par la commande:
+\begin{verbatim}
+$ chgrp <new_group> fichier
+\end{verbatim}
 ~\\
-Pour demander à init (le processus d'initialisation) de réexaminer \texttt{/etc/inittab}, faire~:\\
-\texttt{\# init q} \\
+On peut changer l'utilisateur et le groupe par la commande:
+\begin{verbatim}
+$ chown <new_user>.<new_group> fichier
+\end{verbatim}
 ~\\
-Néanmoins, malgré toutes ces protections possibles, il faut considérer qu'avoir un accès physique à une machine permet d'en faire ce que l'on veut. C'est pourquoi on se contente souvent des protections basiques comme fermer la salle des machines à clé, mettre en place des cadenas sur les boitiers ou encore avoir un système de vidéosurveillance. \\
+Les 3 droits fondamentaux sont la lecture, l'écriture et l'éxecution.\\
+Pour un fichier, ces 3 droits sont définis pour 3 catégories: l'utilisateur, le groupe et le "reste du monde". Pour chacune de ces catégories: on note les droits sous la forme rwx.\\
+\textbf{r} correspond à l'écriture, \textbf{w} à l'écriture et \textbf{x} à l'exécution. Par exemple, \textbf{r-x} correspond à des droits de lecture et d'exécution autorisés, mais l'écriture interdite.\\
+Un notation pratique est de voir \textbf{rwx} comme 3 bits. L'autorisation correspond à 1 et l'interdication à 0.\\
+Par exemple \textbf{r-x} correspond à 101. En base 10, 101=1*4+0*2+1*1=5. Cela correspond donc à 5.On notera côte à côte les droits des 3 catégories.\\
+Par exemple \textbf{rwxr-xr--} correspond à des droits \textbf{rwx} pour l'utilisateur, \textbf{r-x} pour le groupe et \textbf{r--} pour le reste du monde. Si vous avez bien suivi, \textbf{rwxr-xr--}=111101100=754\\
+On ajoute (ou retire) des droits avec la commande :
+\begin{verbatim}
+$ chmod <catégorie>+<nouveau_droit> fichier
+\end{verbatim}\\
+~\\
+\texttt{<catégorie>} peut être u (utilisateur), g (groupe) ou a (all=reste du monde). \texttt{<nouveau\_droit>} peut être r,w ou x\\
+Pour retirer, on mettra un - à la place du +\\
+On peut changer complètement les droits d'un fichier par la commande:
+\begin{verbatim}
+$ chmod <nouveaux_droits> fichier
+\end{verbatim}
+Par exemple, \texttt{<nouveaux\_droits>}=777 pour autoriser tout par tout le monde.\\
+~\\
+Pour un répertoire, on pourra lister les fichiers dans ce répertoire si on a les droits \textbf{r} du répertoire (et ceux des répertoires supérieurs). Si on a pas ces droits, on ne pourra pas lister. Le droit \textbf{rx} permet en plus d'entrer dans ce répertoire. Sans lui, on ne pourra pas effectuer des opérations sur un des fichiers contenus dans ce répertoire. Par exemple, le répertoire \texttt{/root/} n'a souvent aucun droit pour "all" et donc on ne peut rien faire dans ce répertoire si l'on est pas root.\\
+~\\
+Notons que le droit \textbf{x} seul permet de traverser le répertoire mais pas d'y entrer ou de le lister\\
+~\\
+Attention, pour pouvoir effacer un fichier ou un répertoire vide, il suffit d'avoir les droits \textbf{wx} sur le répertoire contenant ! (avoir uniquement de droit \textbf{w} ne sert -a priori- à rien pour un répertoire). Notez que dans un répertoire avec droit \textbf{wx}, on peut effacer les fichiers (ou répertoires vides) sur lesquels on n'a pas les droits (par contre, on ne peut pas effacer les répertoires non vides sur lesquels on a pas les droits \textbf{wx}).\\
+~\\
+En plus de cela, il existe des droits spéciaux: setuid, setgid et sticky bit\\
+- Un fichier exécutable peut être \texttt{setuid}, c'est-à-dire qu'au lieu d'être exécuté avec les droits de l'utilisateur qui le lance, il sera exécuté avec les droits du propriétaire de l'exécutable. Ceci s'avère assez dangereux notamment pour les exécutables \texttt{setuid} root. L'exemple-type est le programme \texttt{passwd} qui permet de changer de mot de passe. Il est exécutable par un utilisateur mais il est \texttt{setuid} root car seul root peut écrire dans les fichiers \texttt{/etc/passwd} et \texttt{/etc/shadow}\\
+- Un fichier exécutable peut être \texttt{setguid}. Il s'agit de la même notion que celle vue ci-dessus pour le groupe. Le fichier est donc exécuté avec les droits du groupe auquel il appartient.\\
+- Un fichier exécutable peut être \texttt{sticky}, c'est-à-dire avoir le \texttt{sticky bit} positionné. Cela signifie qu'il reste en mémoire même après la fin de son exécution afin d'être relancé plus rapidement. Attention, seul root peut positionner le \texttt{sticky bit}.
+%à préciser
+- Un répertoire peut être \texttt{setgid}. Cela signifie que tous les fichiers créés dans ce répertoire appartiendront au même groupe que le répertoire.\\
+- Un répertoire peut être \texttt{sticky} bit. Cela signifie dans ce répertoire, un utilisateur ne pourra effacer que les fichiers qui lui appartiennent. L'exemple-type est le répertoire /tmp où tout le monde peut écrire mais où l'on ne peut effacer que ce que l'on a créé.\\
+Ces droits spéciaux sont notés \texttt{sst} où le premier \texttt{s} correspond au \texttt{setuid}, le second au \texttt{setgid} et le \texttt{t} au \texttt{sticky bit}.\\
+On écrira également cela sous la forme de bits. Par exemple s-t=101=5 On ajoute (ou retire) des droits spéciaux avec la commande:
+\begin{verbatim}
+$ chmod +<droit_spécial> fichier
+\end{verbatim}
+~\\
+\texttt{<droit\_spécial>} peut être \texttt{s (setuid+setgid)} ou \texttt{t (sticky bit)}\\
+On change complètement les droits spéciaux et les droits d'un fichier par la commande:
+\begin{verbatim}
+$ chmod <nouveaux_droits_spéciaux><nouveaux_droits> fichier
+\end{verbatim}
+~\\
+\texttt{<nouveaux\_droits\_spéciaux>} s'écrit en base 10. Par exemple, 5 pour setuid et \texttt{sticky bit}.\\
+~\\
+Il faut aussi définir la politique de gestion des droits de la machine, c'est-à-dire se poser la question "Qui a le droit de faire quoi~?" \\
+Définissons tout d'abord les droits au niveau des données utilisateurs. Les droits par défaut sont gérés par la directive \texttt{umask}. On mettra donc, selon sa politique, dans le fichier \textit{/etc/profile} (et dans login.defs pour gérer lors de la création de l'utilisateur) :\\
+~\\
+\textit{umask 022} : pour que les données utilisateurs soient visibles par tous les utilisateurs\\
+~\\
+\textit{umask 027} : pour que les données d'un utilisateur soient visibles entre eux par les utilisateurs du même groupe\\
+~\\
+\textit{umask 077} :  pour que seul l'utilisateur puisse lire ses fichiers par défaut\\
+~\\
+Il faut ensuite gérer les droits sur les périphériques. Les différents périphériques appartiennent souvent à un groupe (cdrom, audio, video, etc.) et on peut gérer les droits en ajoutant ou non les utilisateurs à ces groupes. On ne détaillera pas trop cette procédure car elle est surtout valable dans le cas où il s'agit de postes de travail accessible physiquement aux utilisateurs.\\
+~\\
+Il faut également penser à mettre des protections sur les répertoires et partitions accessibles à l'utilisateur (on traitera le cas des journaux systèmes à part : voir par la suite). Ces protections ne sont pas infaillibles mais constituent un premier rempart dans le cas d'attaques d'un utilisateur inexpérimenté (souvent appelés script-kiddy). Voici un exemple de protection que l'on peut mettre dans le fichier \textit{/etc/fstab}~:\\
+~\\
 
-\section{Authentification}
+\begin{verbatim}
+/dev/sda8 /tmp ext3 defaults,nodev,nosuid,noexec,usrquota,grpquota 0 2
+# disques amovibles
+/dev/fd0 /mnt/fd0 ext2 defaults,users,nodev,nosuid,noexec 0 0
+/dev/fd0 /mnt/floppy vfat defaults,users,nodev,nosuid,noexec 0 0
+/dev/hdc /mnt/cdrom iso9660 ro,users,nodev,nosuid,noexec 0 0
+\end{verbatim}
 
-Le fichier \texttt{/etc/passwd} contient la liste des utilisateurs avec le mot de passe chiffré. Ainsi lors de la procédure d'authentification d'un utilisateur, le système teste si le chiffrement du mot de passe entré correspond au mot de passe chiffré (\texttt{/etc/passwd} est accessible en lecture aux utilisateurs). Il est souhaitable d'utiliser l'algorithme de chiffrement MD5 pour chiffrer les mots de passe. Il est également conseillé d'utiliser l'authentification shadow. Avec cette authentification, les mots de passe du fichier /etc/passwd sont remplacés par 'x' et sont stockés dans le fichier \texttt{/etc/shadow}, inaccessible en lecture aux utilisateurs. D'autres méthodes d'authentification locale existent comme sous OpenBSD\footnote{\url{http://openbsd.org/}}  mais l'utilisation de la méthode shadow est répandue sur les distributions Linux. Il faut bien avoir conscience que cela repose sur la solidité de l'algorithme de chiffrement\footnote{\url{http://evolix.org/man/crypt.html}}.\\
+Remarque~: certains paquets (screen, PostgreSQL, etc.) nécessitent d'exécuter un script dans \textit{/tmp/}. On fera donc~:
+\begin{verbatim}
+# mount -o exec,remount /tmp
+\end{verbatim}
 
-Le fichier \texttt{/etc/group} stocke la liste des groupes, c'est-à-dire des entités regroupant plusieurs utilisateurs et permettant de donner à ce groupe d'utilisateurs les mêmes droits sur des fichiers. Un utilisateur peut connaître les groupes auxquels il appartient en tapant la commande \texttt{groups} ou encore \texttt{id}.\\ 
-Le fichier /etc/adduser.conf contient les valeurs par défaut pour les programmes \textit{adduser} \textit{addgroup} \textit{deluser} et \textit{delgroup}. Chaque option est de la forme option = valeur. Les simples ou doubles guillemets sont autorisés autour de la valeur. Les lignes de commentaires doivent avoir un caractère dièse (\#) au début de la ligne.\\
+Avant d'installer des paquets, puis on refera~:
+\begin{verbatim}
+# mount -o remount /tmp
+\end{verbatim}
+
+Plus généralement on peut vérifier ce que peut voir un utilisateur par les commandes~:
+
+\begin{verbatim}
+$ find / -type f -a -perm +006 2>/dev/null}
+$ find / -type d -a -perm +007 2>/dev/null}
+\end{verbatim}
+
+On prendra garde par exemple aux données sensibles des fichiers de configuration ou des scripts (notamment des données web). On peut par exemple voir les fichiers du répertoire /etc non visibles par un utilisateur~:
+
+\begin{verbatim}
+# find /etc -type f -a -perm 600 -a -uid 0
+\end{verbatim}
+
+On peut également restreindre les droits sur certaines applications dangereuses.\\
+Exemple :\\
+\begin{verbatim}
+chmod o-x /usr/bin/nmap
+chmod -s /bin/ping
+\end{verbatim}
+On pourra autoriser l'utilisation de n'importe quel programme (même des programmes administrateurs) grâce au logiciel sudo\footnote{\url{http://www.courtesan.com/sudo/}}. Son fichier de configuration est \textbf{/etc/sudoers}. Voici un exemple~: \\
 ~\\
-Exemple~:\\
-\texttt{
-DSHELL=/bin/bash\\
-DHOME=/home\\
-SKEL=/etc/skel\\
-QUOTAUSER="forquota"\\
-DIR\_MODE=0755\\
+\texttt{User\_Alias STAFF=jo,zette\\
+Cmnd\_Alias NET=/bin/ping,/usr/bin/traceroute,/usr/bin/nmap\\
+~\\
+root ALL=(ALL) ALL\\
+STAFF ALL=(ALL) NET\\
 }\\
 ~\\
-Le répertoire /etc/skel/ contient le profil par défaut qui sera copié dans le répertoire personnel d'un nouvel utilisateur. Il contient souvent les fichiers .bashrc, .bash\_profile, etc. Pour configurer un profil pour les utilisateurs, on ajoutera des fichiers dans /etc/skel (par exemple des boites à mail, paramètres pour certaines applications, etc.)\\
-~\\
-La gestion des utilisateurs se fait grâce aux commandes adduser et addgroup. Notez bien que les commandes useradd, groupadd, userdel et groupdel ont une syntaxe différente et n'utilisent pas forcément les mêmes configurations.\\
-~\\
-Exemple~:\\
-\begin{verbatim}
-# addgroup --gid 107 student}
-# adduser --home /home/jean --shell /bin/bash  
-  --uid 1057 --ingroup student jean
-\end{verbatim}
-
-~\\
-L'utilisation d'un mot de passe aléatoire contenant des lettres majuscules et minuscules, des chiffres et des caractères spéciaux (au total plus de 8 caractères) est fortement recommandée.\\ 
-Toute trace écrite devra être bannie si possible surtout pour un administrateur - c'est son boulot ;) - à l'exception d'endroits sécurisés (coffre-fort, banque, etc.) accessibles par des supérieurs hiérarchiques. Une procédure en cas d'accident corporel de l'administrateur pourra être mise en place.\\
-~\\
-Pour les mots de passe utilisateurs, il peut être utile d'empêcher les mots de passe trop simples (cracklib) et de faire tourner des crackeurs de mots de passe afin de vérifier en permanence qu'aucun utilisateur n'a un mot de passe trop simple etc.\\
-~\\
-Voici quelques programmes de génération de mot de passe aléatoire disponibles sous Debian~:\\
-\texttt{otp} \texttt{apg} \texttt{makepasswd} \texttt{pwgen}\\
-~\\
-Il existe également des outils pour tenter de cracker les mots de passe. L'un des plus connu est le programme \texttt{john} qu'il est intéressant de faire tourner régulièrement afin de détecter si des utilisateurs ont des mots de passe trop simples.
+\textit{ \# /etc/init.d/sudo restart}
 ~\\
 
 \section{Quotas}
@@ -112,7 +145,7 @@ Ajoutez les options \textit{usrquota} et \textit{grpquota} pour les partitions c
 \texttt{\# touch /home/aquota.user /home/aquota.group}\\
 \texttt{\# chmod 600 /home/aquota.* \&\& chown root:root /home/aquota.*}\\
 \texttt{\# mount -v -o remount /home}\\
-\texttt{\# aptitude install quota quotatool -> warnquota}\\
+\texttt{\# apt-get install quota quotatool -> warnquota}\\
 \texttt{\# update-rc.d -f quotarpc remove}\\
 \texttt{\# quotacheck -auvg}\\
 \texttt{\# quotaon -auvg}\\
@@ -153,53 +186,158 @@ Liens : \\
 \url{http://www.freenix.fr/unix/linux/HOWTO/mini/Quota.html}\\
 \url{http://linux.developpez.com/cours/securedeb/?page=page5\#L5.4}
 
-\section{Gestion des droits}
+\section{Crontab}
+~\\
+Cron est démon qui permet d'exécuter automatiquement des commandes ou des scripts à une date et une heure spécifiées à l'avance.\\
+~\\
+C'est évidemment très utile pour toutes les tâches d'aministration. Le démon cron se base sur le fichier \textit{/etc/crontab} pour lancer des actions toutes les heures (cron.hourly), tous les jours (cron.daily), toutes les semaines (cron.weekly) et tous les mois (cron.monthly). \\
+~\\
+Déjà, il peut être intéressant de personnaliser les paramètres du \textit{/etc/crontab} afin d'éviter l'utilisation des horaires par défaut.\\
+Ensuite on peut placer des scripts (exécutables) dans les cron.*ly ou bien dans le répertoire cron.d afin de personnaliser l'horaire :
+~\\
+\textbf{Squelette} :
+~\\
+"minute" "heure" "date" "mois" "jour" "utilisateur" "commande"\\
+~\\
+Exemple signifiant du lundi au vendredi, toutes les 3h à la 5ème minute:\\
+\texttt{5 */3 * 1-5 root ntpdate serveur-ntp\\
+}
 
-Il faut maintenant définir la politique de gestion des droits de la machine, c'est-à-dire se poser la question "Qui a le droit de faire quoi~?" \\
-Définissons tout d'abord les droits au niveau des données utilisateurs. Les droits par défaut sont gérés par la directive \texttt{umask}. On mettra donc, selon sa politique, dans le fichier \textit{/etc/profile} (et dans login.defs pour gérer lors de la création de l'utilisateur) :\\
-~\\
-\textit{umask 022} : pour que les données utilisateurs soient visibles par tous les utilisateurs\\
-~\\
-\textit{umask 027} : pour que les données d'un utilisateur soient visibles entre eux par les utilisateurs du même groupe\\
-~\\
-\textit{umask 077} :  pour que seul l'utilisateur puisse lire ses fichiers par défaut\\
-~\\
-Il faut ensuite gérer les droits sur les périphériques. Les différents périphériques appartiennent souvent à un groupe (cdrom, audio, video, etc.) et on peut gérer les droits en ajoutant ou non les utilisateurs à ces groupes. On ne détaillera pas trop cette procédure car elle est surtout valable dans le cas où il s'agit de postes de travail accessible physiquement aux utilisateurs.\\
-~\\
-Il faut également penser à mettre des protections sur les répertoires et partitions accessibles à l'utilisateur (on traitera le cas des journaux systèmes à part : voir par la suite). Ces protections ne sont pas infaillibles mais constituent un premier rempart dans le cas d'attaques d'un utilisateur inexpérimenté (souvent appelés script-kiddy). Voici un exemple de protection que l'on peut mettre dans le fichier \textit{/etc/fstab}~:\\
-~\\
+\section{Gestion des Journaux}
 
-\begin{verbatim}
-/dev/sda8 /tmp ext3 defaults,nodev,nosuid,noexec,usrquota,grpquota 0 2
-# disques amovibles
-/dev/fd0 /mnt/fd0 ext2 defaults,users,nodev,nosuid,noexec 0 0
-/dev/fd0 /mnt/floppy vfat defaults,users,nodev,nosuid,noexec 0 0
-/dev/hdc /mnt/cdrom iso9660 ro,users,nodev,nosuid,noexec 0 0
+Les journaux sont des fichiers qui contiennent des informations d'activité datée. Ils sont essentiels pour un serveur pour de nombreuses raisons : vérifier des actions passées, générer des statistiques, déboguer un programme. La vérification des actions passées est notamment importante en cas de problème (piratage, service défectueux). La justice oblige également à conserver certains journaux pendant une certaine durée. Un flou concerne ce qu'il faut réellement conserver (apparemment seules les informations d'entêtes mais pas le contenu en lui-même) et la durée (cela varie entre 3 mois, 1 an et 3 ans si l'on se base sur les lois françaises ou européennes). Des décrets d'application devraient éclaircir ces points dans les prochains mois.\\
+~\\
+Sous Debian, les journaux se trouvent généralement dans le répertoire \textit{/var/log}. On va distinguer les journaux systèmes et les journaux applicatifs. Les journaux systèmes sont gérés par le démon SYSLOG\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc3164.txt}}. Sa configuration se trouve dans le fichier \textit{syslog.conf}. Voici quelques ligne extraites de ce fichier~:
+\begin{verbatim} 
+daemon.*                              -/var/log/daemon.log
+kern.*                                -/var/log/kern.log
+mail.*                                -/var/log/mail.log
+*.=debug;auth,authpriv.none;news.none;mail.none  -/var/log/debug
+*.emerg                               *
+*.*;auth,authpriv.none                /dev/tty8
 \end{verbatim}
 
-Remarque~: certains paquets (screen, PostgreSQL, etc.) nécessitent d'exécuter un script dans \textit{/tmp/}. On fera donc~:
+Voici les fichiers pincipaux générés par SYSLOG : \\
+~\\
+\begin{itemize}
+\item[\textbf{auth.log :}] authentification système (login, su, getty)
+\item[\textbf{daemon.log :}] relatif aux daemons
+\item[\textbf{mail.* :}] messages relatifs aux mails
+\item[\textbf{kern.log :}] messages générés par le noyau
+\item[\textbf{user.log :}] message généré par des programmes utilisateur
+\item[\textbf{debug :}] messages de bogues
+\item[\textbf{messages :}]  messages d'info
+\item[\textbf{syslog :}]  tous les messages
+\end{itemize}
+~\\
+~\\
+Les journaux applicatifs sont générés par chaque application. Ils sont souvent dans un répertoire du nom de l'application situé dans \textit{/var/log}.\\
+~\\
+L'un des points essentiels est la rotation des journaux, c'est-à-dire l'action de fermer le journal actuel (et éventuellement le compresser) et d'en ouvrir un autre. Il existe actuellement deux programmes qui se chargent d'effectuer ce travail. Le script \texttt{savelog} (un outil Debian) et le programme \texttt{logrotate}. Par défaut \texttt{savelog} gère les journaux système et \texttt{logrotate} gère les journaux applicatifs (apache, mysql, ppp, etc.).\\
+Logrotate est exécuté tous les jours (cron.daily) \\
+Savelog est exécuté tous les jours (crond.daily) pour syslog notamment.\\
+Savelog est exécuté toutes les semaines (crond.weekly) pour les autres journaux système.\\
+~\\
+L'option "-d" de savelog permet d'utiliser la date lors de la rotation des journaux et de ne pas les effacer. On pourra donc ajouter ses propres règles dans les scripts cron pour faire une sauvegarde distante des journaux (éventuellement dans une base de données). Pour des serveurs dédiés (applications clés), on peut augmenter la fréquence des rotations et des sauvegardes distantes, mais également utiliser des scripts afin de détecter toutes alertes ou anomalies et les envoyer par courrier électronique ou même SMS. \\
+Il existe des programmes analysant les journaux permettant de détecter des problèmes, avoir des statistiques (lire logtool prelude).\\
+~\\
+Il faut donc bien insister sur la nécessité de surveiller les services en production à l'aide d'outils adaptés. On dispose donc d'outils s'appuyant souvent sur le protocole SNMP (Simple Network Management Protocol) qui permet de gérer et diagnostiquer les problèmes en transférant des informations système (réseau, charge, état, etc.).
+~\\
+Pour exploiter ces informations, on pourra tracer des courbes MRTG\footnote{\url{http://people.ee.ethz.ch/~oetiker/webtools/mrtg/}} ou RRDtool\footnote{\url{http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/}}. Ces logiciels permettent de produire des courbes totalement personnalisées pour tracer des courbes.\\
+~\\
+%TODO
+%http://www.linpro.no/projects/munin/
+%http://stat.trackfire.net/statspppd/src/
+%http://people.ee.ethz.ch/~oetiker/webtools/smokeping/
+
+\section{OpenSSH}
+
+SSH signifie Secure SHell (Shell sécurisé). Le protocole SSH est en cours de standardisation par l'IETF\footnote{\url{http://www.ietf.org/html.charters/secsh-charter.html}}. Les outils du protocole SSH sont utilisés par un nombre croissant de personnes. Ils sont destinés à sécuriser le login à distance, sécuriser les transferts de fichiers et sécuriser les TCP/IP et X11 forwardings. Il peut automatiquement chiffrer, authentifier et compresser des données transmises.\\
+~\\
+La principale implémentation du protocole est OpenSSH\footnote{\url{http://www.openssh.org}}. OpenSSH est une version libre de la suite d'outils du protocole SSH. De nombreux utilisateurs de telnet, rlogin, ftp et autres programmes identiques ne réalisent pas que leur mot de passe et leurs données sont transmis de façon non chiffrée. OpenSSH chiffre tout le trafic (mots de passe inclus) de façon à déjouer les écoutes réseau, les prises de contrôle de connexion, et autres attaques. De plus, OpenSSH fournit toute une palette de possibilités de tunnel et de méthodes d'authentification. OpenSSH \textbf{doit} être utilisé à la place de telnet et autres logiciels non-sûrs.\\
+
+Pour la plupart de ses fonctionnalités cryptographiques, OpenSSH s'appuie sur la bibliothèque OpenSSL. La suite logicielle OpenSSH inclue les programmes ssh qui remplace telnet et rlogin, scp qui remplace rcp, et sftp qui remplace ftp. De plus sshd, la partie serveur, est inclus ainsi que d'autres utilitaires tels que ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server. OpenSSH supporte les protocoles SSH 1.3, 1.5 et 2.0. Intéressons nous à sa configuration, qui se trouve dans le fichier \textit{sshd\_config} :\\
+
 \begin{verbatim}
-# mount -o exec,remount /tmp
+Protocol 2
+LoginGraceTime 30
+PermitRootLogin no
+AllowUsers moi admin
+ClientAliveInterval 15
+ClientAliveCountMax 45
+\end{verbatim}
+~\\
+
+On peut également imposer des restrictions supplémentaires dans le fichier pam.d/ssh :\\
+\begin{verbatim}
+auth required pam_listfile.so sense=allow onerr=fail 
+item=user file=/etc/loginusers
+\end{verbatim}
+~\\
+Si des utilisateurs normaux sont destinés à utiliser SSH, il peut être intéressant de l'installer dans une prison Chroot. Voici quelques liens qui expliquent cette mise en place~: \\
+
+Liens : \\
+{\small
+\url{http://chrootssh.sourceforge.net/index.php} \\
+\url{http://www.debian.org/doc/manuals/securing-debian-howto/ap-chroot-ssh-env.fr.html} \\
+\url{http://vince.kerneled.org/files/ssh\_chroot.txt} \\
+}
+~\\
+
+\section{Transfert de fichiers}
+~\\
+Le transfert de fichiers par le protocole FTP fait circuler identifiants, mot de passe et données en clair sur le réseau. Il est vraiment préférable d'utiliser scp ou sftp, du projet OpenSSH, qui permet de transférer des fichiers de façon plus sécurisée. Mais dans certains cas, notamment dans le cas de serveur web mutualisé, il est de coutume d'offrir un accès FTP. Il faut donc prendre quelques précautions. Par exemple, avec le serveur ProFTPD\footnote{\url{http://www.proftpd.org/}}, certaines directives du fichier de configuration \textit{proftpd.conf} sont importantes : \\
+\begin{verbatim}
+DefaultRoot ~ 
+DenyFilter \*.*/
 \end{verbatim}
 
-Avant d'installer des paquets, puis on refera~:
+On pourra également utiliser PAM pour limiter l'accès selon les utilisateurs. Dans le fichier \textit{/etc/pam.d/proftpd}~: \\
+auth       required     pam\_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
+
+~\\
+On aura donc un fichier \textit{/etc/ftpusers} qui spécifiera les identifiants ne pouvant pas utiliser les services FTP (on pourrait faire l'inverse aussi). \\
+~\\
+Dans le but de chiffrer les connexions FTP, on peut également utiliser une couche SSL. Les serveurs Pure-FTP\footnote{\url{http://www.pureftpd.org/}} ou linux-ftpd-ssl\footnote{\url{http://freshmeat.net/projects/linux-ftpd-ssl/}} permettent cela. Il faut bien noter qu'il faut utiliser un programme client capable de l'utiliser (mais c'est le cas de plus en plus de clients). \\
+
+\section{Authentification}
+
+Le fichier \texttt{/etc/passwd} contient la liste des utilisateurs avec le mot de passe chiffré. Ainsi lors de la procédure d'authentification d'un utilisateur, le système teste si le chiffrement du mot de passe entré correspond au mot de passe chiffré (\texttt{/etc/passwd} est accessible en lecture aux utilisateurs). Il est souhaitable d'utiliser l'algorithme de chiffrement MD5 pour chiffrer les mots de passe. Il est également conseillé d'utiliser l'authentification shadow. Avec cette authentification, les mots de passe du fichier /etc/passwd sont remplacés par 'x' et sont stockés dans le fichier \texttt{/etc/shadow}, inaccessible en lecture aux utilisateurs. D'autres méthodes d'authentification locale existent comme sous OpenBSD\footnote{\url{http://openbsd.org/}}  mais l'utilisation de la méthode shadow est répandue sur les distributions Linux. Il faut bien avoir conscience que cela repose sur la solidité de l'algorithme de chiffrement\footnote{\url{http://evolix.org/man/crypt.html}}.\\
+
+Le fichier \texttt{/etc/group} stocke la liste des groupes, c'est-à-dire des entités regroupant plusieurs utilisateurs et permettant de donner à ce groupe d'utilisateurs les mêmes droits sur des fichiers. Un utilisateur peut connaître les groupes auxquels il appartient en tapant la commande \texttt{groups} ou encore \texttt{id}.\\ 
+Le fichier /etc/adduser.conf contient les valeurs par défaut pour les programmes \textit{adduser} \textit{addgroup} \textit{deluser} et \textit{delgroup}. Chaque option est de la forme option = valeur. Les simples ou doubles guillemets sont autorisés autour de la valeur. Les lignes de commentaires doivent avoir un caractère dièse (\#) au début de la ligne.\\
+~\\
+Exemple~:\\
+\texttt{
+DSHELL=/bin/bash\\
+DHOME=/home\\
+SKEL=/etc/skel\\
+QUOTAUSER="forquota"\\
+DIR\_MODE=0755\\
+}\\
+~\\
+Le répertoire /etc/skel/ contient le profil par défaut qui sera copié dans le répertoire personnel d'un nouvel utilisateur. Il contient souvent les fichiers .bashrc, .bash\_profile, etc. Pour configurer un profil pour les utilisateurs, on ajoutera des fichiers dans /etc/skel (par exemple des boites à mail, paramètres pour certaines applications, etc.)\\
+~\\
+La gestion des utilisateurs se fait grâce aux commandes adduser et addgroup. Notez bien que les commandes useradd, groupadd, userdel et groupdel ont une syntaxe différente et n'utilisent pas forcément les mêmes configurations.\\
+~\\
+Exemple~:\\
 \begin{verbatim}
-# mount -o remount /tmp
+# addgroup --gid 107 student}
+# adduser --home /home/jean --shell /bin/bash  
+  --uid 1057 --ingroup student jean
 \end{verbatim}
 
-Plus généralement on peut vérifier ce que peut voir un utilisateur par les commandes~:
-
-\begin{verbatim}
-$ find / -type f -a -perm +006 2>/dev/null}
-$ find / -type d -a -perm +007 2>/dev/null}
-\end{verbatim}
-
-
-On prendra garde par exemple aux données sensibles des fichiers de configuration ou des scripts (notamment des données web). On peut par exemple voir les fichiers du répertoire /etc non visibles par un utilisateur~:
-
-\begin{verbatim}
-# find /etc -type f -a -perm 600 -a -uid 0
-\end{verbatim}
+~\\
+L'utilisation d'un mot de passe aléatoire contenant des lettres majuscules et minuscules, des chiffres et des caractères spéciaux (au total plus de 8 caractères) est fortement recommandée.\\ 
+Toute trace écrite devra être bannie si possible surtout pour un administrateur - c'est son boulot ;) - à l'exception d'endroits sécurisés (coffre-fort, banque, etc.) accessibles par des supérieurs hiérarchiques. Une procédure en cas d'accident corporel de l'administrateur pourra être mise en place.\\
+~\\
+Pour les mots de passe utilisateurs, il peut être utile d'empêcher les mots de passe trop simples (cracklib) et de faire tourner des crackeurs de mots de passe afin de vérifier en permanence qu'aucun utilisateur n'a un mot de passe trop simple etc.\\
+~\\
+Voici quelques programmes de génération de mot de passe aléatoire disponibles sous Debian~:\\
+\texttt{otp} \texttt{apg} \texttt{makepasswd} \texttt{pwgen}\\
+~\\
+Il existe également des outils pour tenter de cracker les mots de passe. L'un des plus connu est le programme \texttt{john} qu'il est intéressant de faire tourner régulièrement afin de détecter si des utilisateurs ont des mots de passe trop simples.
+~\\
 
 \section{Gestion de l'authentification}
 
@@ -391,121 +529,76 @@ On peut également avoir divers renseignements sur les utilisateurs~:\\
 \textit{ \# w.procs} : donne les utilisateurs actuellement connectés et des renseignements complémentaires\\
 ~\\
 
-\section{Droits sur les applications}
+\section{Sécurité}
 
-On peut également restreindre les droits sur certaines applications dangereuses.\\
-Exemple :\\
+La sécurité informatique englobe non seulement la sécurité réseau pour se
+prémunir d'attaque locale ou extérieure, mais également la sécurité physique,
+la gestion des utilisateurs, des droits, des journaux et des sauvegardes.\\
+
+\textbf{Sécurité physique au niveau des infrastructures} \\
+~\\
+Même si les gens ont plutôt tendance à l'oublier, la sécurité physique de la
+machine est très importante. Il est nécessaire qu'un disque dur ne soit pas en
+évidence, prêt à être volé avec toutes les informations qu'il contient. Il est
+important que l'alimentation d'un serveur soit protégée, et qu'il ne suffise
+pas juste au pirate de débrancher le cordon à la prise pour que des dizaines de
+couches de sécurité logicielles soient anéanties.\\
+
+\textbf{Sécurité physique au niveau de l'utilisation} \\
+~\\
+Lorsque vous tapez un mot de passe, il n'est pas superflu de vous assurer que
+personne ne soit penché ou dessus de votre épaule, ou qu'aucun élément d'écoute
+a été rajouté (keylogger logiciel ou physique).
+
+\textbf{Au niveau du BIOS} \\
+~\\
+Une première méthode de sécurisation consiste à autoriser uniquement le disque
+dur à démarrer. Il faut aussi définir un mot de passe au niveau du BIOS
+empêchant de changer les paramètres de ce dernier pour un démarrage sur un
+autre périphérique dans l'espoir de pouvoir ensuite avec différents outils
+accéder aux données du disque dur.\\
+
+Il est également possible d'avoir des protections complexes, comme une
+authentification mutuelle entre le BIOS et le disque, mais ces protections sont
+rarement mises en place.\\
+
+\textbf{Au niveau du Boot Loader}\\
+~\\
+\emph{Lilo}\\
+Le fichier de configuration principal est lilo.conf (\textit{/etc/lilo.conf})\\
+Dans ce fichier la possibilité est donnée de mettre en place un mot de passe par l'ajout de la ligne : \texttt{password = motdepasse}.
+A remarquer que contrairement à grub que l'on va décrire, une modification de lilo.conf pour être prise en compte doit être suivie de la commande \texttt{\#lilo} exécutée en tant que root.\\
+~\\
+\emph{Grub}\\
+De même que précedemment il est possible avec grub d'ajouter un mot de passe qui peut même être crypté~:\\
+\\
+Lancer le shell GRUB~:\\
+~\\
+\texttt{\# grub}\\
+\texttt{grub> md5crypt}\\
+~\\
+entrez votre mot de passe :\\
+\\
+Password: *********\\
+Encrypted: {\small{\$1\$gxRBf0\$pe0rH7/nG9KPJLvc.XV7V.}}\\
+~\\
+puis, copiez le mot de passe crypté dans votre fichier de configuration \texttt{/boot/grub/menu.lst}~:
 \begin{verbatim}
-chmod o-x /usr/bin/nmap
-chmod -s /bin/ping
+password --md5 $1$gxRBf0$pe0rH7/nG9KPJLvc.XV7V.
 \end{verbatim}
-On pourra autoriser l'utilisation de n'importe quel programme (même des programmes administrateurs) grâce au logiciel sudo\footnote{\url{http://www.courtesan.com/sudo/}}. Son fichier de configuration est \textbf{/etc/sudoers}. Voici un exemple~: \\
+L'argument password peut être utilisé pour restreindre certaines entrées; dans ce cas il est inséré juste sous la ligne "title" à  démarrer. \\
 ~\\
-\texttt{User\_Alias STAFF=jo,zette\\
-Cmnd\_Alias NET=/bin/ping,/usr/bin/traceroute,/usr/bin/nmap\\
+Dans le fichier \textit{/etc/inittab} permet à un utilisateur physique de redémarrer la machine. Vous pouvez donc supprimer cette ligne~:\\
+\texttt{ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now}
 ~\\
-root ALL=(ALL) ALL\\
-STAFF ALL=(ALL) NET\\
-}\\
+Pour demander à init (le processus d'initialisation) de réexaminer \texttt{/etc/inittab}, faire~:\\
+\texttt{\# init q} \\
 ~\\
-\textit{ \# /etc/init.d/sudo restart}
-~\\
-~\\
-Quand on parle de sécurité informatique, de nombreuses personnes pensent uniquement à la sécurité réseau. Ceci est sûrement provoqué par les médiatiques affaires de piratage informatique. Il reste néanmoins vrai que des précautions sont à prendre en terme de sécurité réseau pour éviter les mauvaises surprises.\\
-~\\
-Au niveau d'un serveur, il est préférable d'opter pour une configuration réseau statique. En effet dépendre d'un tiers (serveur DHCP) pour des paramètres aussi essentiels que les paramètres réseau n'est pas prudent. Dans le cas où l'on voudrait quand même avoir un configuration par DHCP, il faudra au minimum une authentification par adresse MAC.
-~\\
-Tout d'abord, parlons de quelques outils réseau dont nous allons nous servir par la suite :\\
-~\\
-\begin{itemize}
-\item[\textbf{netstat :}] netstat -a -u
-\item[\textbf{lsof :}] lsof -i 4 
-\item[\textbf{tcpdump :}] tcpdump -X -i eth2 port 22 > log\_ssh
-\item[\textbf{nmap :}] http://www.insecure.org/nmap/ nmap -O -P0 192.168.23.27
-\item[\textbf{hping :}] outil générateur de paquet réseau
-\item[\textbf{scapy :}] outil de manipulation de paquets
-\item[\textbf{arping :}] arping -a -S 192.168.3.12 -c 3 -i wlan0 192.168.54.22
-\item[\textbf{dsniff :}] dsniff -i eth1
-\end{itemize}
-~\\
-On va donc commencer par contrôler les services réseau ouverts sur la machine et les fermer si nécessaires~:\\
-~\\
-Sur un système installé depuis peu, on trouve souvent ces services ouverts :\\
-~\\
-\texttt{\# nmap localhost}
-\texttt{
-9/tcp~~~open~~discard\\
-13/tcp~~open~~daytime\\
-37/tcp~~open~~time\\
-111/tcp~open~~rpcbind\\
-113/tcp~open~~auth\\
-}
-~\\
-discard, daytime et time sont démarrés par inetd\\
-~\\
-Inetd est historiquement un "super-serveur" permettant de configurer plusieurs services. Pour désactiver les services précédents on procédera à la commande suivante :\\
-\begin{verbatim}
-# update-inetd --disable discard,daytime,time,ident
-\end{verbatim}
-\begin{verbatim}
-WARNING!!!!!! /etc/inetd.conf contains multiple entries for
-the `discard' service. You're about to disable these entries.
-Do you want to continue? [n] y
-\end{verbatim}
-~\\
-
-\textbf{Le super-démon} \\
-
-~\\
-Si vous avez l'intention d'utiliser le serveur Inetd, il est préférable d'utiliser Xinetd\footnote{\url{http://www.xinetd.org/}}, qui remplace Inetd en offrant des fonctionnalités plus complètes notamment en terme de sécurité. Pour installer Xinetd, on installera le paquet xinetd tout simplement. Voici un exemple du fichier de configuration xinetd.conf~:
-
-\begin{verbatim}
-service imap3
-{
-
-        socket_type         = stream
-        protocol            = tcp
-        wait                = no
-        user                = root
-        passenv             =
-        server              = /usr/bin/tcpd
-        server_args         = /usr/sbin/imapd
-}
-\end{verbatim}
-~\\
-On fermera également le port 111 en supprimant le programme portmap (utile pour NIS ou NFS notamment):\\
-\begin{verbatim}
-# aptitude purge portmap
-\end{verbatim}
-~\\
-On supprimera tous les services inutiles.\\
-On vérifie les services TCP ouverts par~:\\
-~\\
-\texttt{
-\# nmap localhost\\
-\# netstat -a -t\\
-}
-~\\
-Et les services UDP par~:\\
-~\\
-\texttt{
-\# nmap -sU localhost\\
-\# netstat -a -u\\
-}
-~\\
-On peut vérifier quels sont les processus qui ouvrent les ports par :\\
-~\\
-\texttt{
-\# lsof -i 4\\
-\# lsof -i 6\\
-}
-~\\
-~\\
-{\small{Note : dans le cas où l'on utilise une configuration réseau par DHCP, on ne s'étonnera pas de trouver le port 68 ouvert en UDP.}}
-:\\
-
-
-\section{Sécurité applicative}
+Néanmoins, malgré toutes ces protections possibles, il faut considérer qu'avoir
+un accès physique à une machine permet d'en faire ce que l'on veut. C'est
+pourquoi on se contente souvent des protections basiques comme fermer la salle
+des machines à clé, mettre en place des cadenas sur les boitiers ou encore
+avoir un système de vidéosurveillance. \\
 
 \textbf{Firewall}
 ~\\
@@ -547,60 +640,9 @@ On citera également les nombreux outils qui permettent d'écouter et d'analyser l
 On peut vérifier l'intégrité du système grâce à des outils de détection des rootkits : Chkrootkit\footnote{\url{http://www.chkrootkit.org/}} :\\ ou Rootkit Hunter\footnote{\url{http://www.rootkit.nl/projects/rootkit\_hunter.html}}\\
 ~\\
 
-
 % voir script checksecurity (Debian package)
 
-\section{OpenSSH}
-
-SSH signifie Secure SHell (Shell sécurisé). Le protocole SSH est en cours de standardisation par l'IETF\footnote{\url{http://www.ietf.org/html.charters/secsh-charter.html}}. Les outils du protocole SSH sont utilisés par un nombre croissant de personnes. Ils sont destinés à sécuriser le login à distance, sécuriser les transferts de fichiers et sécuriser les TCP/IP et X11 forwardings. Il peut automatiquement chiffrer, authentifier et compresser des données transmises.\\
-~\\
-La principale implémentation du protocole est OpenSSH\footnote{\url{http://www.openssh.org}}. OpenSSH est une version libre de la suite d'outils du protocole SSH. De nombreux utilisateurs de telnet, rlogin, ftp et autres programmes identiques ne réalisent pas que leur mot de passe et leurs données sont transmis de façon non chiffrée. OpenSSH chiffre tout le trafic (mots de passe inclus) de façon à déjouer les écoutes réseau, les prises de contrôle de connexion, et autres attaques. De plus, OpenSSH fournit toute une palette de possibilités de tunnel et de méthodes d'authentification. OpenSSH \textbf{doit} être utilisé à la place de telnet et autres logiciels non-sûrs.\\
-
-Pour la plupart de ses fonctionnalités cryptographiques, OpenSSH s'appuie sur la bibliothèque OpenSSL. La suite logicielle OpenSSH inclue les programmes ssh qui remplace telnet et rlogin, scp qui remplace rcp, et sftp qui remplace ftp. De plus sshd, la partie serveur, est inclus ainsi que d'autres utilitaires tels que ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server. OpenSSH supporte les protocoles SSH 1.3, 1.5 et 2.0. Intéressons nous à sa configuration, qui se trouve dans le fichier \textit{sshd\_config} :\\
-
-\begin{verbatim}
-Protocol 2
-LoginGraceTime 30
-PermitRootLogin no
-AllowUsers moi admin
-ClientAliveInterval 15
-ClientAliveCountMax 45
-\end{verbatim}
-~\\
-
-On peut également imposer des restrictions supplémentaires dans le fichier pam.d/ssh :\\
-\begin{verbatim}
-auth required pam_listfile.so sense=allow onerr=fail 
-item=user file=/etc/loginusers
-\end{verbatim}
-~\\
-Si des utilisateurs normaux sont destinés à utiliser SSH, il peut être intéressant de l'installer dans une prison Chroot. Voici quelques liens qui expliquent cette mise en place~: \\
-
-Liens : \\
-{\small
-\url{http://chrootssh.sourceforge.net/index.php} \\
-\url{http://www.debian.org/doc/manuals/securing-debian-howto/ap-chroot-ssh-env.fr.html} \\
-\url{http://vince.kerneled.org/files/ssh\_chroot.txt} \\
-}
-~\\
-
-\section{Transfert de fichiers}
-~\\
-Le transfert de fichiers par le protocole FTP fait circuler identifiants, mot de passe et données en clair sur le réseau. Il est vraiment préférable d'utiliser scp ou sftp, du projet OpenSSH, qui permet de transférer des fichiers de façon plus sécurisée. Mais dans certains cas, notamment dans le cas de serveur web mutualisé, il est de coutume d'offrir un accès FTP. Il faut donc prendre quelques précautions. Par exemple, avec le serveur ProFTPD\footnote{\url{http://www.proftpd.org/}}, certaines directives du fichier de configuration \textit{proftpd.conf} sont importantes : \\
-\begin{verbatim}
-DefaultRoot ~ 
-DenyFilter \*.*/
-\end{verbatim}
-
-On pourra également utiliser PAM pour limiter l'accès selon les utilisateurs. Dans le fichier \textit{/etc/pam.d/proftpd}~: \\
-auth       required     pam\_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
-
-~\\
-On aura donc un fichier \textit{/etc/ftpusers} qui spécifiera les identifiants ne pouvant pas utiliser les services FTP (on pourrait faire l'inverse aussi). \\
-~\\
-Dans le but de chiffrer les connexions FTP, on peut également utiliser une couche SSL. Les serveurs Pure-FTP\footnote{\url{http://www.pureftpd.org/}} ou linux-ftpd-ssl\footnote{\url{http://freshmeat.net/projects/linux-ftpd-ssl/}} permettent cela. Il faut bien noter qu'il faut utiliser un programme client capable de l'utiliser (mais c'est le cas de plus en plus de clients). \\
-
-\section{Isoler les services}
+\textbf{Isoler les services}
 ~\\
 
 \textit{Chroot} \\
@@ -622,7 +664,7 @@ Lien : \url{http://user-mode-linux.sourceforge.net/}
 Vmware est un programme propriétaire plutôt réputé permettant de lancer plusieurs machines virtuelles (MS-Windows, Linux, *BSD) Il existe une version Workstation permettant de lancer des machines virtuelles comme des applications et une version Serveur permettant de lancer à distance des machines virtuelles sur un serveur. \\
 Lien : \url{http://www.vmware.com/}
 ~\\
-
+\textbf{Mises-à-jour logicielles de sécurité}
 ~\\
 "Nous ne cacherons pas les problèmes. Nous garderons toujours notre base de données des rapports de bogues ouverte au public. Les rapports que les utilisateurs remplissent en ligne seront immédiatement visibles par les autres." extrait du Contrat social Debian\\
 ~\\
@@ -633,52 +675,104 @@ Comme pour la plupart des logiciels, la politique de sécurité de Debian est d'av
 Le minimum est de s'abonner à la liste de diffusion debian-security-announce. Mais pour aller plus loin, il est conseillé de suivre de près les listes de diffusion des logiciels utilisés en production et également des listes traitant de sécurité notamment la liste Bugtraq\footnote{\url{http://www.securityfocus.com/archive/1}}. \\
 ~\\
 
-\section{Gestion des Journaux}
-
-Les journaux sont des fichiers qui contiennent des informations d'activité datée. Ils sont essentiels pour un serveur pour de nombreuses raisons : vérifier des actions passées, générer des statistiques, déboguer un programme. La vérification des actions passées est notamment importante en cas de problème (piratage, service défectueux). La justice oblige également à conserver certains journaux pendant une certaine durée. Un flou concerne ce qu'il faut réellement conserver (apparemment seules les informations d'entêtes mais pas le contenu en lui-même) et la durée (cela varie entre 3 mois, 1 an et 3 ans si l'on se base sur les lois françaises ou européennes). Des décrets d'application devraient éclaircir ces points dans les prochains mois.\\
+\section{Réseau}
 ~\\
-Sous Debian, les journaux se trouvent généralement dans le répertoire \textit{/var/log}. On va distinguer les journaux systèmes et les journaux applicatifs. Les journaux systèmes sont gérés par le démon SYSLOG\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc3164.txt}}. Sa configuration se trouve dans le fichier \textit{syslog.conf}. Voici quelques ligne extraites de ce fichier~:
-\begin{verbatim} 
-daemon.*                              -/var/log/daemon.log
-kern.*                                -/var/log/kern.log
-mail.*                                -/var/log/mail.log
-*.=debug;auth,authpriv.none;news.none;mail.none  -/var/log/debug
-*.emerg                               *
-*.*;auth,authpriv.none                /dev/tty8
-\end{verbatim}
-
-Voici les fichiers pincipaux générés par SYSLOG : \\
+Au niveau d'un serveur, il est préférable d'opter pour une configuration réseau statique. En effet dépendre d'un tiers (serveur DHCP) pour des paramètres aussi essentiels que les paramètres réseau n'est pas prudent. Dans le cas où l'on voudrait quand même avoir un configuration par DHCP, il faudra au minimum une authentification par adresse MAC.
+~\\
+Tout d'abord, parlons de quelques outils réseau utiles~:
 ~\\
 \begin{itemize}
-\item[\textbf{auth.log :}] authentification système (login, su, getty)
-\item[\textbf{daemon.log :}] relatif aux daemons
-\item[\textbf{mail.* :}] messages relatifs aux mails
-\item[\textbf{kern.log :}] messages générés par le noyau
-\item[\textbf{user.log :}] message généré par des programmes utilisateur
-\item[\textbf{debug :}] messages de bogues
-\item[\textbf{messages :}]  messages d'info
-\item[\textbf{syslog :}]  tous les messages
+\item[\textbf{netstat :}] netstat -a -u
+\item[\textbf{lsof :}] lsof -i 4 
+\item[\textbf{tcpdump :}] tcpdump -X -i eth2 port 22 > log\_ssh
+\item[\textbf{nmap :}] http://www.insecure.org/nmap/ nmap -O -P0 192.168.23.27
+\item[\textbf{hping :}] outil générateur de paquet réseau
+\item[\textbf{scapy :}] outil de manipulation de paquets
+\item[\textbf{arping :}] arping -a -S 192.168.3.12 -c 3 -i wlan0 192.168.54.22
+\item[\textbf{dsniff :}] dsniff -i eth1
 \end{itemize}
 ~\\
+On va donc commencer par contrôler les services réseau ouverts sur la machine et les fermer si nécessaires~:\\
 ~\\
-Les journaux applicatifs sont générés par chaque application. Ils sont souvent dans un répertoire du nom de l'application situé dans \textit{/var/log}.\\
+Sur un système installé depuis peu, on trouve souvent ces services ouverts :\\
 ~\\
-L'un des points essentiels est la rotation des journaux, c'est-à-dire l'action de fermer le journal actuel (et éventuellement le compresser) et d'en ouvrir un autre. Il existe actuellement deux programmes qui se chargent d'effectuer ce travail. Le script \texttt{savelog} (un outil Debian) et le programme \texttt{logrotate}. Par défaut \texttt{savelog} gère les journaux système et \texttt{logrotate} gère les journaux applicatifs (apache, mysql, ppp, etc.).\\
-Logrotate est exécuté tous les jours (cron.daily) \\
-Savelog est exécuté tous les jours (crond.daily) pour syslog notamment.\\
-Savelog est exécuté toutes les semaines (crond.weekly) pour les autres journaux système.\\
+\texttt{\# nmap localhost}
+\texttt{
+9/tcp~~~open~~discard\\
+13/tcp~~open~~daytime\\
+37/tcp~~open~~time\\
+111/tcp~open~~rpcbind\\
+113/tcp~open~~auth\\
+}
 ~\\
-L'option "-d" de savelog permet d'utiliser la date lors de la rotation des journaux et de ne pas les effacer. On pourra donc ajouter ses propres règles dans les scripts cron pour faire une sauvegarde distante des journaux (éventuellement dans une base de données). Pour des serveurs dédiés (applications clés), on peut augmenter la fréquence des rotations et des sauvegardes distantes, mais également utiliser des scripts afin de détecter toutes alertes ou anomalies et les envoyer par courrier électronique ou même SMS. \\
-Il existe des programmes analysant les journaux permettant de détecter des problèmes, avoir des statistiques (lire logtool prelude).\\
+discard, daytime et time sont démarrés par inetd\\
 ~\\
-Il faut donc bien insister sur la nécessité de surveiller les services en production à l'aide d'outils adaptés. On dispose donc d'outils s'appuyant souvent sur le protocole SNMP (Simple Network Management Protocol) qui permet de gérer et diagnostiquer les problèmes en transférant des informations système (réseau, charge, état, etc.).
+Inetd est historiquement un "super-serveur" permettant de configurer plusieurs services. Pour désactiver les services précédents on procédera à la commande suivante :\\
+\begin{verbatim}
+# update-inetd --disable discard,daytime,time,ident
+\end{verbatim}
+\begin{verbatim}
+WARNING!!!!!! /etc/inetd.conf contains multiple entries for
+the `discard' service. You're about to disable these entries.
+Do you want to continue? [n] y
+\end{verbatim}
 ~\\
-Pour exploiter ces informations, on pourra tracer des courbes MRTG\footnote{\url{http://people.ee.ethz.ch/~oetiker/webtools/mrtg/}} ou RRDtool\footnote{\url{http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/}}. Ces logiciels permettent de produire des courbes totalement personnalisées pour tracer des courbes.\\
+
+\textbf{Le super-démon} \\
+
 ~\\
-%TODO
-%http://www.linpro.no/projects/munin/
-%http://stat.trackfire.net/statspppd/src/
-%http://people.ee.ethz.ch/~oetiker/webtools/smokeping/
+Si vous avez l'intention d'utiliser le serveur Inetd, il est préférable
+d'utiliser Xinetd\footnote{\url{http://www.xinetd.org/}}, qui remplace Inetd en
+offrant des fonctionnalités plus complètes notamment en terme de sécurité. Pour
+installer Xinetd, on installera le paquet xinetd tout simplement. Voici un
+exemple du fichier de configuration xinetd.conf~:
+
+\begin{verbatim}
+service imap3
+{
+
+        socket_type         = stream
+        protocol            = tcp
+        wait                = no
+        user                = root
+        passenv             =
+        server              = /usr/bin/tcpd
+        server_args         = /usr/sbin/imapd
+}
+\end{verbatim}
+~\\
+
+On fermera également le port 111 en supprimant le programme portmap (utile pour NIS ou NFS notamment):\\
+\begin{verbatim}
+# aptitude remove portmap nfs-comon
+\end{verbatim}
+~\\
+
+On supprimera tous les services inutiles.\\
+On vérifie les services TCP ouverts par~:\\
+~\\
+\texttt{
+\# nmap localhost\\
+\# netstat -a -t\\
+}
+~\\
+Et les services UDP par~:\\
+~\\
+\texttt{
+\# nmap -sU localhost\\
+\# netstat -a -u\\
+}
+~\\
+On peut vérifier quels sont les processus qui ouvrent les ports par :\\
+~\\
+\texttt{
+\# lsof -i 4\\
+\# lsof -i 6\\
+}
+~\\
+~\\
+{\small{Note : dans le cas où l'on utilise une configuration réseau par DHCP, on ne s'étonnera pas de trouver le port 68 ouvert en UDP.}}
+
 
 \section{Monitoring}
 
@@ -740,8 +834,14 @@ Pour une surveillance système en direct, on peut utiliser GKrellM\footnote{\url{
 \url{http://www.debian.org/doc/manuals/securing-debian-howto/index.fr.html}\\
 \url{http://entreelibre.com/scastro/debian-secinst/debian-secinst.txt}\\
 
+\section{Scripts shell}
 ~\\
-En informatique, on distingue les langages compilés et les langages interprétés. On peut considérer qu'un "script" est un programme écrit dans un langage interprété. Cela comprendra donc les shells (sh, csh, ksh, tcsh, bash, pdksh) les outils de manipulation de texte (sed, awk), Perl, Tcl, Ruby et Python.
+~\\
+En informatique, on distingue les langages compilés et les langages
+interprétés. On peut considérer qu'un "script" est un programme écrit dans un
+langage interprété. Cela comprendra donc les shells (sh, csh, ksh, tcsh, bash,
+pdksh) les outils de manipulation de texte (sed, awk), Perl, Tcl, Ruby et
+Python.
 ~\\
 ~\\
 La plupart de ces langages pourraient mériter une formation entière aussi nous nous concentrons sur quelques fonctionnalités intéressantes du shell :\\
@@ -791,22 +891,7 @@ Boucle\\
 \texttt{for i in \`ls \*.php\`; do mv \$i \$(\$i\%\%.php).html; done}\\
 \end{itemize}
 
-\section{Crontab}
-~\\
-Cron est démon qui permet d'exécuter automatiquement des commandes ou des scripts à une date et une heure spécifiées à l'avance.\\
-~\\
-C'est évidemment très utile pour toutes les tâches d'aministration. Le démon cron se base sur le fichier \textit{/etc/crontab} pour lancer des actions toutes les heures (cron.hourly), tous les jours (cron.daily), toutes les semaines (cron.weekly) et tous les mois (cron.monthly). \\
-~\\
-Déjà, il peut être intéressant de personnaliser les paramètres du \textit{/etc/crontab} afin d'éviter l'utilisation des horaires par défaut.\\
-Ensuite on peut placer des scripts (exécutables) dans les cron.*ly ou bien dans le répertoire cron.d afin de personnaliser l'horaire :
-~\\
-\textbf{Squelette} :
-~\\
-"minute" "heure" "date" "mois" "jour" "utilisateur" "commande"\\
-~\\
-Exemple signifiant du lundi au vendredi, toutes les 3h à la 5ème minute:\\
-\texttt{5 */3 * 1-5 root ntpdate serveur-ntp\\
-}
+
 
 \section{Procédures de sauvegarde}
 ~\\
