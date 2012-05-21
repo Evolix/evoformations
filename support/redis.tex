@@ -1,0 +1,157 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Redis}
+
+Site officiel: \url{http://redis.io/}
+
+\section{Présentation}
+
+Redis est un jeune projet (première version sortie en 2009) de système de
+gestion de bases de données no-SQL (\emph{Not Only SQL}) de type clé-valeur. Il
+est écrit en C et son but est d'être hautement performant.\\
+Les données stockées peuvent être des chaines de caractères, tableaux, listes,
+etc\dots
+
+Une caractéristique notable de Redis est que tout est stocké dans la RAM. Des
+syncrhonisations sont faites de manière régulière sur le disque afin de rendre
+les données persistantes.
+
+\section{Installation}
+
+Sous Debian Squeeze, la version 1.2.6 est présente dans les dépôts, et peut
+être installée simplement:
+\begin{verbatim}
+# aptitude install redis-server
+\end{verbatim}
+
+Cependant, il peut être utile d'avoir une version plus récente, et on peut
+utiliser un backport du paquet qui fourni la version 2.4.2. Pour cela, si ce
+n'est pas le cas, il faut ajouter le dépôt backport au \texttt{sources.list}:
+\begin{verbatim}
+deb http://backports.debian.org/debian-backports squeeze-backports main
+\end{verbatim}
+
+Pour s'assurer d'avoir les mises à jour ultérieures sur le paquet
+\texttt{redis-server}, il est nécessaire de rajouter dans le fichier
+\texttt{/etc/apt/preferences.d/redis}:
+\begin{verbatim}Package: redis-server
+Pin: release a=squeeze-backports
+Pin-Priority: 999
+\end{verbatim}
+
+\section{Configuration}
+
+La configuration de Redis se fait dans le fichier
+\texttt{/etc/redis/redis.conf}, dont voici un exemple:
+\begin{verbatim}
+daemonize yes
+pidfile /var/run/redis.pid
+port 6379
+unixsocket /var/run/redis/redis.sock
+bind 127.0.0.1
+timeout 300
+loglevel notice
+logfile /var/log/redis/redis-server.log
+databases 16
+save 900 1
+save 300 10
+save 60 10000
+dbfilename dump.rdb
+dir /var/lib/redis
+#requirepass <password>
+maxclients 128
+maxmemory 104857600
+\end{verbatim}
+
+\section{Sécurité}
+
+Il faut bien faire attention à restreindre l'accès aux données stockées dans les
+bases de données Redis. Par défaut, aucune authentification n'est configurée.
+
+Redis peut être configuré pour écouter soit sur un socket réseau (par défaut
+\texttt{127.0.0.1:6379}) soit via un socket unix. Dans le second cas, il est
+aisé de positionner les bons droits unix sur le socket pour restreindre l'accès
+à tout le monde. Pour cette raison, il est préférable de faire écouter Redis sur
+un socket unix.\\
+Si le choix ne peut se poser et que Redis doit obligatoirement écouter sur un
+socket réseau (en local ou non), il est important de configurer une
+authentification sur les bases de données.
+
+Redis implémente une couche d'authentification extrêmement minimaliste: pas de
+gestion de comptes, mais un unique mot de passe défini en clair dans le fichier
+de configuration de Redis. Il sera alors nécessaire, après chaque connexion à la
+base, d'exécuter la commande Redis \texttt{AUTH} suivie du mot de passe.
+
+Étant donné que Redis est capable de traité un nombre très élevé de requêtes par
+seconde, les attaques par brute-force se font plus rapide et il est donc
+conseillé de définir un mot de passe très long.
+
+\section{Utilisation}
+
+Voici un aperçu de l'utilisation de Redis:
+\begin{itemize}
+  \item Connexion au serveur (via un socket unix):
+    \begin{verbatim}$ redis-cli -s /var/run/redis/redis.sock\end{verbatim}
+  \item Ajout d'une entrée:
+    \begin{verbatim}redis> set foo 3
+OK\end{verbatim}
+  \item Ajout de plusieurs entrée:
+    \begin{verbatim}redis> mset un 1 deux 2 trois 3 quatre 4
+OK\end{verbatim}
+  \item Récupération d'une entrée:
+    \begin{verbatim}redis> get foo
+(nil)\end{verbatim}
+  \item Listage des clé:
+    \begin{verbatim}redis> keys *
+1) "un"
+2) "foo"
+3) "deux"
+4) "trois"
+5) "quatre"\end{verbatim}
+  \item Récupération des entrées qui contiennent \emph{r}:
+    \begin{verbatim}redis> *keys *r*
+1) "quatre"
+2) "trois"\end{verbatim}
+\end{itemize}
+
+\section{Sauvegardes}
+
+Redis sauvegarde régulièrement le contenu de sa base de donnée (en RAM) sur le
+disque, dans le seul fichier \texttt{/var/lib/redis/dump.rdb} (par défaut). Il
+suffit donc de copier ce fichier pour en faire une sauvegarde.
+
+La restauration consiste à éteindre Redis, copier le fichier sauvegardé à son
+bon emplacement, et redémarrer Redis.
+
+\section{Réplication}
+
+\subsection{Fonctionnement}
+
+Redis supporte la réplication master-slaves, avec quelques caractéristiques
+intéressantes: un master peut avoir plusieurs slave, et un slave peut être
+master d'un autre slave (ce qui permet de faire de la réplication
+cascadée).
+
+Après ça mise en place, la réplication se passe en deux temps. Premièrement, le
+master va envoyer l'intégralité de sa base de données au(x) slave(s). Les
+données seront alors créés sur le disque, puis chargé en mémoire. Une fois que
+les données sont identiques entre le master et le(s) slave(s), le master
+transmet au(x) slave(s) les modifications qui sont effectuées. Les commandes
+transmises sont les mêmes que pour interagir avec le master.
+
+\subsection{Configuration}
+
+La mise en place de la réplication est extrêmement simple: il suffit de rajouter
+la directive \texttt{slaveof <IP> <port>} dans la configuration de Redis, en
+prenant bien sûr soin d'adapter l'IP et le port du master.
+
+Si le master demande une authentification (ce qui devrait être le cas si il est
+correctement configuré), il faut ajouter la directive \texttt{masterauth
+<password>}, avec le mot de passe du master.
+
+
