@@ -235,8 +235,68 @@ un cookie de session (\texttt{req.http.cookie}).
 
 \subsection{Gestion du failover}
 
-probe sur les backend
-saint et grace mode
+Nous avons vu que Varnish était capable de gérer plusieurs backend en contrôlant
+la répartition des requêtes sur chacun d'eux. Il est aussi capable de détecter
+une panne sur un backend, et de prendre en compte cet évènement pour modifier
+son comportement: utiliser un autre backend, ou renvoyer ces fichiers en cache.
+
+\subsubsection{Détection lors de la requête}
+
+Il est possible d'ajuster différent paramètres indiquant le temps d'attente
+maximum toléré par Varnish lors de l'interrogation d'un backend:
+\begin{verbatim}
+backend www00 {
+    .host = "192.0.2.6";
+    .port = "80";
+    .connect_timeout = 1s;
+    .first_byte_timeout = 3s;
+    .between_bytes_timeout = 2s;
+}
+\end{verbatim}
+Les directives sont assez explicites. Passé ce délai, Varnish ira interroger le
+backend suivant.
+
+\subsubsection{Surveillance périodique des backends}
+
+La méthode précédente est essentielle, mais pas suffisante en elle-même; en
+effet, même si Varnish basculera sur un autre backend en cas de saturation du
+premier, le traitement de la requête sera ralenti par l'expiration des délais
+d'attente. D'autre part, une erreur HTTP 5xx par exemple sur un backend
+n'empêchera pas Varnish de continuer à lui envoyer des requêtes.
+
+Varnish offre la possibilité de surveiller régulièrement ses backends et les
+marquer éventuellement comme «down». Pour cela, il est nécessaire de lui
+indiquer comment les surveiller, avec la directive
+\texttt{.probe}:
+\begin{verbatim}
+backend www00 {
+    .host = "192.0.2.6";
+    .port = "80";
+    .probe = {
+     .request = "GET / HTTP/1.1"
+             "Host: www.example.com"
+             "User-Agent: test Varnish"
+             "Connection: close"
+             "Accept-Encoding: text/html" ;
+     .timeout = 1s;
+     .interval = 5s;
+     .window = 8;
+     .threshold = 6;
+   }
+}
+\end{verbatim}
+On définit la requête HTTP que Varnish devra envoyer au backend, ainsi que
+diverses directives. Le backend devra obligatoirement retourné un code HTTP 200,
+il sera considéré comme «down» si ce n'est pas le cas.
+
+Dans l'exemple ci-dessus, les checks sont fait sur un intervalle de 5 secondes,
+et s'attend à avoir une réponse en moins d'une seconde. Les directives
+\texttt{.window} et \texttt{.threshold} permet de définir un cycle d'hystérésis:
+pour que le backend soit vu comme étant «down», il faut que, sur une quantité de
+8, 6 checks ont échoué. Et inversement, pour qu'il repasse «up», il faut que 6
+checks sur les 8 ont réussi.
+
+\subsubsection{Saint mode}
 
 \section{Administration}
 
