@@ -174,7 +174,7 @@ On vérifie avec le script PHP suivant :\\
 
 \subsection{Gestion des sessions}
 
-Lorsque des sessions PHP sont utilisées (fonctions session_*() dans le code), des informations sont stockées côté serveur. Le navigateur conserve uniquement identifiant pour accéder à ces informations, stockés dans un cookie ou une variable du type PHPSESSID dans l'URL (cela tend à être obsolète).\\
+Lorsque des sessions PHP sont utilisées (fonctions session\_*() dans le code), des informations sont stockées côté serveur. Le navigateur conserve uniquement identifiant pour accéder à ces informations, stockés dans un cookie ou une variable du type PHPSESSID dans l'URL (cela tend à être obsolète).\\
 
 Par défaut, ces informations sont conservées dans des fichiers sur le disque (un fichier par session) mais il est conseillé d'utiliser une méthode plus performante si vous avez un serveur dédié :
 monter simplement le répertoire des sessions pour un mono-serveur, ou déléguer la gestion des sessions à un service annexe (Memcached, Redis ou Kyoto Tycoon).\\
