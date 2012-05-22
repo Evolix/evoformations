@@ -298,6 +298,80 @@ checks sur les 8 ont réussi.
 
 \subsubsection{Saint mode}
 
+Dans le cas où tous les backends sont HS, il est possible de faire en sorte que
+Varnish utilise sont cache pour répondre aux requêtes (sous réserve bien sûr
+qu'elle y soit). Il est donc possible d'éteindre temporairement son unique
+backend, et que Varnish continu à délivrer son contenu.
+Au niveau de la configuration, cela se configure comme ceci:
+\begin{verbatim}
+sub vcl_fetch {
+  if (beresp.status == 500) {
+    set beresp.saintmode = 10s;
+    restart;
+  }
+}
+\end{verbatim}
+Le \texttt{beresp.saintmode} spécifie de ne plus retenter d'interroger le
+backend en cas d'erreur 500 avant un certain temps (ici 10 semonces). En effet,
+autant laisser le backend tranquille, une erreur 500 ne se résolvant rarement
+«magiquement» sans untervention manuelle.
+
+\subsubsection{Backend de spare}
+
+Il est également possible de déclarer un backend de spare, qui sera utilisé
+automatiquement (et seulement) si plus aucun backend ne sont disponibles:
+\begin{verbatim}
+backend wwwspare {
+    .host = "192.0.2.32";
+    .port = "80";
+}
+sub vcl_recv {
+    if (!req.backend.healthy) {
+        set req.backend = wwwspare;
+    }
+}
+\end{verbatim}
+
 \section{Administration}
 
 \section{Gestion des logs}
+
+Varnish permet de loguer de nombreuses informations, notamment très utiles pour
+analyser sont fonctionnement.
+
+Par défaut, Varnish n'écrit pas ses logs dans un fichier, mais dans un segment
+mémoire, ce qui permet d'augmenter grandement les performances. Quand l'espace
+est plein, Varnish réécrit par dessus en repartant de l'origine, ce qui fait
+que la mémoire allouée pour les logs n'augmente pas.
+
+Plusieurs outils permet ensuite de récupérer les lignes de log en mémoire, et
+de les exploiter, soit pour les visualiser en direct, soit pour les écrire dans
+un fichier de log.
+
+L'outil \texttt{varnishtop} permet d'afficher les logs en temps réel:
+\begin{verbatim}
+# varnishtop
+\end{verbatim}
+
+\texttt{varnishlog} et \texttt{varnishncsa} permettent également de lire le
+segment mémoire dans lequel varnish écrit ces logs, mais ils peuvent également
+écrire ce contenu dans des fichiers, afin d'en conserver une trace. Ils peuvent
+donc être utilisé manuellement, mais des scripts d'init sont fourni pour
+permettre de les lancer au démarrage en mode démon.\\
+\texttt{varnishncsa}, comme son nom l'indique, permet d'avoir les logs d'accès
+HTTP au format NCSA (comme ceux générés par les serveurs web tel que Apache).
+
+Pour les activer, il faut éditer respectivement les fichiers de configuration
+\texttt{/etc/default/varnishlog} et \texttt{/etc/default/varnishncsa}:
+\begin{verbatim}
+VARNISHLOG_ENABLED=1
+\end{verbatim}
+\begin{verbatim}
+VARNISHNCSA_ENABLED=1
+\end{verbatim}
+
+Puis lancer les démons:
+\begin{verbatim}
+# /etc/init.d/varnishlog start
+# /etc/init.d/varnishncsa start
+\end{verbatim}
