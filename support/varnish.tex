@@ -133,14 +133,16 @@ header HTTP \emph{Cache-Control} en ajoutant (dans le premier \texttt{if}:
 set beresp.http.cache-control = ``max-age=432000'';
 \end{verbatim}
 
-\paragraph{Indiquer si un object provient du cache ou pas dans les headers HTTP}
+\paragraph{Indiquer si un objet provient du cache ou pas dans les headers HTTP}
+Dans un but de debugage, il peut être intéressant d'indiquer si un contenu
+provient du cache de Varnish ou non. Cela se fait simplement comme ceci:
 \begin{verbatim}
 sub vcl_deliver {
-        if (obj.hits > 0) {
-                set resp.http.X-Cache = "HIT";
-        } else {
-                set resp.http.X-Cache = "MISS";
-        }
+    if (obj.hits > 0) {
+        set resp.http.X-Cache = "HIT";
+    } else {
+        set resp.http.X-Cache = "MISS";
+    }
 }
 \end{verbatim}
 
@@ -171,21 +173,64 @@ director baz round-robin {
 \end{verbatim}
 
 Et enfin, on indique dans quel cas il sera utilisé (dans l'exemple il sera
-utilisé dans tous les cas):
+utilisé dans tous les cas, pas de condition):
 \begin{verbatim}
 sub vcl_recv {
-    if (req.http.host ~ "^.*$") {
-        set req.backend = baz;
-    }
+    set req.backend = baz;
 }
 \end{verbatim}
 
 Il s'agit ici de la configuration la plus simple possible. Maintenant, il peut
 être intéressant d'ajuster certains paramètres:
 \begin{itemize}
-  \item poids
-  \item max connection
-  \item s/round-robin/client et critères pour sticky
+  \item Dans l'exemple ci dessus, le director est en mode round-robin. Le trafic
+    est alors réparti équitablement entre les backend. On peut définir un
+    «poids» pour chacun des backends, afin de jouer sur la répartition du trafic
+    entre eux:
+    \begin{verbatim}
+director baz random {
+    {
+        .backend = www00;
+        .weight = 6;
+    }
+    {
+        .backend = www01;
+        .weight = 4;
+    }
+}
+    \end{verbatim}
+    Pour cela, on change le mode du director pour \emph{random}.
+  \item Une directive importante est \texttt{.max\_connections}. Elle permet de
+    limiter le nombre de connexions concurrentes envoyées sur un backend. En en
+    positionnant une sur chacun des backends, Varnish saura qu'il devra ignorer
+    le backend saturé et en choisir un autre, afin de ne pas le surchargé.
+    \begin{verbatim}
+backend www00 {
+    .host = "192.0.2.8";
+    .port = "80";
+    .max_connections = 80;
+}
+\end{verbatim}
+
+  \item Il est possible également de répartir les requêtes sur les backends
+    suivant des critères sur la requête. Le mode du director à utiliser est
+    alors \emph{client}:
+    \begin{verbatim}
+director baz client {
+    { .backend = www00; }
+    { .backend = www01; }
+}
+
+sub vcl_recv {
+   set req.backend = baz;
+   set client.identity = req.ip;
+}
+\end{verbatim}
+Dans l'exemple ci-dessus, le critère utilisé est l'IP du client
+(\texttt{client.identity = req.ip}. Les autres critères possibles sont le
+user-agent (\texttt{req.http.user-agent}), l'URL (\texttt{client.url}) ou encore
+un cookie de session (\texttt{req.http.cookie}).
+
 \end{itemize}
 
 \subsection{Gestion du failover}
