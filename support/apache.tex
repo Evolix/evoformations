@@ -284,7 +284,7 @@ IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t
 
 # redirection vers fichiers index (mod_dir)
 <IfModule mod_dir.c>
-    DirectoryIndex index.html index.htm index.shtml index.cgi index.php index.php3 index.php4
+    DirectoryIndex index.html index.htm index.shtml index.cgi index.php
 </IfModule>
 
 # Répertoires utilisateurs (mod_userdir)
@@ -724,7 +724,7 @@ Ce module permet d'exécuter des scripts Perl. Il offre de nombreux avantages par
 ~\\
 \texttt{apt-cache search \textasciicircum libapache perl}
 ~\\
-\subsection{mod\_php4}
+\subsection{mod\_php5}
 
 \textit{voir PHP}
 
@@ -901,7 +901,7 @@ Permet de spécifier que l'on se réfère à l'option ServerName pour déterminer les
 
 \section{Optimisation}
 ~\\
-Lien:\url{http://httpd.apache.org/docs-2.2/misc/perf-tuning.html}\\
+Lien : \url{http://httpd.apache.org/docs-2.2/misc/perf-tuning.html}\\
 \begin{verbatim}
 HostnameLookups off
 <Files ~ ".(html|cgi)$">
@@ -1078,6 +1078,9 @@ Lang="fr"
 }
 \end{itemize}
 ~\\
+~\\
+
+Voici un récapitulatif de nos préconisations d'installation : \url{http://trac.evolix.net/infogerance/wiki/HowtoLAMP/Apache} \\
 
 %http://www.SERVER.tld/cgi-bin/awstats.pl?config=VHOST
 

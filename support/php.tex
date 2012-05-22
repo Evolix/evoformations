@@ -117,8 +117,10 @@ file_uploads = On
 upload_max_filesize = 2M
 
 ; repertoire temporaire pour les uploads
-upload_tmp_dir = /tmp/php/
+upload_tmp_dir = /var/tmp/
 
+; limiter les acces de PHP sur le systeme
+open_basedir = /home
 \end{verbatim}
 ~\\
 Lien~: \url{http://www.php.net/manual/fr/features.safe-mode.functions.php}\\
@@ -170,6 +172,15 @@ On vérifie avec le script PHP suivant :\\
 \texttt{echo "<?php phpinfo(); ?>" > /var/www/info.php}
 ~\\
 
+\subsection{Gestion des sessions}
+
+Lorsque des sessions PHP sont utilisées (fonctions session_*() dans le code), des informations sont stockées côté serveur. Le navigateur conserve uniquement identifiant pour accéder à ces informations, stockés dans un cookie ou une variable du type PHPSESSID dans l'URL (cela tend à être obsolète).\\
+
+Par défaut, ces informations sont conservées dans des fichiers sur le disque (un fichier par session) mais il est conseillé d'utiliser une méthode plus performante si vous avez un serveur dédié :
+monter simplement le répertoire des sessions pour un mono-serveur, ou déléguer la gestion des sessions à un service annexe (Memcached, Redis ou Kyoto Tycoon).\\
+~\\
+Pour plus de détails : \url{http://trac.evolix.net/infogerance/wiki/HowtoLAMP/PHP#SessionsPHP}
+
 \section{Base de programmation}
 
 Il existe de nombreuses extensions de PHP (MySQL, PostGreSQL, LDAP, FTP, IMAP, GD, XML, etc.) et également des bibliothèques dont la plus connue est PEAR (PHP Extension and Application Repository) qui comprend classes et librairies mais introduit également un style de codage.\\
@@ -182,6 +193,6 @@ Liens :\\
 \url{http://gtk.php.net/}\\
 ~\\
 
-% open_basedir
-
-
+Voici un récapitulatif de nos préconisations d'installation : \url{http://trac.evolix.net/infogerance/wiki/HowtoLAMP/PHP} \\
+~\\
+~\\

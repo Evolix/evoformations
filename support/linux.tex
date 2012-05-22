@@ -250,7 +250,7 @@ Le RAID (Redundant Arrays of Inexpensive Disks) est une solution bien connue pou
 ~\\
 Il existe de nombreuses comparaisons entre ces systèmes de fichiers mais il est difficile d'en tirer des conclusions générales car cela dépend beaucoup de l'utilisation de la machine. La fiabilité de ces systèmes est désormais éprouvée même si la prudence naturelle des administrateurs poussera à conserver ext3\footnote{\url{http://www.zip.com.au/~akpm/linux/ext3/}}, dérivé du système de fichier historique (Extended File System a été implémenté en 1992 et intégré à Linux 0.96c). En terme de performances, il semble se dégager quelques constations comme la performance de ReiserFS\footnote{\url{http://www.namesys.com/}} pour les petits fichiers, un léger gain de XFS\footnote{\url{http://oss.sgi.com/projects/xfs/}} pour la copie de fichiers de grande taille mais une lenteur à l'effacement et la bonne tenue d'ext3 pour des opérations classiques. JFS\footnote{\url{http://www-124.ibm.com/developerworks/oss/jfs/}} semblant légèrement moins performant pour le moment. \\
 ~\\
-Sachant la perpétuelle évolution des développements, les conditions dans lesquelles se déroulent les tests et les autres paramètres (processeur, mémoire...) on se gardera bien de tirer des conclusions définitives. Disons simplement que l'utilisation de ext3 est encore assez raisonnable pour des serveurs classiques. En ce qui concerne ext4, il manque encore du recul pour l'utiliser dans des environnements critiques.\\
+Sachant la perpétuelle évolution des développements, les conditions dans lesquelles se déroulent les tests et les autres paramètres (processeur, mémoire...) on se gardera bien de tirer des conclusions définitives. Disons simplement que l'utilisation de ext3 est encore assez raisonnable pour des serveurs classiques. En ce qui concerne ext4, il tend à remplacer ext3 et l'on peut commencer à l'utiliser en production car il offre parfois de meilleures performances.\\
 ~\\
 \textit{\textit{Liens :}}\\
 \url{http://www.linux-france.org/article/sys/ext3fs/Benchmarks/} \\
@@ -303,7 +303,7 @@ Exemple : \texttt{route add -net 192.168.100.10/24 gw 192.168.100.1}\\
 Exemple : \texttt{ip addr add 10.0.0.1/24 dev eth0 label eth01} \\
 ~\\
 \emph{netstat} informations avancées sur l'état réseau \\
-Exemple : \texttt{netstat -a -t} \\
+Exemple : \texttt{netstat -taupen} \\
 ~\\
 \emph{traceroute} pour tester la route vers un hôte du réseau\\
 Exemple : \texttt{traceroute -v google.fr} \\
@@ -346,14 +346,15 @@ Par défaut, un système du type Unix a besoin d'un système de messagerie, ne sera
 ~\\
 \emph{Mise à l'heure}\\
 ~\\
-Il est souvent essentiel pour un serveur d'être à l'heure. Pour cela le protocole NTP (Network Time Protocol)\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc2030.txt}} permet de se synchroniser sur un serveur de temps. Si l'on possède plusieurs serveurs, il est intéressant d'avoir un serveur NTP\footnote{\url{http://www.ntp.org/}} sur lequel les autres machines locales vont se synchroniser. La synchronisation du serveur de temps ou du serveur isolé se fera sur plusieurs serveurs de temps officiels (certains sont en libre accès comme \texttt{ntp.tuxfamily.net} ou \texttt{swisstime.ee.ethz.ch}, sinon il faut demander un accès en envoyant un courrier électronique) \\
+Il est souvent essentiel pour un serveur d'être à l'heure. Pour cela le protocole NTP (Network Time Protocol)\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc2030.txt}} permet de se synchroniser sur un serveur de temps. Si l'on possède plusieurs serveurs, il est intéressant d'avoir un serveur NTP\footnote{\url{http://www.ntp.org/}} sur lequel les autres machines locales vont se synchroniser. La synchronisation du serveur de temps ou du serveur isolé se fera sur plusieurs serveurs de temps officiels (certains sont en libre accès comme \texttt{ntp.tuxfamily.net} ou \texttt{swisstime.ee.ethz.ch}, sinon il faut demander un accès en envoyant un courrier électronique).\\
 ~\\
-Concrètement, on installe le paquet \textit{ntpdate} et on peut lancer une synchronisation dans un cron avec la commande suivante: \\
+Concrètement, on peut installer le paquet \textit{ntpdate} et lancer une synchronisation horaire avec la commande suivante: \\
 \begin{verbatim}
-ntpdate ntp.evolix.net > /dev/null 2>&1 || echo \ 
-"pas de mise a l'heure `date`" | /usr/bin/mail -s \
-"[alert] ntpdate sur serveur.domain.tld `date`" admin@example.com
+ntpdate ntp2.evolix.net
 \end{verbatim}
+~\\
+Sur un serveur, on utilisera plutôt le paquet \texttt{ntp} permettant une synchronisation permanente avec un ou plusieurs serveurs NTP.\\
+~\\
 \textit{Lien :}  \url{http://www.cru.fr/NTP/serveurs\_francais.html} \\
 
 

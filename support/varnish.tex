@@ -78,14 +78,14 @@ Et voici quelques explications sur les paramètres:
     On indique ici qu'une partie du cache sera stocké en mémoire 3~Go, ainsi que
     dans un fichier plat sur le disque, qui sera limité à 10~Go.
   \item[\texttt{-p thread\_pools=<Number of CPU cores>}]
-  \item[\texttt{-p threa\_poo\_ad\_delay=2}]
-  \item[\texttt{-p threa\_poo\_max=5000}] \hfill \\
+  \item[\texttt{-p thread\_pool\_add\_delay=2}]
+  \item[\texttt{-p thread\_pool\_max=5000}] \hfill \\
     L'option \texttt{-p} permet de modifier différents paramètres d'exécution.
     De nombreux paramètres peuvent être modifiés, la liste complète avec leur
     description se trouve ici:
     \url{https://www.varnish-cache.org/docs/2.1/reference/varnishd.html}.
 
-    \texttt{threa\_pools} indique le nombre de groupe de threads à lancer. Cette
+    \texttt{thread\_pools} indique le nombre de groupe de threads à lancer. Cette
     valeur ne devrait pas dépasser le nombre de c\oe{}ur disponible sur le système
     (pour des raisons de performance). Pour \texttt{threa\_poo\_ad\_delay}, il
     s'agit du temps en milisecondes à attendre avant la création d'un nouveau
