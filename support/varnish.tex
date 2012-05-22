@@ -99,6 +99,106 @@ Et voici quelques explications sur les paramètres:
 
 \subsection{Aperçu de la syntaxe du langage VCL}
 
+La syntaxe VCL est complexe mais puissante. On découpe un fichier VCL en
+plusieurs sous-routines dans lesquelles on définit des actions/comportements en
+fonction de certaines conditions.
+
+Concrètement, 99~\% des règles sont faites dans les 2 sous-routines
+\texttt{vcl\_recv} et \texttt{vcl\_fetch}.
+
+\begin{itemize}
+  \item \texttt{vcl\_recv} est appelé AVANT le début de la requête au backend.
+    On peut donc choisir vers quel backend renvoyer la requête. On peut aussi
+    de modifier la requête (modifier des entêtes HTTP, supprimer des demandes
+    de cookies, etc\dots). Seul les actions \texttt{set req.} sont possibles.
+  \item \texttt{vcl\_fetch} est appelé APRÈS la réception de la réponse du
+    backend. Les actions \texttt{set req.} sont possibles, mais aussi \texttt{set
+    beresp.} (pour \emph{backend response}).
+\end{itemize}
+
+Voici donc des règles typiques:
+\begin{verbatim}
+sub vcl_recv {
+
+    if (req.http.host ~ "(www\.example\.com|example\.com)") {
+        set req.backend = default;
+    }
+
+    if (req.url ~ "^/images") {
+        unset req.http.cookie;
+    }
+}
+
+sub vcl_fetch {
+   if (req.url ~ "\.(png|gif|jpg)$") {
+     unset beresp.http.set-cookie;
+     set beresp.ttl = 3600s;
+  }
+}
+\end{verbatim}
+
+Voici un certain nombre de \emph{conditions} possibles:
+\begin{verbatim}
+# Condition sur l'entête HTTP Host:
+if (req.http.host ~ "^regex$")
+# Présence d'un cookie
+if (req.http.cookie) {
+# Condition sur l'URL demandée
+if (req.url ~ "^/regex$")
+# Si le backend est accessible
+if (req.backend.healthy)
+# Présence entête Accept-Encoding
+if (req.http.Accept-Encoding)
+# Condition sur la requête faite 
+if (req.request != "GET" && req.request != "HEAD")
+# Présence de l'entête X-Forwarded-For
+if (req.http.x-forwarded-for)
+# Condition sur les entêtes envoyés
+if (req.http.Authorization || req.http.Cookie)
+# Condition 
+if (req.http.Cache-Control ~ "no-cache")
+# Si la réponse du backend permet la mise en cache
+if (beresp.cacheable)
+# Condition sur le temps de mise (Cache-Control: max-age a priori)
+if (beresp.ttl < 120s)
+# Condition sur le statut des réponses
+if (obj.status == 404 || obj.status == 503 || obj.status == 500)
+\end{verbatim}
+
+Voici un certain nombre d'\emph{actions} possibles:
+\begin{verbatim}
+# Renvoyer vers un backend
+set req.backend = baz;
+# Supprimer les cookies dans la requête
+unset req.http.cookie;
+remove req.http.cookie;
+# Supprimer un certain nombre d'entêtes HTTP
+remove req.http.X-Forwarded-For;
+remove req.http.Accept-Encoding;
+# Positionner un certain nombre d'entêtes HTTP pour la requête
+set req.http.X-Forwarded-For = client.ip;
+set req.http.Accept-Encoding = "gzip";
+set req.http.Accept-Encoding = "deflate";
+# Positionner un certain nombre d'entêtes HTTP pour la réponse
+set obj.http.expires = "Mon, 1 Jan 2007 00:00:01 GMT";
+set obj.http.X-foo = "bar";
+# Renvoyer une erreur HTTP
+error 404 "Page not found";
+\end{verbatim}
+
+Enfin, voici les \emph{comportements} possibles:
+\begin{verbatim}
+# Renvoie vers le backend (pas de cache)
+return (pass);
+# Renvoie la version en cache (si possible)
+return (lookup);
+return (deliver);
+# Renvoie "directement" vers le backend sans inspection du contenu
+return (pipe)
+# Redémarre la demande au backend (et incrémente le compteur de restarts)
+return (restart);
+\end{verbatim}
+
 \subsection{Gestion du cache}
 
 En se positionnant entre le client et le serveur applicatif, Varnish permet de
@@ -333,6 +433,42 @@ sub vcl_recv {
 \end{verbatim}
 
 \section{Administration}
+
+Dans la première partie de ce chapitre, un couple IP, port avait été défini pour
+faire écouter une interface d'administration de Varnish. Cette interface permet
+d'envoyer un certain nombre de commande d'administration au démon varnishd.
+Pour s'y connecter, une authentification est également nécessaire. Par défaut
+lors de l'installation du paquet Debian, le fichier \texttt{/etc/varnish/secret}
+est créé contenant la clé permettant de s'authentifier. On peut se connecter en
+utilisant \texttt{telnet}, mais la commande dédiée \texttt{varnishadm} est plus
+adaptée:
+\begin{verbatim}
+# varnishadm -T localhost:6082 -S /etc/varnish/secret
+200 154
+-----------------------------
+Varnish HTTP accelerator CLI.
+-----------------------------
+Type 'help' for command list.
+Type 'quit' to close CLI session.
+\end{verbatim}
+
+On est alors dans un mode interactif, où l'on peut exécuter les commandes
+Varnish disponibles. Il est également possible de passer une commande
+directement en argument de \texttt{varnishtop}.
+
+Par exemple, pour pouvoir vider la totalité du cache Varnish:
+\begin{verbatim}
+# varnishadm -T localhost:6082 -S /etc/varnish/secret purge.url ".*"
+\end{verbatim}
+
+On peut également vérifier l'état du démon, via la commande \texttt{status}:
+\begin{verbatim}
+# varnishadm -T localhost:6082 -S /etc/varnish/secret status
+\end{verbatim}
+
+Ainsi que d'autres opérations, comme l'arrêt et le redémarrage du processus, le
+chargement de nouvelles règles VCL à chaud, etc\dots
+
 
 \section{Gestion des logs}
 
