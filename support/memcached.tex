@@ -1,0 +1,114 @@
+% Copyright (c) 2004-2010 Evolix <info@evolix.fr>
+%  Permission is granted to copy, distribute and/or modify this document
+%  under the terms of the GNU Free Documentation License, Version 1.2
+%  or any later version published by the Free Software Foundation;
+%  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%  A copy of the license is included at http://www.gcolpart.com/howto/fdl.html
+
+\chapter{Memcached}
+
+Site officiel: \url{http://memcached.org/}
+
+\section{Présentation}
+
+Memcached est une base de données de type clé-valeur dont les informations sont
+stockées uniquement en mémoire. Le but visé est de fournir un cache aux
+applications (web ou non) afin de stocker des résultats de requêtes sur des API
+ou base de données dont les appels sont couteux en ressources et temps
+d'exécution.
+
+Le cas d'utilisation typique est sa mise en place dans une infra ayant un
+serveur de base de donnée et N serveurs applicatifs. Memcached est fait pour
+gérer les accès réseau concurrents, et peux être interrogé par chaque serveur
+applicatif. Le premier serveur fait sa requête à la base de données ou API
+distante, puis stocke le résultat dans Memcached. Les autres serveurs pourront
+alors directement utiliser les données misent en cache dans Memcached, en
+bénéficiant d'un accès beaucoup plus rapide.
+
+Memcached supporte également la mise la répartition de sa base sur plusieurs
+serveurs mis en cluster.
+
+Au contraire de Redis, Memcached ne dispose d'aucun moyen de sauvegarde
+sur disque, il n'est donc adapté que pour stocker des données qui peuvent
+facilement être regénérées par l'application ou hébergées par un service tiers
+(plus lent).
+
+Memcached est sorti dans sa première version en 2003. Il est écrit en C et
+distribué sous la licence libre BSD.
+
+\section{Installation}
+
+Le paquet Debian memcached est disponible dans les dépôts officiels et fourni la
+version 1.4.5:
+\begin{verbatim}
+# aptitude install memcached
+\end{verbatim}
+
+\section{Configuration}
+
+La configuration de Memcached est triviale et se fait dans l'unique fichier
+\texttt{/etc/memcached.conf}.
+
+Voici un exemple de configuration:
+\begin{verbatim}
+-d
+# Mode verbose (pour du debug)
+logfile /var/log/memcached.log
+# -v
+# -vv
+# Taille mémoire (en Mo)
+-m 64
+# Adresses d'écoute (à supprimer pour ouvrir de partout)
+-l 127.0.0.1
+-p 11211
+-u nobody
+# Nombre max de connexions
+-c 2048
+\end{verbatim}
+
+Les options importantes sont notamment \texttt{-d} pour que Memcached soit lancé
+en mode démon, \texttt{-m} qui indique la taille mémoire à allouer pour la base.
+À noter la taille mémoire utilisée par Memcached pourra être légèrement
+supérieure à la limite fixée dans la configuration.
+On peut également fixer une limite maximum pour le nombre de connexions
+concurrente à la base via l'option \texttt{-c} (par défaut, limité à 1024). À
+noter que Memcached est capable de gérer un nombre très élevé de connexions,
+d'autant plus que chaque connexion ouverte consomme une quantité de mémoire
+négligeable, il est donc conseillé de définir une cette limite assez haute.
+
+Comme pour Redis, on peut également vouloir désactiver l'écoute sur un socket
+réseau pour privilégier un socket unix, pour des raisons de sécurité. L'option à
+utiliser pour cela est \texttt{-s}, suivi du chemin vers le socket unix.
+
+\section{Utilisation}
+
+Voici quelques commandes basiques pour interagir avec la base de données:
+\begin{itemize}
+  \item Connexion au serveur: on utilise \texttt{telnet}:
+    \begin{verbatim}$ telnet localhost 11211\end{verbatim}
+  \item Stocke une valeur:
+    \begin{verbatim}set greeting 1 0 11
+Hello world
+STORED\end{verbatim}
+    Les paramètres passés à \texttt{set} sont, dans l'ordre, la clé, un flag de
+    contrôle, la durée de vie de l'entrée (elle sera supprimée au-delà), la
+    taille de la valeur à stocker (en octets), et enfin la valeur (après un
+    retour à la ligne).
+  \item Récupérer une valeur:
+    \begin{verbatim}get greeting
+VALUE greeting 1 11
+Hello world
+END \end{verbatim}
+  \item Statistiques sur les entrées stockées:
+    \begin{verbatim}stats items
+STAT items:1:number 1
+STAT items:1:age 1397
+STAT items:1:evicted 0
+STAT items:1:evicted_nonzero 0
+STAT items:1:evicted_time 0
+STAT items:1:outofmemory 0
+STAT items:1:tailrepairs 0
+STAT items:1:reclaimed 0
+END\end{verbatim}
+\end{itemize}
+
