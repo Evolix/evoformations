@@ -40,7 +40,7 @@ Installation du paquet:
 \section{Configuration}
 
 Les possibilités offertes pour la configuration de Varnish sont assez vastes,
-elles seront abordés par grands thèmes.
+elles seront abordées par grands thèmes.
 
 \subsection{Paramétrage de base}
 
@@ -86,7 +86,7 @@ Et voici quelques explications sur les paramètres:
     \url{https://www.varnish-cache.org/docs/2.1/reference/varnishd.html}.
 
     \texttt{thread\_pools} indique le nombre de groupe de threads à lancer. Cette
-    valeur ne devrait pas dépasser le nombre de c\oe{}ur disponible sur le système
+    valeur ne devrait pas dépasser le nombre de c\oe{}ur disponibles sur le système
     (pour des raisons de performance). Pour \texttt{threa\_poo\_ad\_delay}, il
     s'agit du temps en milisecondes à attendre avant la création d'un nouveau
     thread. Et enfin \texttt{threa\_poo\_max} représente le nombre total de
@@ -110,7 +110,7 @@ Concrètement, 99~\% des règles sont faites dans les 2 sous-routines
   \item \texttt{vcl\_recv} est appelé AVANT le début de la requête au backend.
     On peut donc choisir vers quel backend renvoyer la requête. On peut aussi
     de modifier la requête (modifier des entêtes HTTP, supprimer des demandes
-    de cookies, etc\dots). Seul les actions \texttt{set req.} sont possibles.
+    de cookies, etc\dots). Seules les actions \texttt{set req.} sont possibles.
   \item \texttt{vcl\_fetch} est appelé APRÈS la réception de la réponse du
     backend. Les actions \texttt{set req.} sont possibles, mais aussi \texttt{set
     beresp.} (pour \emph{backend response}).
@@ -203,12 +203,12 @@ return (restart);
 
 En se positionnant entre le client et le serveur applicatif, Varnish permet de
 lire et surcharger si besoin les entêtes HTTP de contrôle du cache. Par défaut,
-celle ci sont lues et pris en compte, mais on peut redéfinir le comportement
+ceux ci sont lus et pris en compte, mais on peut redéfinir le comportement
 dans la configuration.
 
 Voici quelques exemples d'utilisation typique:
 
-\paragraph{Forcer le TTL pour certains contenu}
+\paragraph{Forcer le TTL pour certains contenus}
 \begin{verbatim}
 sub vcl_fetch {
     if (req.url ~ "\.(png|gif|jpg)$") {
@@ -303,7 +303,7 @@ director baz random {
   \item Une directive importante est \texttt{.max\_connections}. Elle permet de
     limiter le nombre de connexions concurrentes envoyées sur un backend. En en
     positionnant une sur chacun des backends, Varnish saura qu'il devra ignorer
-    le backend saturé et en choisir un autre, afin de ne pas le surchargé.
+    le backend saturé et en choisir un autre, afin de ne pas le surcharger.
     \begin{verbatim}
 backend www00 {
     .host = "192.0.2.8";
@@ -342,7 +342,7 @@ son comportement: utiliser un autre backend, ou renvoyer ces fichiers en cache.
 
 \subsubsection{Détection lors de la requête}
 
-Il est possible d'ajuster différent paramètres indiquant le temps d'attente
+Il est possible d'ajuster différents paramètres indiquant le temps d'attente
 maximum toléré par Varnish lors de l'interrogation d'un backend:
 \begin{verbatim}
 backend www00 {
@@ -391,10 +391,10 @@ il sera considéré comme «down» si ce n'est pas le cas.
 
 Dans l'exemple ci-dessus, les checks sont fait sur un intervalle de 5 secondes,
 et s'attend à avoir une réponse en moins d'une seconde. Les directives
-\texttt{.window} et \texttt{.threshold} permet de définir un cycle d'hystérésis:
+\texttt{.window} et \texttt{.threshold} permettent de définir un cycle d'hystérésis:
 pour que le backend soit vu comme étant «down», il faut que, sur une quantité de
-8, 6 checks ont échoué. Et inversement, pour qu'il repasse «up», il faut que 6
-checks sur les 8 ont réussi.
+8, 6 checks aient échoué. Et inversement, pour qu'il repasse «up», il faut que 6
+checks sur les 8 aient réussi.
 
 \subsubsection{Saint mode}
 
@@ -413,13 +413,13 @@ sub vcl_fetch {
 \end{verbatim}
 Le \texttt{beresp.saintmode} spécifie de ne plus retenter d'interroger le
 backend en cas d'erreur 500 avant un certain temps (ici 10 semonces). En effet,
-autant laisser le backend tranquille, une erreur 500 ne se résolvant rarement
+autant laisser le backend tranquille, une erreur 500 se résolvant rarement
 «magiquement» sans untervention manuelle.
 
 \subsubsection{Backend de spare}
 
 Il est également possible de déclarer un backend de spare, qui sera utilisé
-automatiquement (et seulement) si plus aucun backend ne sont disponibles:
+automatiquement (et seulement) si plus aucun backend n'est disponible:
 \begin{verbatim}
 backend wwwspare {
     .host = "192.0.2.32";
@@ -473,14 +473,14 @@ chargement de nouvelles règles VCL à chaud, etc\dots
 \section{Gestion des logs}
 
 Varnish permet de loguer de nombreuses informations, notamment très utiles pour
-analyser sont fonctionnement.
+analyser son fonctionnement.
 
 Par défaut, Varnish n'écrit pas ses logs dans un fichier, mais dans un segment
 mémoire, ce qui permet d'augmenter grandement les performances. Quand l'espace
 est plein, Varnish réécrit par dessus en repartant de l'origine, ce qui fait
 que la mémoire allouée pour les logs n'augmente pas.
 
-Plusieurs outils permet ensuite de récupérer les lignes de log en mémoire, et
+Plusieurs outils permettent ensuite de récupérer les lignes de log en mémoire, et
 de les exploiter, soit pour les visualiser en direct, soit pour les écrire dans
 un fichier de log.
 
@@ -492,7 +492,7 @@ L'outil \texttt{varnishtop} permet d'afficher les logs en temps réel:
 \texttt{varnishlog} et \texttt{varnishncsa} permettent également de lire le
 segment mémoire dans lequel varnish écrit ces logs, mais ils peuvent également
 écrire ce contenu dans des fichiers, afin d'en conserver une trace. Ils peuvent
-donc être utilisé manuellement, mais des scripts d'init sont fourni pour
+donc être utilisés manuellement, mais des scripts d'init sont fournis pour
 permettre de les lancer au démarrage en mode démon.\\
 \texttt{varnishncsa}, comme son nom l'indique, permet d'avoir les logs d'accès
 HTTP au format NCSA (comme ceux générés par les serveurs web tel que Apache).

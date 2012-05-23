@@ -17,15 +17,15 @@ applications (web ou non) afin de stocker des résultats de requêtes sur des API
 ou base de données dont les appels sont couteux en ressources et temps
 d'exécution.
 
-Le cas d'utilisation typique est sa mise en place dans une infra ayant un
+Le cas d'utilisation typique est sa mise en place dans une infrastructure ayant un
 serveur de base de donnée et N serveurs applicatifs. Memcached est fait pour
 gérer les accès réseau concurrents, et peux être interrogé par chaque serveur
 applicatif. Le premier serveur fait sa requête à la base de données ou API
 distante, puis stocke le résultat dans Memcached. Les autres serveurs pourront
-alors directement utiliser les données misent en cache dans Memcached, en
+alors directement utiliser les données mises en cache dans Memcached, en
 bénéficiant d'un accès beaucoup plus rapide.
 
-Memcached supporte également la mise la répartition de sa base sur plusieurs
+Memcached supporte également la répartition de sa base sur plusieurs
 serveurs mis en cluster.
 
 Au contraire de Redis, Memcached ne dispose d'aucun moyen de sauvegarde
@@ -71,10 +71,10 @@ en mode démon, \texttt{-m} qui indique la taille mémoire à allouer pour la base.
 À noter la taille mémoire utilisée par Memcached pourra être légèrement
 supérieure à la limite fixée dans la configuration.
 On peut également fixer une limite maximum pour le nombre de connexions
-concurrente à la base via l'option \texttt{-c} (par défaut, limité à 1024). À
+concurrentes à la base via l'option \texttt{-c} (par défaut, limité à 1024). À
 noter que Memcached est capable de gérer un nombre très élevé de connexions,
 d'autant plus que chaque connexion ouverte consomme une quantité de mémoire
-négligeable, il est donc conseillé de définir une cette limite assez haute.
+négligeable, il est donc conseillé de définir une limite assez haute.
 
 Comme pour Redis, on peut également vouloir désactiver l'écoute sur un socket
 réseau pour privilégier un socket unix, pour des raisons de sécurité. L'option à
@@ -86,7 +86,7 @@ Voici quelques commandes basiques pour interagir avec la base de données:
 \begin{itemize}
   \item Connexion au serveur: on utilise \texttt{telnet}:
     \begin{verbatim}$ telnet localhost 11211\end{verbatim}
-  \item Stocke une valeur:
+  \item Stocker une valeur:
     \begin{verbatim}set greeting 1 0 11
 Hello world
 STORED\end{verbatim}
