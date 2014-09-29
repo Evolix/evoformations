@@ -1,0 +1,171 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2004-2011 eVoLiX. Tous droits reserves.%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper,oneside]{report}
+
+%% Extensions
+% \usepackage[options]{extension}
+
+% pour les liens
+\usepackage{url}
+
+% permettre accents dans le texte
+\usepackage[latin1]{inputenc} % entree 8 bits iso-latin1
+
+% prendre en compte utf8 ?
+%\usepackage{ucs}
+%\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}      % encodage 8 bits des fontes utilisees
+
+% mathematiques
+\usepackage{amsmath}
+\usepackage{amsfonts}
+%\usepackage{euler} mathpple mathptmx
+%\usepackage{euler}
+%\usepackage{aeguill}
+%\boldmath
+
+% en francais
+\usepackage[francais]{babel}
+\usepackage[francais]{layout}
+\selectlanguage{francais}
+
+% ajout de listings, verbatim et verbatimcmd
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{moreverb}
+
+% avoir de la couleur
+\usepackage{color}
+% definition couleurs 
+\definecolor{shell}{rgb}{0.79,0.79,0.79}
+\definecolor{fichier}{rgb}{0.74,0.82,0.95}
+\definecolor{gris50}{rgb}{0.5,0.5,0.5}
+
+
+% avoir des liens fonctionnels (avec pdflatex)
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+%\usepackage[pdftex,colorlinks=true,urlcolor=blue,pdfstartview=FitH]{hyperref}
+
+%\pdfcompresslevel=9
+
+
+%% figures
+% inserer des fichiers EPS pour latex
+% inserer des fichiers PDF pour pdflatex
+
+% package pour insertion de figures
+\usepackage{graphicx}
+%\usepackage[dvips]{graphicx}
+%\usepackage[pdftex]{graphicx}
+%\DeclareGraphicsExtensions{.png, .jpg, .pdf}
+
+% pour mettre sans serif par défaut
+\renewcommand{\familydefault}{\sfdefault}
+
+% pour hevea
+% apt-get install hevea
+\usepackage{hevea}
+
+
+% fonts
+%\usepackage{avant}      %AvantGarde font as default 
+%\usepackage{bookman}    % Bookman  
+%\usepackage{chancery}   % Zapf Chancery 
+%\usepackage{charter}    % Default 
+%\usepackage{courier}    % Courier 
+\usepackage{helvet}     % Helveticat 
+%\usepackage{helvetic}   % Helvetica-Oblique 
+%\usepackage{ncntrsbk}   % NewCenturySchlbk 
+%\usepackage{newcent}    % NewCenturySchoolbook 
+%\usepackage{palatcm}    % Palatino+Computer Modem 
+%\usepackage{palatino}   % Palatino 
+%\usepackage{pifont}     % Pi font support 
+%\usepackage{times}      % Times 
+%\usepackage{utopia}     % Utopia  
+%\usepackage{zapfchan}   % ITC Zapf Chancery
+
+% definition de caracteres
+\def\tilde{\char'176}
+
+%% Styles des pages
+
+\textwidth=16cm
+\textheight=24cm
+\oddsidemargin=0pt
+\topmargin=0pt
+\headsep=1cm
+\voffset=-3cm
+\footskip=1.5cm
+\headheight=2.5cm
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textcolor{gris50}{\scriptsize{Administration Linux Apache PHP MySQL}}}
+\rhead{\textcolor{gris50}{\scriptsize{Formation Evolix}}}
+
+\lfoot{\scriptsize{\thepage}}
+\cfoot{\textcolor{gris50}{\scriptsize{Evolix / www.evolix.fr / info@evolix.fr / Octobre 2014}}}
+\rfoot{\includegraphics*[width=12mm]{evolix}}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Variables a changer :
+% TITRE, AUTEUR, SUJET et DATE
+
+\author{Evolix}
+\title{Administration Linux Apache PHP MySQL}
+\date{Octobre 2014}
+
+%% debut du document
+
+\begin{document}
+
+\begin{center}
+
+\vspace*{3 cm}
+\Huge{{\bfseries Formation Evolix Administration Linux }} \\
+~\\
+Focus sur Apache, PHP, MySQL\\
+~\\
+\normalsize{Evolix - Octobre 2014}\\
+
+\vspace*{3 cm}
+\includegraphics*[width=70mm]{pevolix}\\
+
+\end{center}
+
+\tableofcontents
+
+\include{libre}
+\include{linux}
+\include{debian}
+\include{noyau}
+\include{securite}
+\include{apache}
+\include{php}
+\include{mysql}
+
+% TO READ
+% http://debianbook.info/
+
+\newpage
+\chapter{À propos de ce document}
+Ce support de formation s'inspire de documentations officielles, de pages
+Internet, de livres ou de magazines soumis à des droits d'auteurs. Dans la
+mesure du possible, les liens vers les sources ont été cités.\\
+~\\
+Copyright (c) 2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014 Evolix, Grégory Colpart, Sébastien Dubois, Romain Dessort, Arnaud André et Alexandre Anriot\\
+~\\
+
+Permission vous est donnée de copier, distribuer et/ou modifier ce document
+selon les termes de la Licence GNU Free Documentation License, Version 1.2 ou
+ultérieure publiée par la Free Software Foundation ; ce document ne comporte
+pas de section inaltérable. Cette licence est disponible à l'adresse suivante:\\
+\url{http://www.gnu.org/copyleft/fdl.html}
+
+\end{document}
+
+% $Id: 2J-Debian-LAMP-Tomcat.2011.tex,v 1.6 2011-06-19 17:20:25 sdubois Exp $
