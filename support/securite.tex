@@ -197,10 +197,10 @@ Ensuite on peut placer des scripts (exécutables) dans les cron.*ly ou bien dans 
 ~\\
 \textbf{Squelette} :
 ~\\
-"minute" "heure" "date" "mois" "jour" "utilisateur" "commande"\\
+"minute" "heure" "jours" "mois" "jour/semaine" "utilisateur" "commande"\\
 ~\\
 Exemple signifiant du lundi au vendredi, toutes les 3h à la 5ème minute:\\
-\texttt{5 */3 * 1-5 root ntpdate serveur-ntp\\
+\texttt{5 */3 * * 1-5 root ntpdate serveur-ntp\\
 }
 
 \section{Gestion des Journaux}
@@ -302,7 +302,7 @@ Dans le but de chiffrer les connexions FTP, on peut également utiliser une couch
 
 \section{Authentification}
 
-Le fichier \texttt{/etc/passwd} contient la liste des utilisateurs avec le mot de passe chiffré. Ainsi lors de la procédure d'authentification d'un utilisateur, le système teste si le chiffrement du mot de passe entré correspond au mot de passe chiffré (\texttt{/etc/passwd} est accessible en lecture aux utilisateurs). Il est souhaitable d'utiliser l'algorithme de chiffrement MD5 pour chiffrer les mots de passe. Il est également conseillé d'utiliser l'authentification shadow. Avec cette authentification, les mots de passe du fichier /etc/passwd sont remplacés par 'x' et sont stockés dans le fichier \texttt{/etc/shadow}, inaccessible en lecture aux utilisateurs. D'autres méthodes d'authentification locale existent comme sous OpenBSD\footnote{\url{http://openbsd.org/}}  mais l'utilisation de la méthode shadow est répandue sur les distributions Linux. Il faut bien avoir conscience que cela repose sur la solidité de l'algorithme de chiffrement\footnote{\url{http://evolix.org/man/crypt.html}}.\\
+Le fichier \texttt{/etc/passwd} contient la liste des utilisateurs avec le mot de passe chiffré. Ainsi lors de la procédure d'authentification d'un utilisateur, le système teste si le chiffrement du mot de passe entré correspond au mot de passe chiffré (\texttt{/etc/passwd} est accessible en lecture aux utilisateurs). Il est souhaitable d'utiliser l'algorithme de chiffrement SHA-512 pour chiffrer les mots de passe. Il est également conseillé d'utiliser l'authentification shadow. Avec cette authentification, les mots de passe du fichier /etc/passwd sont remplacés par 'x' et sont stockés dans le fichier \texttt{/etc/shadow}, inaccessible en lecture aux utilisateurs. D'autres méthodes d'authentification locale existent comme sous OpenBSD\footnote{\url{http://openbsd.org/}}  mais l'utilisation de la méthode shadow est répandue sur les distributions Linux. Il faut bien avoir conscience que cela repose sur la solidité de l'algorithme de chiffrement\footnote{\url{http://evolix.org/man/crypt.html}}.\\
 
 Le fichier \texttt{/etc/group} stocke la liste des groupes, c'est-à-dire des entités regroupant plusieurs utilisateurs et permettant de donner à ce groupe d'utilisateurs les mêmes droits sur des fichiers. Un utilisateur peut connaître les groupes auxquels il appartient en tapant la commande \texttt{groups} ou encore \texttt{id}.\\ 
 Le fichier /etc/adduser.conf contient les valeurs par défaut pour les programmes \textit{adduser} \textit{addgroup} \textit{deluser} et \textit{delgroup}. Chaque option est de la forme option = valeur. Les simples ou doubles guillemets sont autorisés autour de la valeur. Les lignes de commentaires doivent avoir un caractère dièse (\#) au début de la ligne.\\
@@ -322,7 +322,7 @@ La gestion des utilisateurs se fait grâce aux commandes adduser et addgroup. Not
 ~\\
 Exemple~:\\
 \begin{verbatim}
-# addgroup --gid 107 student}
+# addgroup --gid 107 student
 # adduser --home /home/jean --shell /bin/bash  
   --uid 1057 --ingroup student jean
 \end{verbatim}
@@ -354,7 +354,7 @@ FAILLOG_ENAB  yes
 LOG_UNKFAIL_ENAB yes
 # retenir les tentatives réussies
 LOG_OK_LOGINS yes
-# delai maximim pour authentification
+# delai maximum pour authentification
 LOGIN_TIMEOUT  60
 \end{verbatim}
 
@@ -411,7 +411,7 @@ La syntaxe des fichiers est constituée de lignes telles que :
 \item[\textbf{pam\_access.so}] : restriction d'accès avec le fichier access.conf\\
 \end{itemize}
 ~\\
-Le fichier \texttt{access.conf} permet de gérer les permissions de login  (si activé dans PAM) selon la syntaxe suivante :\\
+Le fichier \texttt{/etc/security/access.conf} permet de gérer les permissions de login  (si activé dans PAM) selon la syntaxe suivante :\\
 ~\\
 ~[*] permission : users : origins
 ~\\
@@ -448,7 +448,7 @@ Sur un serveur où seuls les administrateurs peuvent se connecter :
 ~\\
 \end{itemize}
 ~\\
-Le fichier limits.conf permet d'imposer des limites diverses sur les groupes ou les identifiants :\\
+Le fichier \texttt{/etc/security/limits.conf} permet d'imposer des limites diverses sur les groupes ou les identifiants :\\
 ~\\
 Structure: "qui" "type" "quoi" "combien"\\
 ~\\
