@@ -1,0 +1,28 @@
+\makeatletter
+
+\usepackage{color}
+\definecolor{orange}{rgb}{1.0, 0.5, 0.0}
+\definecolor{gris}{gray}{0.75}
+
+\def\tableofcontents{%
+  \thispagestyle{fancy}%
+  \section*{\contentsname}%
+  \@starttoc{toc}}
+
+\renewcommand\section{\@startsection
+			{section}{1}{\z@}%
+			{40pt}%
+			{40pt}%
+			{\normalfont\sffamily\huge\bfseries\color{orange}}}
+
+\renewcommand\subsection{\@startsection
+			{subsection}{1}{\z@}%
+			{20pt}%
+			{20pt}%
+			{\normalfont\sffamily\Large\bfseries\color{gris}}}
+
+\renewcommand\subsubsection{\@startsection
+			{subsubsection}{1}{\z@}%
+			{10pt}%
+			{10pt}%
+			{\normalfont\sffamily\large\bfseries\color{black}}}
