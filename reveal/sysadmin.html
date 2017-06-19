@@ -48,7 +48,7 @@
 
 <section>
 <h2>Cron</h2>
-	<pre>Les fichiers de cron</pre>
+	<pre>Les fichiers utiles :</pre>
 	<pre>
 		<code>
 # systemctl status cron
@@ -65,6 +65,7 @@
 </section>
 
 <section>
+<h2>Cron (suite)</h2>
 <pre>
 <code>
 $ crontab -e
@@ -87,6 +88,7 @@ MAILTO=alert@example.com
 </section>
 
 <section>
+<h2>Cron (suite)</h2>
 <pre>
 <code>
 $ man 5 crontab
@@ -100,57 +102,88 @@ $ crontab -l
 </section>
 
 <section>
-
 <h2>ntpd</h2>
+<pre>
+<code>
 $ date
+</code>
+<code>
 # apt install ntp
-
+</code>
+<code>
 Fichier /etc/ntp.conf :
+</code>
 server ntp.evolix.net
-
-# ntpq -p
-
-$ timedatectl
-# hwclock --show
-# hwclock --systohc
+</pre>
 </section>
 
 <section>
+<h2>ntpd (suite)</h2>
+<pre>
+<code>
+# ntpq -p
+</code>
+<code>
+$ timedatectl
+</code>
+<code>
+# hwclock --show
+</code>
+<code>
+# hwclock --systohc
+</code>
+</pre>
+</section>
+
+<section>
+
 <h2>systemd</h2>
-systemd est un gestionnaire de services (le fameux démon avec le PID 1) en alternative au System V. Il est installé par défaut depuis Debian 8.
+<p>systemd est un gestionnaire de services (le fameux démon avec le PID 1) en alternative au System V. Il est installé par défaut depuis Debian 8.</p>
+<pre>
+<code># systemctl status</code>
+<code># systemctl list-units</code>
+<code># systemctl --failed</code>
+<code># systemctl list-unit-files</code>
+</pre>
+</section>
 
-# systemctl status
-# systemctl list-units
-# systemctl --failed
-# systemctl list-unit-files
-
+<section>
+<p>
+<h2>systemd (suite)</h2>
 Unités par défaut : /usr/lib/systemd/system/
 Modifications manuelles : /etc/systemd/system/
+</p>
+<pre>
+<code># systemctl start < unité ></code>
+<code># systemctl stop < unité ></code>
+<code># systemctl restart < unité ></code>
+<code># systemctl reload < unité ></code>
+</pre>
+</section>
 
-# systemctl start <unité>
-# systemctl stop <unité>
-# systemctl restart <unité>
-# systemctl reload <unité>
+<section>
+<h2>systemd (suite)</h2>
+<pre>
+<code># systemctl status < unité ></code>
+<code># systemctl is-enabled < unité ></code>
+<code># systemctl enable < unité ></code>
+<code># systemctl disable < unité ></code>
+<code># systemctl reboot</code>
+<code># systemctl poweroff</code>
+<code># systemd-analyze</code>
+</pre>
+</section>
 
-# systemctl status <unité>
-# systemctl is-enabled <unité>
-
-# systemctl enable <unité>
-# systemctl disable <unité>
-
-# systemctl reboot
-# systemctl poweroff
-# systemd-analyze
-
-Modifier une unité
-
-# cp -a /lib/systemd/system/<service>.service /etc/systemd/system/
-# vim /etc/systemd/system/<service>.service
-# systemctl daemon-reload
-
-# systemctl cat ssh
-# systemctl cat cron
-# systemctl edit <unité>
+<section>
+<h2>Modifier une unité</h2>
+<pre>
+<code># cp -a /lib/systemd/system/< service >.service /etc/systemd/system/</code>
+<code># vim /etc/systemd/system/< service >.service</code>
+<code># systemctl daemon-reload</code>
+<code># systemctl cat ssh</code>
+<code># systemctl cat cron</code>
+<code># systemctl edit < unité ></code>
+</pre>
 </section>
 
 <section>
