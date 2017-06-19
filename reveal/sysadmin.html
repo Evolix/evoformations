@@ -897,26 +897,66 @@ EvoBackup : https://forge.evolix.org/projetcs/evobackup
 </section>
 
 <section>
+	<section>
 <h2>Gestion des droits</h2>
-Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers: les fichiers, les répertoires, les liens symboliques, les fichiers-périphériques.
-Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).
-Les 3 droits fondamentaux sont la lecture, l'écriture et l'éxecution.
-Pour un fichier, ces 3 droits sont définis pour 3 catégories: l'utilisateur, le groupe et le "reste du monde". Pour chacune de ces catégories: on note les droits sous la forme rwx.
-[s:sst] u:rwx g:rwx o:rwx
+<p>Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers: 
+<ul>
+<li>les fichiers,</li> 
+<li>les répertoires,</li>
+<li>les liens symboliques,</li>
+<li> les fichiers-périphériques.</li>
+</ul>
+</p>
+<p> Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
+<p>Les 3 droits fondamentaux sont la <b>lecture, l'écriture et l'éxecution</b>.</p>
+	</section>
+	<section>	
+<p>Pour un fichier, ces 3 droits sont définis pour 3 catégories: 
+<ul>
+<li>l'utilisateur,</li>
+<li>le groupe</li>
+<li>et le "reste du monde".</li>
+</ul></p>
+<p>
+Pour chacune de ces catégories: on note les droits sous la forme rwx.</p>
+<pre>
+<code>[s:sst] u:rwx g:rwx o:rwx</code>
+</pre>
+	</section>
 
-Commandes utiles/essentielles :
-- ls -l, stat, chmod, chown, chgrp
-- su, newgrp, login, who, w, w.procps
+	<section>
+<h2>Commandes utiles/essentielles :</h2>
+<p>
+<ul>
+<li>ls -l, stat, chmod, chown, chgrp</li>
+<li>su, newgrp, login, who, w, w.procps</li>
+</ul>
+</p>
+<pre>
+<code>
 $ chmod <catégorie>+<nouveau_droit> fichier
+</code>
+<code>
 $ chmod <nouveaux_droits> fichier
-Droits pour un répertoire :
-r = lister, x = traverser, w = écrire (et même effacer !!)
-Droits spéciaux :
-- Exécutables setuid ou setgid
-- Répertoire setgid ou stickybit
-
-Notation décimale :
-
+</code>
+</pre>
+	</section>
+	<section>
+<p>Droits pour un répertoire :</p>
+<pre>
+<code>r = lister, x = traverser, w = écrire (et même effacer !!)</code>
+</pre>
+<p>Droits spéciaux :
+<ul>
+<li> Exécutables setuid ou setgid</li>
+<li> Répertoire setgid ou stickybit</li>
+</ul>
+</p>
+	</section>
+	<section>
+<p> Notation décimale :
+<pre>
+<code>
 777 = ?
 700 = ?
 600 = ?
@@ -924,10 +964,12 @@ Notation décimale :
 755 = ?
 775 = ?
 701 = ?
-
-umask :
-- Pour gérer droit niveau utilisateurs : commande umask
-  Fixé dans le fichier profile ou bashrc (local ou général...)
+</code>
+<p>
+umask : Pour gérer droit niveau utilisateurs : commande umask
+Fixé dans le fichier profile ou bashrc (local ou général...)
+</p>
+	</section>
 </section>
 
 <section>
