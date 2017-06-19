@@ -852,21 +852,21 @@ ansible 2.2.1.0
 
 <section>
 	<section>
-<h2>OpenSSH</h2>
-<p>
-<ul>
-<li> SSH: Secure Shell</li>
-<li> Outils: 
-	<ul>
-	<li>Client: ssh, scp, sftp</li>
-	<li>Serveur: ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server</li>
-	</ul>
-</li>
-</ul>
-	</section>
-	<section>
-<h2>Configuration de sshd_config</h2>
-<pre>
+    <h2>OpenSSH</h2>
+    Client et serveur pour connexions shell à distance.
+  </section>
+
+  <section>
+    <h3> SSH: Secure Shell</h3>
+    <ul>
+      <li>Client: ssh, scp, sftp</li>
+      <li>Serveur: ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server</li>
+    </ul>
+  </section>
+ <section>
+  <h2>Configuration du serveur</h2>
+    <pre>
+      <code data-trim class="hljs nohighlight"># cat /etc/ssh/sshd_config</code>
 Port 22
 Port 2222
 
@@ -878,27 +878,26 @@ Match Address 192.0.2.1,192.0.2.2
     PasswordAuthentication yes
 Match User foo,bar
     PasswordAuthentication no
-</code>
-<code>
+      <code data-trim class="hljs nohighlight">
 $ ssh-keygen
 $ cat .ssh/id_rsa.pub
 $ vim .ssh/authorized_keys
-</code>
-</pre>
-	</section>
-	<section>
-<h2>OpenSSH (suite)</h2>
-<pre>
-<code>$ ssh-agent</code>
-<code>scp   fichier-local    identité-distante@hôte-distant:chemin/fichier</code>
-<code>scp   identité-distante@hôte-distant:chemin/fichier   fichier-local</code>
-</pre>
+      </code>
+    </pre>
+  </section>
+  <section>
+    <h2>Agent SSH</h2>
+    <pre>
+    <code data-trim class="hljs nohighlight">$ ssh-agent</code>
+    <code data-trim class="hljs nohighlight">$ scp   fichier-local    identité-distante@hôte-distant:chemin/fichier</code>
+    <code data-trim class="hljs nohighlight">$ scp   identité-distante@hôte-distant:chemin/fichier   fichier-local</code>
+    </pre>
 	</section>
 </section>
 
 <section>
 	<section>
-<h2>Sauvegardes</h2>
+    <h2>Sauvegardes</h2>
 	</section>
 	<section>
 <p>
@@ -925,16 +924,16 @@ rsync -av --delete
 cp -al
 </code>
 </pre>
-<p>EvoBackup :<br><a href="https://forge.evolix.org/projetcs/evobackup">https://forge.evolix.org/projetcs/evobackup</a></p>
+<p>EvoBackup :<br><a href="https://forge.evolix.org/projetcs/evobackup">forge.evolix.org/projetcs/evobackup</a></p>
 	</section>
 </section>
 
 <section>
 	<section>
 <h2>Gestion des droits</h2>
-<p>Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers: 
+<p>Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers:
 <ul>
-<li>les fichiers,</li> 
+<li>les fichiers,</li>
 <li>les répertoires,</li>
 <li>les liens symboliques,</li>
 <li> les fichiers-périphériques.</li>
@@ -945,8 +944,8 @@ cp -al
 <p>Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
 <p>Les 3 droits fondamentaux sont la <b>lecture, l'écriture et l'éxecution</b>.</p>
 	</section>
-	<section>	
-<p>Pour un fichier, ces 3 droits sont définis pour 3 catégories: 
+	<section>
+<p>Pour un fichier, ces 3 droits sont définis pour 3 catégories:
 <ul>
 <li>l'utilisateur,</li>
 <li>le groupe</li>
