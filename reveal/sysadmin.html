@@ -55,16 +55,16 @@
     <h3>Les fichiers de cron</h3>
     <pre>
       <code data-trim class="hljs nohighlight">
-        # systemctl status cron
+# systemctl status cron
       </code>
       <code data-trim class="hljs nohighlight">
-        # vim /etc/crontab
-        # vim /etc/default/cron
+# vim /etc/crontab
+# vim /etc/default/cron
       </code>
     </pre>
     <pre>
     <code data-trim class="hljs nohighlight">
-      # vim /etc/cron.d/example
+# vim /etc/cron.d/example
     </code>
 30 05 * * 0 www-data /usr/local/adm/savelog-weekly
     </pre>
@@ -95,13 +95,13 @@ MAILTO=alert@example.com
     <h3>Documentation et consultation</h3>
     <pre>
       <code data-trim class="hljs nohighlight">
-        $ man 5 crontab
+$ man 5 crontab
       </code>
       <code data-trim class="hljs nohighlight">
-        $ crontab -l
+$ crontab -l
       </code>
       <code data-trim class="hljs nohighlight">
-        # crontab -u jdoe -l
+# crontab -u jdoe -l
       </code>
     </pre>
   </section>
@@ -114,13 +114,13 @@ MAILTO=alert@example.com
 <section>
   <pre>
     <code data-trim class="hljs nohighlight">
-    $ date
+$ date
     </code>
     <code data-trim class="hljs nohighlight">
-    # apt install ntp
+# apt install ntp
     </code>
     <code data-trim class="hljs nohighlight">
-    Fichier /etc/ntp.conf :
+# cat /etc/ntp.conf :
     </code>
 server ntp.evolix.net
   </pre>
@@ -129,16 +129,16 @@ server ntp.evolix.net
   <section>
   <pre>
   <code data-trim class="hljs nohighlight">
-  # ntpq -p
+# ntpq -p
   </code>
   <code data-trim class="hljs nohighlight">
-  $ timedatectl
+$ timedatectl
   </code>
   <code data-trim class="hljs nohighlight">
-  # hwclock --show
+# hwclock --show
   </code>
   <code data-trim class="hljs nohighlight">
-  # hwclock --systohc
+# hwclock --systohc
   </code>
   </pre>
   </section>
@@ -209,7 +209,7 @@ server ntp.evolix.net
   <section>
     <h3>Installation</h3>
     <pre><code data-trim class="hljs nohighlight">
-      # apt install postfix
+# apt install postfix
     </code></pre>
     <h3>Configuration</h3>
     <ul>
@@ -220,7 +220,6 @@ server ntp.evolix.net
   <section>
   <pre>
 <code># vim main.cf</code>
-<code data-trim style="max-height: 500px">
 smtpd_banner = $myhostname ESMTP mail server
 biff = no
 append_dot_mydomain = no
@@ -236,7 +235,7 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = ipv4
 disable_vrfy_command = yes
-</code></pre>
+</pre>
 </section>
 
 <section>
