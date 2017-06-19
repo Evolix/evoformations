@@ -14,8 +14,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <link rel="stylesheet" href="../css/reveal.css">
-    <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+    <link rel="stylesheet" href="reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
 
     <!-- Theme used for syntax highlighting of code -->
     <link rel="stylesheet" href="../lib/css/zenburn.css">
@@ -25,7 +25,7 @@
         var link = document.createElement('link');
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = window.location.search.match(.. / print - pdf / gi) ? '../css/print/pdf.css' : '../css/print/paper.css';
+        link.href = window.location.search.match(.. / print - pdf / gi) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
         document.getElementsByTagName('head')[0].appendChild(link);
     </script>
 
@@ -60,10 +60,8 @@
                 <h2>Compatibilité du matériel</h2>
                 <ul>
                     <li>Enjeu principal : carte réseau et controleur disque/RAID</li>
-                    <li>Test avec Live-CD</li>
-                    <li>Compatibilité du matériel</li>
+                    <li>Si possible, test avec Live-CD</li>
                     <li><tt>lspci -n</tt> sur http://kmuto.jp/debian/hcl/ plus à jour :(</li>
-                    <li>Listes de diffusion</li>
                     <li>Recherche Google avec "site:lists.debian.org/debian-boot"</li>
                 </ul>
             </section>
@@ -75,33 +73,33 @@
                     <li>CPU Intel Xeon : fréquence ? nombre de cores ? https://www.cpubenchmark.net/</li>
                     <li>Quantité de mémoire</li>
                     <li>Importance du stockage :</li>
-                    <li>Local ou distant (NFS, iSCSI)</li>
+                    <ul><li>Local ou distant (NFS, iSCSI)</li>
                     <li>Type : SATA, SAS, SSD ?</li>
                     <li>Performance lecture/écriture : Mo/s, IOPS</li>
-                    <li>Gestion du cache</li>
+                    <li>Gestion du cache</li></ul></li>
                 </ul>
             </section>
 
             <section>
-                <h2>Focus sur le RAID</h2>
+                <h2>Focus sur le stockage</h2>
+            </section>
+
+            <section>
+                <h2>RAID</h2>
                 <ul>
                     <li>RAID0</li>
                     <li>RAID1</li>
                     <li>RAID5</li>
                     <li>RAID6</li>
                     <li>RAID10</li>
-                    <li>RAID hardware ou logiciel</li>
+                    <li>RAID hardware ou logiciel ?</li>
                 </ul>
-            </section>
-
-            <section>
-                <h2>Focus sur le stockage</h2> parted
             </section>
 
             <section>
                 <h2>Partitionnement</h2>
                 <ul>
-                    <li>Partitionnement DOS limité à 2,2 T</li>
+                    <li>Partitionnement msdos limité à 2To</li>
                     <li>Partitionnement GPT</li>
                     <li>Outils : fdisk, cfdisk, sfdisk, parted</li>
                     <li>/boot / /var /usr /tmp 2xswap /srv /home</li>
@@ -110,24 +108,79 @@
             </section>
 
             <section>
-                <h2>Focus sur RAID logiciel</h2>
+                <h2>RAID logiciel</h2>
+                <pre>
+                    <code>
+# apt install mdadm
+$ /sbin/mdadm -V
+$ /sbin/modinfo md_mod
+# mdadm --detail --scan
+# cat /proc/mdstat
+                    </code>
+                </pre>
+                    <code>
+                <pre>
+# mdadm --create /dev/md42 --chunk=64 --metadata=default --level=raid1 --raid-devices=2 /dev/sdy1 /dev/sdz1
+# mdadm --detail /dev/md42
+                    </code>
+                </pre>
             </section>
 
             <section>
-                <h2>Focus sur LVM</h2>
+                <h2>RAID logiciel (suite)</h2>
+                <pre>Manipulation en cas de disque HS</pre>
+                <pre>
+                    <code>
+# sfdisk -d /dev/sda > /tmp/part.out
+# sfdisk -f /dev/sdz < /tmp/part.out
+# partprobe /dev/sdz
+
+# apt install gdisk
+# sgdisk -R=/dev/sdz /dev/sda
+# sgdisk -G /dev/sdz
+                    </code>
+                </pre>
+            </section>
+
+            <section>
+                <h2>RAID logiciel (suite)</h2>
+                <pre>Manipulation en cas de disque HS (suite)</pre>
+                <pre>
+                    <code>
+# mdadm /dev/md1 --add /dev/sdz1
+mdadm: added /dev/sdz1
+# mdadm /dev/md2 --add /dev/sdz2
+mdadm: added /dev/sdz2
+
+# cat /proc/mdstat
+Personalities : [raid1] 
+md2: active raid1 sda1[1] sdz1[0]
+      1893933820 blocks super 1.2 [2/1] [U_]
+      [>....................]  recovery =  4.0% (75859776/1893933820) finish=493.5min speed=61391K/sec
+                    </code>
+                </pre>
+            </section>
+
+            <section>
+                <h2>LVM</h2>
+                <pre>
+                    <code>
+# apt install lvm2
+# pvcreate /dev/sdz8
+# pvdisplay / pvs
+# vgcreate group1 /devdz8
+# vgdisplay / vgs
+# lvcreate -L5G -nfirstlvmvol group1
+# ls /dev/mapper/
             </section>
 
             <section>
                 <h2>Réseau</h2>
                 <ul>
-                    <li>Fichiers de paramètres : <br> Fichiers spécifiques /etc/resolv.conf, /etc/hosts
-                    </li>
-                    <li> Configuration dynamique DHCP (Dynamic Host Configuration Protocol) : <br> Paramètres réseau sont automatiquement mis en place.
-                    </li>
-                    <li>Configuration statique : <br> Configuration manuelle des fichiers
-                    </li>
-                    <li>Outils réseaux : <br> (ifconfig, ping, route, ip, netstat, traceroute...)
-                    </li>
+                    <li>Fichiers standards : /etc/resolv.conf, /etc/hosts</li>
+                    <li>Configuration statique ou dynamique (DHCP) ?</li>
+                    <li>Configuration réseau : pas de standard sous Linux...</li>
+                    <li>Outils réseaux de base : ifconfig, ping, route, ip, netstat, traceroute</li>
                 </ul>
             </section>
 
@@ -138,7 +191,8 @@
                     <li>Utilisation du système de packages</li>
                 </ul>
                 <p>
-                    Les packages sont des binaires précompilés qui sont prêts à être installés de façon simple et rapide. <br> Les dépendances sont gérées, ainsi que la mise à jour et la suppression des packages déjà installés (varie selon les distributions).
+                    Les packages sont des binaires précompilés qui sont prêts à être installés de façon simple et rapide.<br>
+                    Les dépendances sont gérées, ainsi que la mise à jour et la suppression des packages déjà installés (varie selon les distributions).
                 </p>
             </section>
 
@@ -190,13 +244,13 @@
             <section>
                 <h2>console de debug à l'installation</h2>
                 <pre>
-        <code>
+                    <code>
 # lspci | grep Eth
 # ip addr show
 # dmesg | grep sd
 # cat /proc/cpuinfo
-        </code>
-    </pre>
+                    </code>
+                </pre>
             </section>
 
             <section>
@@ -329,7 +383,7 @@ $ dpkg -s
                 <pre>
 Sources de paquets :  /etc/apt/sources.list
                     <code>
-# netselect / apt-cdrom / apt-config
+# netselect / apt-cdrom
                     </code>
 Interface pour APT : apt, apt-cache, apt-get, aptitude
                     <code>
@@ -379,12 +433,13 @@ deb http://mirror.evolix.org/debian/ stretch main
                 <pre>
                     <code>
 # dpkg-reconfigure -plow debconf
+# apt remove aptitude
 # vim /etc/apt/apt.conf.d/99custom
                     </code>
 APT::Install-Recommends "false";
 APT::Install-Suggests "false";
-DPkg::Pre-Invoke { "mount -oremount,exec /tmp && mount -oremount,rw /usr || true"; };"
-DPkg::Post-Invoke { "mount -oremount /tmp && mount -oremount /usr || true"; };"
+Dpkg::Pre-Invoke { "mount -oremount,exec /tmp && mount -oremount,rw /usr || true"; };"
+Dpkg::Post-Invoke { "mount -oremount /tmp && mount -oremount /usr || true"; };"
                 </pre>
             </section>
 
@@ -460,8 +515,8 @@ $ iperf -c debit.k-net.fr
                 <h2>Comment choisir sa version de Linux ?</h2>
                 <ul>
                     <li>Versions logiciels fixes : Apache / PHP / MySQL / etc.</li>
-                    <li>Version nue / panel (cpanel, plesk)</li>
-                    <li>apt-get / yum install</li>
+                    <li>Version nue ou panel (cpanel, plesk) ?</li>
+                    <li>apt-get ou yum ?</li>
                 </ul>
             </section>
 
@@ -479,8 +534,8 @@ $ iperf -c debit.k-net.fr
 
     </div>
 
-    <script src="../lib/js/head.min.js"></script>
-    <script src="../js/reveal.js"></script>
+    <script src="reveal.js/lib/js/head.min.js"></script>
+    <script src="reveal.js/js/reveal.js"></script>
 
     <script>
         // More info https://github.com/hakimel/reveal.js#configuration
@@ -494,31 +549,31 @@ $ iperf -c debit.k-net.fr
 
             // More info https://github.com/hakimel/reveal.js#dependencies
             dependencies: [{
-                src: '../lib/js/classList.js',
+                src: 'reveal.js/lib/js/classList.js',
                 condition: function() {
                     return !document.body.classList;
                 }
             }, {
-                src: '../plugin/markdown/marked.js',
+                src: 'reveal.js/plugin/markdown/marked.js',
                 condition: function() {
                     return !!document.querySelector('[data-markdown]');
                 }
             }, {
-                src: '../plugin/markdown/markdown.js',
+                src: 'reveal.js/plugin/markdown/markdown.js',
                 condition: function() {
                     return !!document.querySelector('[data-markdown]');
                 }
             }, {
-                src: '../plugin/highlight/highlight.js',
+                src: 'reveal.js/plugin/highlight/highlight.js',
                 async: true,
                 callback: function() {
                     hljs.initHighlightingOnLoad();
                 }
             }, {
-                src: '../plugin/zoom-js/zoom.js',
+                src: 'reveal.js/plugin/zoom-js/zoom.js',
                 async: true
             }, {
-                src: '../plugin/notes/notes.js',
+                src: 'reveal.js/plugin/notes/notes.js',
                 async: true
             }]
         });

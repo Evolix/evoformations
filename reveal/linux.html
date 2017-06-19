@@ -146,7 +146,23 @@ $ make xconfig
             </section>
 
             <section>
-                <h2></h2>
+                <h2>Organisation des fichiers</h2>
+                <pre>
+bin : binaires (exécutables) des commandes essentielles
+boot : fichiers statiques pour le chargeur d'amorçage
+dev : fichiers des pilotes de périphériques
+etc : configuration système propre à la machine
+home : répertoires personnels des utilisateurs
+lib : bibliothèques partagées et modules noyau
+mnt, media : points de montage temporaire
+proc,sys : répertoire virtuel pour infos système
+root : répertoire personnel de l'utilisateur root
+sbin : binaires (exécutables) essentiels
+tmp : fichiers temporaires
+usr : hiérarchie secondaire
+var : données variables
+opt : suites applicatives additionnelles
+                </pre>
             </section>
 
             <section>
@@ -157,10 +173,6 @@ $ make xconfig
                     <li>Debian</li>
                     <li>Ubuntu</li>
                 </ul>
-            </section>
-
-            <section>
-                <h2>Organisation des fichiers</h2> Norme FHS
             </section>
 
             <section>
@@ -229,15 +241,12 @@ $ make xconfig
                 <h2>Red Hat</h2>
                 <h3>Caractéristiques</h3>
                 <ul>
-                    <li>Système de packages RPM :</li>
-                    <li>Installation facile et rapide (pas de compilation)</li>
+                    <li>Système de packages RPM (rpm.org)</li>
+                    <ul><li>Installation facile et rapide (pas de compilation)</li>
                     <li>Gestion des dépendances</li>
                     <li>Notoriété et abondance de dépôts RPM</li>
-                    <li>Bénéficie d'améliorations constantes</li>
+                    <li>Bénéficie d'améliorations constantes</li></ul>
                 </ul>
-                <p>
-                    Voir www.rpm.org
-                </p>
             </section>
 
             <section>
@@ -287,9 +296,9 @@ grep-dctrl -P '' -c /var/lib/apt/lists/*jessie*Sources
                 <h2>Debian</h2>
                 <h3>Versions</h3>
                 <ul>
-                    <li>Debian 7 (2013) : support jusqu'en 2016 (support LTS jusqu'en 2018)</li>
-                    <li>Debian 8 (2015): support jusqu'en 2018 (support LTS jusqu'en 2020)</li>
-                    <li>Debian 9 (2017): support jusqu'en 2020 (support LTS jusqu'en 2022)</li>
+                    <li>Debian 7 (2013) : support jusqu'en 2016 (LTS jusqu'en 2018)</li>
+                    <li>Debian 8 (2015) : support jusqu'en 2018 (LTS jusqu'en 2020)</li>
+                    <li>Debian 9 (2017) : support jusqu'en 2020 (LTS jusqu'en 2022)</li>
                 </ul>
             </section>
 
