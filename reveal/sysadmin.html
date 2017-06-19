@@ -250,15 +250,11 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     </ul>
   </section>
   <section>
-    <h3>Aller plus loin</h3>
-    <p>Le livre <strong>Pro Git</strong> est incontournable,<br>pour le débutant comme pour l'expert.</p>
-    <p>https://git-scm.com/book/fr/v2</p>
-  </section>
-  <section>
     <h3>En pratique /etc/.git</h3>
-    <p>Une <em>bonne pratique</em> Evolix depuis 1337.</p>
+    <p>Une <em>bonne pratique</em> Evolix.</p>
   </section>
   <section>
+    <h4>Initialisation du dépôt</h4>
     <pre><code>
     $ su
     # cd /etc
@@ -267,6 +263,22 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     # git add .
     # git commit -m "commit initial"
     </code></pre>
+  </section>
+  <section>
+    <h4>Premières modifications</h4>
+    <pre><code>
+    # echo "127.0.0.1 foo" >> /etc/hosts
+    # git status
+    # git diff [HEAD]
+    # git commit --all --message "Ajout de foo dans /etc/hosts"
+    # git log
+    # git show
+    </code></pre>
+  </section>
+  <section>
+    <h3>Aller plus loin</h3>
+    <p>Le livre <strong>Pro Git</strong> est incontournable,<br>pour le débutant comme pour l'expert.</p>
+    <p><a href="https://git-scm.com/book/fr/v2">git-scm.com/book/fr/v2</a></p>
   </section>
 </section>
 
