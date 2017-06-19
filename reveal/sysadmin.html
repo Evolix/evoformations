@@ -113,32 +113,31 @@ MAILTO=alert@example.com
 </section>
 <section>
   <pre>
-    <code>
+    <code data-trim class="hljs nohighlight">
     $ date
     </code>
-    <code>
+    <code data-trim class="hljs nohighlight">
     # apt install ntp
     </code>
-    <code>
+    <code data-trim class="hljs nohighlight">
     Fichier /etc/ntp.conf :
     </code>
-    server ntp.evolix.net
+server ntp.evolix.net
   </pre>
 </section>
 
   <section>
-  <h2>ntpd (suite)</h2>
   <pre>
-  <code>
+  <code data-trim class="hljs nohighlight">
   # ntpq -p
   </code>
-  <code>
+  <code data-trim class="hljs nohighlight">
   $ timedatectl
   </code>
-  <code>
+  <code data-trim class="hljs nohighlight">
   # hwclock --show
   </code>
-  <code>
+  <code data-trim class="hljs nohighlight">
   # hwclock --systohc
   </code>
   </pre>
@@ -147,54 +146,60 @@ MAILTO=alert@example.com
 </section>
 
 <section>
+  <section>
+  <h2>systemd</h2>
+  </section>
+  <section>
+    <h3>systemd est un gestionnaire de services</h3>
+    <p>Alternative au System V, installé par défaut depuis Debian 8.</p>
+    <pre>
+    <code data-trim class="hljs nohighlight"># systemctl status</code>
+    <code data-trim class="hljs nohighlight"># systemctl list-units</code>
+    <code data-trim class="hljs nohighlight"># systemctl --failed</code>
+    <code data-trim class="hljs nohighlight"># systemctl list-unit-files</code>
+    </pre>
+  </section>
 
-<h2>systemd</h2>
-<p>systemd est un gestionnaire de services (le fameux démon avec le PID 1) en alternative au System V. Il est installé par défaut depuis Debian 8.</p>
-<pre>
-<code># systemctl status</code>
-<code># systemctl list-units</code>
-<code># systemctl --failed</code>
-<code># systemctl list-unit-files</code>
-</pre>
-</section>
+  <section>
+  <ul>
+  <li>Unités par défaut : /usr/lib/systemd/system/</li>
+  <li>Modifications manuelles : /etc/systemd/system/</li>
+  </ul>
+  <pre>
+  <code data-trim class="hljs nohighlight"># systemctl start &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl stop &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl restart &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl reload &lt;unité&gt;</code>
+  </pre>
+  </section>
 
-<section>
-<p>
-<h2>systemd (suite)</h2>
-Unités par défaut : /usr/lib/systemd/system/
-Modifications manuelles : /etc/systemd/system/
-</p>
-<pre>
-<code># systemctl start < unité ></code>
-<code># systemctl stop < unité ></code>
-<code># systemctl restart < unité ></code>
-<code># systemctl reload < unité ></code>
-</pre>
-</section>
+  <section>
+  <pre>
+  <code data-trim class="hljs nohighlight"># systemctl status &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl is-enabled &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl enable &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl disable &lt;unité&gt;</code>
+  </pre>
+  </section>
 
-<section>
-<h2>systemd (suite)</h2>
-<pre>
-<code># systemctl status < unité ></code>
-<code># systemctl is-enabled < unité ></code>
-<code># systemctl enable < unité ></code>
-<code># systemctl disable < unité ></code>
-<code># systemctl reboot</code>
-<code># systemctl poweroff</code>
-<code># systemd-analyze</code>
-</pre>
-</section>
+  <section>
+  <pre>
+  <code data-trim class="hljs nohighlight"># systemctl reboot</code>
+  <code data-trim class="hljs nohighlight"># systemctl poweroff</code>
+  <code data-trim class="hljs nohighlight"># systemd-analyze</code>
+  </pre>
+  </section>
 
-<section>
-<h2>Modifier une unité</h2>
-<pre>
-<code># cp -a /lib/systemd/system/< service >.service /etc/systemd/system/</code>
-<code># vim /etc/systemd/system/< service >.service</code>
-<code># systemctl daemon-reload</code>
-<code># systemctl cat ssh</code>
-<code># systemctl cat cron</code>
-<code># systemctl edit < unité ></code>
-</pre>
+  <section>
+  <h2>Modifier une unité</h2>
+  <pre>
+  <code data-trim class="hljs nohighlight"># cp -a /lib/systemd/system/&lt;service&gt;.service /etc/systemd/system/</code>
+  <code data-trim class="hljs nohighlight"># vim /etc/systemd/system/&lt;service&gt;.service</code>
+  <code data-trim class="hljs nohighlight"># systemctl cat ssh</code>
+  <code data-trim class="hljs nohighlight"># systemctl edit &lt;unité&gt;</code>
+  <code data-trim class="hljs nohighlight"># systemctl daemon-reload</code>
+  </pre>
+  </section>
 </section>
 
 <section>
