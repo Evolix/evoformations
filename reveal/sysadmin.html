@@ -628,34 +628,46 @@ sécurité logicielle
 </section>
 
 <section>
-<h2>réseau / iptables</h2>
-
-Rappels réseau
-
-Couche physique : Ethernet (adresses MAC)
-Couche réseau : IPv4 (adressage, HostID, NetID, Masque, Brodcast, protocole ARP, ICMP)
-Couche transport : TCP, UDP (notion de ports, mode connecté)
-Couche application : HTTP, SMTP, DNS, etc.
-
+	<section>
+<h2>Réseau / iptables</h2>
+<p>Rappels réseau</p>
+<ul>
+<li>Couche physique : Ethernet (adresses MAC)</li>
+<li>Couche réseau : IPv4 (adressage, HostID, NetID, Masque, Brodcast, protocole ARP, ICMP)</li>
+<li>Couche transport : TCP, UDP (notion de ports, mode connecté)</li>
+<li>Couche application : HTTP, SMTP, DNS, etc.</li>
+</ul>
+	</section>
+	<section>
+<pre>
+<code>
 # iptables -L -t filter -v
-
-• INPUT: les chaînes appliquées sur INPUT concerneront tout paquet à destination de localhost
-• OUTPUT:  les chaînes appliquées sur OUTPUT concerneront tout paquet en provenance de localhost
-• FORWARD: le paquet n'est pas destiné à la machine locale, mais il doit être relayé sur une autre interface. 
-Les chaînes de FORWARD ne concerneront pas les paquets à destination ou venant de la machine locale.
-
-Exemple de règles :
-
+</code>
+</pre>
+<p>
+<ul>
+<li>INPUT: les chaînes appliquées sur INPUT concerneront tout paquet à destination de localhost</li>
+<li>OUTPUT:  les chaînes appliquées sur OUTPUT concerneront tout paquet en provenance de localhost</li>
+<li>FORWARD: le paquet n'est pas destiné à la machine locale, mais il doit être relayé sur une autre interface.
+Les chaînes de FORWARD ne concerneront pas les paquets à destination ou venant de la machine locale.</li>
+</ul>
+</p>
+	</section>
+	<section>
+<h2>Réseau / iptables (suite)</h2>
+<p>Exemple de règles :<p>
+<pre>
 # iptables -A INPUT -i eth1 -j ACCEPT
 # iptables -A INPUT -p tcp --sport 143 --dport 1024:65535 -s 31.170.8.33 -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-minifirewall
-
+<pre>
+<p>Etude de minifirewall</p>
+<code>
 # cd /etc/default && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall.conf" -O minifirewall
 # cd /etc/init.d && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall"
 # chmod 700 /etc/init.d/minifirewall
 # chmod 600 /etc/default/minifirewall
-
+</code>
+	</section>
 </section>
 
 <section>
