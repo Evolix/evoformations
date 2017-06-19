@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="fr">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Formation Evolix : installation Linux</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Hakim El Hattab">
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../css/reveal.css">
+        <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="../lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( ../print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+
+<section>
+<h1>Formation Evolix</h1>
+<h3>installation Linux</h3>
+</section>
+
+<section>
+<h2>Méthode d'installation</h2>
+<li>par CD/ROM ou clé USB (machine physique ou virtuelle)</li>
+<li>par le réseau, via boot PXE+DHCP+TFTP</li>
+<li>Image préinstallée par un hébergeur</li>
+<li>Conteneur minimal (LXC/Docker)</li>
+</section>
+
+<section>
+<h2>Compatibilité du matériel</h2>
+enjeu principal : carte réseau et controleur disque/RAID
+test avec Live-CD
+Compatibilité du matériel
+lspci -n sur http://kmuto.jp/debian/hcl/ plus à jour :(
+Listes de diffusion
+Recherche Google avec “site:lists.debian.org/debian-boot”
+</section>
+
+<section>
+<h2>Choix pour un serveur</h2>
+carte réseau : 1G ou 10G ?
+CPU Intel Xeon : fréquence ? nombre de cores ? https://www.cpubenchmark.net/
+Quantité de mémoire
+Importance du stockage :
+local ou distant (NFS, iSCSI)
+Type : SATA, SAS, SSD ?
+Performance lecture/écriture : Mo/s, IOPS
+Gestion du cache
+</section>
+
+<section>
+<h2>Focus sur le RAID</h2>
+RAID0
+RAID1
+RAID5
+RAID6
+RAID10
+RAID hardware ou logiciel
+</section>
+
+<section>
+<h2>Focus sur le stockage</h2>
+parted
+
+</section>
+
+<section>
+<h2>Partitionnement</h2>
+Partitionnement DOS limité à 2,2 T
+Partitionnement GPT
+Outils : fdisk, cfdisk, sfdisk, parted
+/boot / /var /usr /tmp 2xswap /srv /home
+systèmes de fichiers : ext3/ext4, reiserfs, xfs, btrfs
+</section>
+
+<section>
+<h2>Focus sur RAID logiciel</h2>
+</section>
+
+<section>
+<h2>Focus sur LVM</h2>
+</section>
+
+<section>
+<h2>Réseau</h2>
+ Fichiers de paramètres :
+  Fichiers spécifiques /etc/resolv.conf, /etc/hosts
+
+ Configuration dynamique DHCP 
+   (Dynamic Host Configuration Protocol)
+   Paramètres réseau sont automatiquement mis en place.
+
+ Configuration statique
+   Configuration manuelle des fichiers
+
+ Outils réseaux
+   (ifconfig, ping, route, ip, netstat, traceroute...)
+</section>
+
+<section>
+<h2>Installation de logiciels</h2>
+- Méthode classique de compilation des sources.
+- Utilisation du système de packages
+
+Les packages sont des binaires précompilés qui sont prêts à être installés de façon simple et rapide. Les dépendances sont gérées, ainsi que la mise à jour et la suppression des packages déjà installés (varie selon les distributions).
+</section>
+
+<section>
+<h2>TP : installation Debian GNU/Linux</h2>
+</section>
+
+<section>
+<h2>Choix de la version</h2>
+Debian GNU/Linux « Sid » : actuelle version unstable
+Debian GNU/Linux 10 (« Buster ») : actuelle version testing
+Debian GNU/Linux 9 (« Stretch ») : actuelle version stable
+Debian GNU/Linux 8 (« Jessie »)  : actuelle version oldstable
+Debian GNU/Linux 7 (« Wheezy »)  : actuelle version oldoldstable
+Debian GNU/Linux 6 (« Squeeze »)
+Debian GNU/Linux 5 (« Lenny »)
+Debian GNU/Linux 4 (« Etch »)
+Debian GNU/Linux 3.1 (« Sarge »)
+Debian GNU/Linux 3.0 (« Woody »)
+Debian GNU/Linux 2.2 (« Potato »)
+Debian GNU/Linux 2.1 (« Slink »)
+Debian GNU/Linux 2.0 (« Hamm »)
+</section>
+
+<section>
+<h2></h2>
+boot sur CD/DVD ou USB
+choix de la langue : anglais (en_US.UTF8)
+réglage du clavier
+réseau
+partitionnement
+choix des miroirs
+mot de passe
+choix de packages
+installation GRUB
+</section>
+
+<section>
+<h2>console de debug à l'installation</h2>
+lspci | grep Eth
+ip addr show
+dmesg | grep sd
+cat /proc/cpuinfo
+</section>
+
+<section>
+<h2>Focus sur Vim</h2>
+# apt install vim
+# select-editor
+# vi /etc/vim/vimrc
+let g:skip_defaults_vim = 1
+# vi ~/.vimrc
+"musthave
+syntax on
+set background=dark
+set nocompatible
+"dev
+set expandtab
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+</section>
+
+<section>
+<h2>Vim basics</h2>
+
+Mode "commandes" <-> Mode "insertion"
+         [Échap] <-> i
+
+Mode "commandes"
+----------------
+
+:w     enregistrer
+:wq    enregistrer et quitter
+:q!    quitter sans enregistrer
+gg     aller tout en haut
+G      aller tout en bas
+$      aller en fin de ligne
+/foo   chercher "foo"
+dd     supprimer (ou couper) la ligne actuelle
+yy     copie la ligne actuelle
+x      supprimer (ou couper) le caractère courant
+p      coller après le curseur
+P      coller avant le curseur
+v      mode visuel pour couper ou copier facilement
+rX     remplace le caractère courant par X 
+u      annule la dernière commande
+Ctrl+r restaure la dernière commande
+
+Passer en mode insertion 
+------------------------
+i    passer en mode insert avant le curseur
+a    passer en mode insert après le curseur
+I    passer en mode insert au début de la ligne
+A    passer en mode insert à la fin de la ligne
+o    sauter une ligne et passer en mode insert
+</section>
+
+<section>
+# apt install locales
+$ LANG=fr_FR.UTF8 /usr/bin/vimtutor
+</section>
+
+<section>
+<h2>Focus sur dpkg / APT</h2>
+- Utilitaire principal : dpkg
+  dpkg -l
+  dpkg --unpack
+  dpkg --configure
+  dpkg -i
+  dpkg -r
+  dpkg -P
+  dpkg -L
+  dpkg -S
+  dpkg -s
+  dpkg-reconfigure
+
+- Gestion avancée de paquets :  APT
+  (Advanced Package Tool)
+  Dépendances, mises à jour, conflits [Packages.gz]
+</section>
+
+<section>
+- Sources de paquets :  /etc/apt/sources.list 
+  netselect / apt-cdrom / apt-config
+
+- Interface pour APT : apt, apt-cache, apt-get, aptitude
+  apt update
+  apt upgrade 
+  apt install paquet 
+  apt remove paquet
+  apt purge paquet
+  apt-cache show / search / -n search / depends / rdepends / policy
+  etc.
+</section>
+
+<section>
+apt -s install
+apt-file
+apt-show-versions
+apt-listchanges
+apt clean/autoclean
+apt upgrade/full-upgrade
+apt changelog
+rmadison
+apt-get check
+apt source
+apt build-dep
+debuild -us -uc
+</section>
+
+<section>
+# vim /etc/apt/sources.list
+
+deb http://mirror.evolix.org/debian/ stretch main
+deb http://security.debian.org/ stretch/updates main
+deb http://mirror.evolix.org/debian/ stretch-updates main
+
+deb http://mirror.evolix.org/debian/ stretch main
+</section>
+
+<section>
+# dpkg-reconfigure -plow debconf
+
+# vim /etc/apt/apt.conf.d/99custom
+APT::Install-Recommends "false";
+APT::Install-Suggests "false";
+DPkg::Pre-Invoke { "mount -oremount,exec /tmp && mount -oremount,rw /usr || true"; };"
+DPkg::Post-Invoke { "mount -oremount /tmp && mount -oremount /usr || true"; };"
+</section>
+
+<section>
+# vim /etc/fstab
+
+/dev/sda2  /        ext4  defaults,errors=remount-ro   0 1
+/dev/sda1  /boot    ext4  defaults                     0 2
+/dev/sda3  /var     ext4  defaults                     0 2
+/dev/sda5  /usr     ext4  defaults,ro                  0 2
+/dev/sda6  /tmp     ext4  defaults,noexec,nosuid,nodev 0 2
+/dev/sda7  none     swap  sw                           0 0
+/dev/sda8  none     swap  sw                           0 0
+/dev/sda9  /home    ext4  defaults,noexec,nosuid,nodev 0 2
+tmpfs      /var/tmp tmpfs defaults,noexec,nosuid,nodev 0 2
+</section>
+
+<section>
+On installe Postfix :
+# apt install postfix
+
+On renvoie tous les alias vers root :
+# getent passwd | cut -d":" -f1 | sed "s/$/: root/" > /etc/aliases
+# vim /etc/aliases
+# newaliases
+</section>
+
+<section>
+Installons les outils de base :
+
+# apt install ssh less mailx sudo munin htop iotop iftop
+</section>
+
+<section>
+Mesure des performances disque 
+
+# time dd if=/dev/zero of=/home/32gb bs=1024k count=32768
+# time dd if=/home/32gb of=/dev/null bs=1024k count=32768
+# time rm /home/32gb
+
+# apt install postgresql-contrib
+# /usr/lib/postgresql/9.6/bin/pg_test_fsync
+</section>
+
+<section>
+Mesure des performances réseau
+
+# apt install iperf mtr-tiny
+
+$ ping -4 google.fr
+$ mtr -4 google.fr
+$ iperf -c debit.k-net.fr
+</section>
+
+<section>
+<h2>Comment choisir sa version de Linux ?</h2>
+<ul>
+<li>Versions logiciels fixes : Apache / PHP / MySQL / etc.</li>
+<li>Version nue / panel (cpanel, plesk)</li>
+<li>apt-get / yum install</li>
+</ul>
+</section>
+
+<section>
+<h2>Récapitulatif</h2>
+Choix matériel
+Choix version de Linux
+Premières optimisations
+Validation des performances
+</section>
+
+            </div>
+
+        </div>
+
+        <script src="../lib/js/head.min.js"></script>
+        <script src="../js/reveal.js"></script>
+
+        <script>
+
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../plugin/zoom-js/zoom.js', async: true },
+                    { src: '../plugin/notes/notes.js', async: true }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>

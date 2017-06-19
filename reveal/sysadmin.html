@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="fr">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Formation Evolix : administration système et réseau</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Hakim El Hattab">
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../css/reveal.css">
+        <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="../lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( ../print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+
+<section>
+<h1>Formation Evolix</h1>
+<h3>Administration système & réseau & sécurité</h3>
+</section>
+
+<section>
+crontab
+
+https://wiki.evolix.org/HowtoCron
+</section>
+
+ntpd
+https://wiki.evolix.org/HowtoNTP
+
+systemd
+https://wiki.evolix.org/HowtoSystemd
+
+Postfix
+https://wiki.evolix.org/HowtoPostfix
+
+syslog
+
+Les journaux systèmes sont gérés par syslog, un protocole qui permet de gérer les messages système de façon centralisé. syslog est précisé dans la RFC 3164Il est utilisé sous la forme d'un daemon syslogd chargé de rassembler les messages envoyés par diverses applications (messages kernel, user, daemon, mail, etc.) triés par une facility : LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc. et un certain niveau de severity : LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc. Les messages reçus sont répartis dans différents fichiers situés dans le répertoire /var/log/ ou d'autres façons (serveur syslog distant, terminal, etc.).
+C'est le paquet sysklogd qui assure ce rôle, en incluant le daemon syslogd (et klogd pour intercepter les message du noyau Linux). La répartition des journaux est spécifiée dans le fichier /etc/rsyslog.conf. Le script d'initialisation est rsyslog, on relancera donc le service syslog (suite à un changement dans le fichier de configuration par exemple) ainsi :
+# /etc/init.d/rsyslog restart
+Voici quelques exemples de journaux à surveiller étroitement :
+- les journaux situés dans les fichiers /var/log/auth.log permettent de voir toutes les tentatives de login, (l'adresse IP d'où la tentative est lancée, l'heure exacte, et le résultat).
+- les journaux situés dans les fichiers /var/log/kern.log permettent de voir toutes les messages générés par le noyau (pour repérer les erreurs éventuelles)
+- les journaux situés dans les fichiers /var/log/cron.log donnent des informations sur les scripts exécutés par la crontab
+
+Les journaux logiciels sont des fichiers remplis directement par les applications (dans le cas où l'application utilise syslog, se reporter ci-dessus). On citera par exemple Apache, Horde ou encore MySQL.
+
+Rotation des journaux
+Le logiciel logrotate permet de gérer les journaux système et logiciel de façon précise et ordonnée. De façon quotidienne ou hebdomadaire, les journaux sont compressés et datés, avec d'éventuelles actions nécessaires (relance du service, génération de statistiques, etc.). Pour le détail, c'est le paquet logrotate qui contient des scripts lancés par la crontab du système et qui utilisent les fichiers dans le répertoire /etc/logrotate.d/.
+
+
+
+
+Les journaux sont des fichiers qui contiennent des informations d'activité datée. Ils sont essentiels pour un serveur pour de nombreuses raisons : vérifier des actions passées, générer des statistiques, déboguer un programme. La vérification des actions passées est notamment importante en cas de problème (piratage, service défectueux). La justice oblige également à conserver certains journaux pendant une certaine durée. Un flou concerne ce qu'il faut réellement conserver (apparemment seules les informations d'entêtes mais pas le contenu en lui-même) et la durée (cela varie entre 3 mois, 1 an et 3 ans si l'on se base sur les lois françaises ou européennes). Des décrets d'application devraient éclaircir ces points dans les prochains mois.\\
+~\\
+Sous Debian, les journaux se trouvent généralement dans le répertoire \textit{/var/log}. On va distinguer les journaux systèmes et les journaux applicatifs. Les journaux systèmes sont gérés par le démon SYSLOG\footnote{\url{ftp://ftp.rfc-editor.org/in-notes/rfc3164.txt}}. Sa configuration se trouve dans le fichier \textit{syslog.conf}. Voici quelques ligne extraites de ce fichier~:
+\begin{verbatim} 
+daemon.*                              -/var/log/daemon.log
+kern.*                                -/var/log/kern.log
+mail.*                                -/var/log/mail.log
+*.=debug;auth,authpriv.none;news.none;mail.none  -/var/log/debug
+*.emerg                               *
+*.*;auth,authpriv.none                /dev/tty8
+\end{verbatim}
+
+Voici les fichiers pincipaux générés par SYSLOG : \\
+~\\
+\begin{itemize}
+\item[\textbf{auth.log :}] authentification système (login, su, getty)
+\item[\textbf{daemon.log :}] relatif aux daemons
+\item[\textbf{mail.* :}] messages relatifs aux mails
+\item[\textbf{kern.log :}] messages générés par le noyau
+\item[\textbf{user.log :}] message généré par des programmes utilisateur
+\item[\textbf{debug :}] messages de bogues
+\item[\textbf{messages :}]  messages d'info
+\item[\textbf{syslog :}]  tous les messages
+\end{itemize}
+~\\
+~\\
+Les journaux applicatifs sont générés par chaque application. Ils sont souvent dans un répertoire du nom de l'application situé dans \textit{/var/log}.\\
+~\\
+
+
+log2mail
+
+Surveiller les journaux avec log2mail
+Pour surveiller précisement un fichier journal et recevoir des alertes par mail si certains termes apparaissent dans ce fichier, vous pouvez utiliser le logiciel log2mail. Sa configuration se déroule dans le fichier /etc/log2mail/config/default. Par exemple, si vous voulez préciser que vous voulez recevoir un mail dès que le terme fatal apparaît dans le fichier /var/log/mail.log, ajoutez ces lignes : 
+file = /var/log/mail.log
+pattern = "fatal"
+mailto = maintenance@example.com
+template = /etc/log2mail/template.mail-fatal
+Dans ce cas, on devra avoir un fichier /etc/log2mail/template.mail-fatal qui définit la structure du mail qui sera envoyé. Voici un exemple simple : 
+From: %f
+To: %t
+Subject: [LOG2MAIL] Erreur fatale pour mail.log
+Nous avons reconnu le terme "%m" dans "%F" %n fois : %l
+
+logcheck
+https://wiki.evolix.org/HowtoLogcheck
+
+fail2ban
+https://wiki.evolix.org/HowtoFail2Ban
+
+logrotate
+
+L'un des points essentiels est la rotation des journaux, c'est-à-dire l'action de fermer le journal actuel (et éventuellement le compresser) et d'en ouvrir un autre.
+Le programme principal est logrotate
+Logrotate est exécuté tous les jours (cron.daily)
+https://wiki.evolix.org/HowtoLogrotate
+
+Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'utiliser la date lors de la rotation des journaux et de ne pas les effacer. On pourra donc ajouter ses propres règles dans les scripts cron pour faire une sauvegarde distante des journaux (éventuellement dans une base de données). Pour des serveurs dédiés (applications clés), on peut augmenter la fréquence des rotations et des sauvegardes distantes, mais également utiliser des scripts afin de détecter toutes alertes ou anomalies et les envoyer par courrier électronique ou même SMS.
+
+intro Git
+HowtoGit
+
+Monitoring
+
+Il existe de nombreux programmes évolués permettant de générer des courbes et statistiques.
+Citons Nagios, Munin, etc.
+Le plus connu d'entre eux est certainement Nagios qui permet de surveiller de nombreux services (SMTP, POP3, HTTP, NNTP, PING, etc.) mais également les ressources (charge processeur, utilisation des disques, etc.). 
+La mise en place de Nagios (ou d'un équivalent) pour un nombre de serveurs dépassant la dizaine est fortement conseillée.
+
+
+Sécurité
+
+
+réseau / iptables
+
+Couche physique : Ethernet 
+(adresses MAC)
+Couche réseau : IPv4 
+(adressage, HostID, NetID, Masque, 
+Brodcast, protocole ARP, ICMP)
+Couche transport : TCP, UDP
+(notion de ports, mode connecté)
+Couche application : HTTP, SMTP, DNS, etc.
+
+
+intro ansible
+
+
+ssh
+
+
+sauvegardes
+
+Gestion des droits
+Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers: les fichiers, les répertoires, les liens symboliques, les fichiers-périphériques.
+Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).
+Les 3 droits fondamentaux sont la lecture, l'écriture et l'éxecution.
+Pour un fichier, ces 3 droits sont définis pour 3 catégories: l'utilisateur, le groupe et le "reste du monde". Pour chacune de ces catégories: on note les droits sous la forme rwx.
+[s:sst] u:rwx g:rwx o:rwx
+
+Commandes utiles/essentielles :
+- ls -l, stat, chmod, chown, chgrp
+- su, newgrp, login, who, w, w.procps
+$ chmod <catégorie>+<nouveau_droit> fichier
+$ chmod <nouveaux_droits> fichier
+Droits pour un répertoire :
+r = lister, x = traverser, w = écrire (et même effacer !!)
+Droits spéciaux :
+- Exécutables setuid ou setgid
+- Répertoire setgid ou stickybit
+
+Notation décimale :
+
+777 = ?
+700 = ?
+600 = ?
+644 = ?
+755 = ?
+775 = ?
+701 = ?
+
+umask :
+- Pour gérer droit niveau utilisateurs : commande umask
+  Fixé dans le fichier profile ou bashrc (local ou général...)
+
+
+NFS
+
+
+DRBD
+
+
+LVM
+
+
+Virtualisation
+
+
+Conteneur
+
+
+evolinux
+
+
+auth
+Historiquement sous Unix, l'authentification est gérée par une liste des utilisateurs avec les mots de passe chiffrés accessible à tous, à savoir le fameux fichier /etc/passwd accessible en lecture et la commande passwd « set-uid root »
+
+- Authentification shadow recommandé
+Le mot de passe chiffré est dans le fichier /etc/shadow inaccessible en lecture. Commande pour activer/désactiver l'authentification shadow :
+# shadowconfig on/off
+
+- Groupes UNIX :
+Les groupes d'un système sont dans le fichier /etc/group
+Programmes de gestion des utilisateurs :
+Utilitaires basiques : useradd, groupadd, userdel, groupdel, usermod, groupmod, chsh, chfn (paquet passwd sous Debian)
+Utilitaires convivaux : adduser, addgroup, deluser et delgroup (paquet adduser sous Debian) avec valeurs par défaut dans le fichier /etc/adduser.conf :
+« Profil » pour un utilisateur créé :
+Il se trouve dans le répertoire /etc/skel/
+
+Les utilisateurs sont identifiés par leur nom de compte et par leur appartenance à  un groupe par défaut(informations dans /etc/passwd). En plus, les utilisateurs peuvent appartenir à d'autres groupes (informations /etc/group).
+
+jdoe@serveur:~$ whoami 
+jdoe
+jdoe@serveur:~$ groups 
+jdoe dialout cdrom floppy audio video plugdev
+jdoe@serveur:~$ id
+uid=1000(jdoe) gid=1000(jdoe) groupes=20(dialout),24(cdrom),25(floppy),29(audio),44(video),46(plugdev),1000(jdoe)
+jdoe@serveur:~$ 
+
+Restriction au niveau des procédures de login :
+
+
+Fichier  /etc/login.defs :
+
+FAIL_DELAY 10 \ delai minimum entre deux tentatives de login
+FAILLOG_ENAB  yes \ journaliser les tentatives ratées
+LOG_UNKFAIL_ENAB yes \ retenir les identifiants iconnus essayés
+LOG_OK_LOGINS yes \ retenir les tentatives réussies
+LOGIN_TIMEOUT  60 \ delai maximim pour authentification
+CHFN_RESTRICT rwh \ restriction pour la commande chfn
+
+
+Complété par... Linux-PAM (Pluggable Authentication Modules)
+
+
+
+Le fichier /etc/shadow  contient les informations sécurisées, notamment la plus sensible : le mot de passe, mais également des paramètres d'expiration. Voir la commande vipw -s
+foo:$1$mYploS2J$uSouKZPBjUF6D094HPgGj/:13853:0:99999:7:::
+
+       ·   nom de connexion de l´utilisateur (« login »)
+       ·   mot de passe chiffré
+       ·   nombre de jours, comptés à partir du 1er janvier 1970, 
+       depuis le dernier changement de mot de passe
+       ·   nombre de jours à attendre avant de pouvoir changer le mot de passe
+       ·   nombre de jours après lesquels le mot de passe doit être changé
+       ·   nombre de jours avant la fin de validité du mot de passe et pendant
+           lesquels l´utilisateur est averti
+       ·   nombre de jours après la fin de validité provoquant la désactivation du
+           compte
+       ·   nombre de jours, comptés à partir du 1er janvier 1970, depuis que le
+           compte est désactivé
+       ·   champ réservé
+
+
+Politique de gestion des mots de passe
+
+- Mot de passe aléatoire ou quasi-aléatoire
+- Trace écrite bannie
+- Empêcher mot de passe trop simple pour les utilisateurs: librairie cracklib
+- Programme de génération de mot de passe:
+  otp, apg, makepasswd, pwgen
+- Programme pour cracker les mots de passe:
+  John the Ripper
+
+Qui est root ?
+- UID=0
+- su, su -, su -c
+sudo
+- Droits délégués (administration partagée, utilisation de scripts, etc.)
+- Éditer les droits : commande visudo
+- sudo -u, sudo sh -c,
+
+# apt install sudo
+# visudo
+
+jdoe ALL = ALL
+jdoe ALL = NOPASSWD: ALL
+jdoe ALL = /usr/sbin/tcpdump
+jdoe ALL = (foo) /bin/kill
+jdoe ALL = (ALL) sudoedit /etc/hosts
+
+sudo -l
+
+
+- Le système de gestion des utilisateurs diffère du système d'authentification des utilisateurs
+- Utilisation des UID, GID (pas de réelle nécessité d'avoir une entrée dans /etc/password !!)
+- Correspondances UID<->login, GID<->group faites avec la bibliothèque libnss (Name Services Switch). C'est également le cas des noms de services, protocoles, machines (DNS). On peut d'ailleurs voir cela comme un DNS pour les UID/GID.
+Voir le fichier /etc/nsswitch.conf :
+
+passwd:         compat
+group:          compat
+shadow:         compat
+hosts:          files dns
+
+
+PAM
+    Mode de fonctionnement très modulaire rendant transparent à l'application l'utilisation de tel ou tel système d'authentification. 
+   Des modules PAM existent pour NIS, LDAP, Kerberos, rendant ainsi les trois systèmes d'authentification interchangeables sans que cela nécessite une reconfiguration des logiciels en eux-même ou encore une recompilation des services.
+- Répertoire des fichiers de configuration:
+  /etc/pam.d/
+- Comportement par défaut:
+  /etc/pam.d/other.
+- Syntaxe des fichiers
+  "type" "niveau" "module" "arguments"
+- /etc/security/access.conf permet de gérer les permissions de       login  (si activé dans PAM)
+- /etc/security/limits.conf permet d'imposer des limites diverses   sur les groupes ou les identifiants
+Syntaxe des fichiers
+  "type" "niveau" "module" "arguments"
+
+"type" peut être :
+auth : authentification
+account : vérification des types de services autorisés
+session : tâches à effectuer avant/après l'accès
+password : mécanismes d'authentification
+
+"niveau" peut être :
+required : le succès à cette étape est nécessaire
+requisite : le succès est nécessaire et l'accès est refusé en cas d'erreur
+sufficient : le succès à cette étape suffit
+optional : l'accès pourra etre refusé en fonction d'autres paramètres
+
+Exemple /etc/pam.d/login :
+           # Authenticate the user
+           auth       required   pam_unix.so
+           # Ensure users account and password are still active
+           account    required   pam_unix.so
+           # Change the users password, but at first check the strength
+           # with pam_cracklib(8)
+           password   required   pam_cracklib.so retry=3 minlen=6 difok=3
+           password   required   pam_unix.so use_authtok nullok md5
+           session    required   pam_unix.so
+
+ACL/QUOTA
+TODO
+
+
+            </div>
+
+        </div>
+
+        <script src="../lib/js/head.min.js"></script>
+        <script src="../js/reveal.js"></script>
+
+        <script>
+
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../plugin/zoom-js/zoom.js', async: true },
+                    { src: '../plugin/notes/notes.js', async: true }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
