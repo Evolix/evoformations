@@ -55,18 +55,18 @@
   	<h3>Les fichiers de cron</h3>
   	<pre>
   		<code data-trim class="hljs nohighlight">
-  # systemctl status cron
+        # systemctl status cron
       </code>
       <code data-trim class="hljs nohighlight">
-  # vim /etc/crontab
-  # vim /etc/default/cron
+        # vim /etc/crontab
+        # vim /etc/default/cron
   		</code>
   	</pre>
   	<pre>
-  	<code data-trim>
+  	<code data-trim class="hljs nohighlight">
       # vim /etc/cron.d/example
-      30 05 * * 0 www-data /usr/local/adm/savelog-weekly
     </code>
+30 05 * * 0 www-data /usr/local/adm/savelog-weekly
     </pre>
   </section>
 
@@ -79,17 +79,15 @@
         <code data-trim class="hljs nohighlight">
         # crontab -u jdoe -e
       </code>
-      <code data-trim class="hljs nohighlight">
-        0,30,45,51 * * * * /usr/local/adm/send-data
-        */15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
-        00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
-        10 03 * * 1-6 nice -10 /usr/local/adm/sauvegarde-daily
-        30 05 * * 0 /usr/local/adm/savelog-weekly
-        30 06 1 * * /usr/local/adm/savelog-monthly
-        00 00 1 1 * /usr/local/bin/happy-new-year
-        MAILTO=alert@example.com
-        @daily /usr/local/bin/minuit-check
-      </code>
+0,30,45,51 * * * * /usr/local/adm/send-data
+*/15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
+00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
+10 03 * * 1-6 nice -10 /usr/local/adm/sauvegarde-daily
+30 05 * * 0 /usr/local/adm/savelog-weekly
+30 06 1 * * /usr/local/adm/savelog-monthly
+00 00 1 1 * /usr/local/bin/happy-new-year
+MAILTO=alert@example.com
+@daily /usr/local/bin/minuit-check
     </pre>
   </section>
 
@@ -110,37 +108,42 @@
 </section>
 
 <section>
-<h2>ntpd</h2>
-<pre>
-<code>
-$ date
-</code>
-<code>
-# apt install ntp
-</code>
-<code>
-Fichier /etc/ntp.conf :
-</code>
-server ntp.evolix.net
-</pre>
+<section>
+  <h2>ntpd</h2>
+</section>
+<section>
+  <pre>
+    <code>
+    $ date
+    </code>
+    <code>
+    # apt install ntp
+    </code>
+    <code>
+    Fichier /etc/ntp.conf :
+    </code>
+    server ntp.evolix.net
+  </pre>
 </section>
 
-<section>
-<h2>ntpd (suite)</h2>
-<pre>
-<code>
-# ntpq -p
-</code>
-<code>
-$ timedatectl
-</code>
-<code>
-# hwclock --show
-</code>
-<code>
-# hwclock --systohc
-</code>
-</pre>
+  <section>
+  <h2>ntpd (suite)</h2>
+  <pre>
+  <code>
+  # ntpq -p
+  </code>
+  <code>
+  $ timedatectl
+  </code>
+  <code>
+  # hwclock --show
+  </code>
+  <code>
+  # hwclock --systohc
+  </code>
+  </pre>
+  </section>
+
 </section>
 
 <section>
