@@ -43,7 +43,7 @@
 
             <section>
             <h1>Formation Evolix</h1>
-            <h3>Administration système & réseau & sécurité</h3>
+            <h3>Administration système &amp; réseau &amp; sécurité</h3>
             </section>
 
 <section>
@@ -191,7 +191,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     <h4>Décentralisé</h4>
     <ul>
       <li>Tout est local, ou presque</li>
-      <li>échanges entre dépôts, par filesystem ou réseau</li>
+      <li>échanges possibles entre dépôts (FS ou réseau)</li>
       <li>tout l'historique est disponible</li>
       <li>pereine et fiable (copies autonomes et complètes)
     </ul>
@@ -216,11 +216,11 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     </ul>
   </section>
   <section>
-    <h4>commit, tree, blob</h4>
+    <h4><em>commit</em>, <em>tree</em>, <em>blob</em></h4>
     <ul>
-      <li>un commit point sur un arbre</li>
+      <li>un commit pointe sur un arbre</li>
       <li>chaque élément pointe sur un autre arbre</li>
-      <li>ou sur un "blob" (contenu final)</li>
+      <li>… ou sur un "blob" (contenu final)</li>
     </ul>
   </section>
   <section>
@@ -236,9 +236,9 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
   <section>
     <h4>3 zones</h4>
     <ul>
-      <li>working copy : ce que voit votre éditeur</li>
-      <li>staging area : préparer des commits</li>
-      <li>repository : la base de données interne</li>
+      <li><em>working copy</em> : ce que voit votre éditeur</li>
+      <li><em>staging area</em> : préparer des commits</li>
+      <li><em>repository</em> : la base de données interne</li>
     </ul>
   </section>
   <section>
@@ -250,14 +250,14 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     </ul>
   </section>
   <section>
-    <h3>En pratique /etc/.git</h3>
+    <h3>En pratique : /etc/.git</h3>
     <p>Une <em>bonne pratique</em> Evolix.</p>
   </section>
   <section>
     <h4>Initialisation du dépôt</h4>
-    <pre><code>
+    <pre><code class="shell">
+    $ cd /etc
     $ su
-    # cd /etc
     # git init .
     # git status
     # git add .
