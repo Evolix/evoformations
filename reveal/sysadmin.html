@@ -289,7 +289,9 @@ Journaux principaux :
 <h2>logrotate</h2>
 Le logiciel logrotate permet de gérer la rotation des journaux système et applicatif de façon précise et ordonnée.
 
-De façon quotidienne (ou moins fréquente), les journaux sont compressés et datés, avec d'éventuelles actions nécessaires (relance du service, génération de statistiques, etc.).
+Logrotate est exécuté tous les jours (cron.daily) : de façon quotidienne (ou
+moins fréquente), les journaux sont compressés et datés, avec d'éventuelles
+actions nécessaires (relance du service, génération de statistiques, etc.).
 
 # vim /etc/logrotate.d/dpkg
 
@@ -302,6 +304,8 @@ De façon quotidienne (ou moins fréquente), les journaux sont compressés et da
         notifempty
         create 644 root root
 }
+
+Note : le programme "savelog" permet une rotation ultrasimple de journaux en ajoutant un suffixe et conservant 7 versions.
 </section>
 
 <section>
@@ -350,17 +354,6 @@ Exceptions dans ignore.d.server/
 <section>
 <h2>fail2ban</h2>
 https://wiki.evolix.org/HowtoFail2Ban
-</section>
-
-<section>
-<h2>logrotate</h2>
-
-L'un des points essentiels est la rotation des journaux, c'est-à-dire l'action de fermer le journal actuel (et éventuellement le compresser) et d'en ouvrir un autre.
-Le programme principal est logrotate
-Logrotate est exécuté tous les jours (cron.daily)
-https://wiki.evolix.org/HowtoLogrotate
-
-Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'utiliser la date lors de la rotation des journaux et de ne pas les effacer. On pourra donc ajouter ses propres règles dans les scripts cron pour faire une sauvegarde distante des journaux (éventuellement dans une base de données). Pour des serveurs dédiés (applications clés), on peut augmenter la fréquence des rotations et des sauvegardes distantes, mais également utiliser des scripts afin de détecter toutes alertes ou anomalies et les envoyer par courrier électronique ou même SMS.
 </section>
 
 <section>
