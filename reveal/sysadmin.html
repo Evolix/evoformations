@@ -78,12 +78,52 @@ $ crontab -l
 
 <section>
 <h2>ntpd</h2>
-https://wiki.evolix.org/HowtoNTP
+$ date
+# apt install ntp
+
+Fichier /etc/ntp.conf :
+server ntp.evolix.net
+
+# ntpq -p
+
+$ timedatectl
+# hwclock --show
+# hwclock --systohc
 </section>
 
 <section>
 <h2>systemd</h2>
-https://wiki.evolix.org/HowtoSystemd
+systemd est un gestionnaire de services (le fameux démon avec le PID 1) en alternative au System V. Il est installé par défaut depuis Debian 8. 
+
+# systemctl status
+# systemctl list-units
+# systemctl --failed
+# systemctl list-unit-files
+
+Unités par défaut : /usr/lib/systemd/system/
+Modifications manuelles : /etc/systemd/system/
+
+# systemctl start <unité>
+# systemctl stop <unité>
+# systemctl restart <unité>
+# systemctl reload <unité>
+
+# systemctl status <unité>
+# systemctl is-enabled <unité>
+
+# systemctl enable <unité>
+# systemctl disable <unité>
+
+# systemctl reboot
+# systemctl poweroff
+
+Modifier une unité
+
+# cp -a /lib/systemd/system/<service>.service /etc/systemd/system/
+# vim /etc/systemd/system/<service>.service
+# systemctl daemon-reload
+
+TODO
 </section>
 
 <section>
