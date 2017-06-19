@@ -844,11 +844,56 @@ ansible 2.2.1.0
 </section>
 
 <section>
-<h2>ssh</h2>
+<h2>OpenSSH</h2>
+
+- SSH: Secure Shell
+- Outils: 
+  Client: ssh, scp, sftp 
+  Serveur: ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server
+- Configuration de sshd_config
+
+Port 22
+Port 2222
+
+PermitRootLogin yes/no/without-password
+
+AllowUsers foo bar baz
+
+Match Address 192.0.2.1,192.0.2.2
+    PasswordAuthentication yes
+Match User foo,bar
+    PasswordAuthentication no
+
+$ ssh-keygen
+$ cat .ssh/id_rsa.pub
+$ vim .ssh/authorized_keys
+$ ssh-agent
+
+scp   fichier-local    identité-distante@hôte-distant:chemin/fichier
+scp   identité-distante@hôte-distant:chemin/fichier   fichier-local
+
 </section>
 
 <section>
 <h2>sauvegardes</h2>
+File-system (totales ou incrémentales)
+
+tar -cpvf
+cpio, pax
+
+dump/restore, partimage
+dd
+
+umount /file-system
+dump 0uf /dev/rst0 /file-system
+
+
+LA solution magique...
+
+rsync -av --delete
+cp -al
+
+EvoBackup : https://forge.evolix.org/projetcs/evobackup
 </section>
 
 <section>
