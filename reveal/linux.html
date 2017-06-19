@@ -14,23 +14,23 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <link rel="stylesheet" href="../css/reveal.css">
-    <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+    <link rel="stylesheet" href="reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
 
     <!-- Theme used for syntax highlighting of code -->
-    <link rel="stylesheet" href="../lib/css/zenburn.css">
+    <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
 
     <!-- Printing and PDF exports -->
     <script>
         var link = document.createElement('link');
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = window.location.search.match(.. / print - pdf / gi) ? '../css/print/pdf.css' : '../css/print/paper.css';
+        link.href = window.location.search.match(/print pdf/gi) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
         document.getElementsByTagName('head')[0].appendChild(link);
     </script>
 
     <!--[if lt IE 9]>
-        <script src="../lib/js/html5shiv.js"></script>
+        <script src="reveal.js/lib/js/html5shiv.js"></script>
         <![endif]-->
 </head>
 
@@ -48,7 +48,7 @@
 
             <section>
                 <h2>Historique</h2>
-                <img src="../imagesEvoFormation2017/linus_torvalds.jpg" border="0">
+                <img src="reveal.js/imagesEvoFormation2017/linus_torvalds.jpg" border="0">
                 <ul>
                     <li>1991 : Lancement du projet Linux par Linus Torvalds, coordination par Internet</li>
                     <li>1993 : Fiabilité de Linux déjà à la hauteur des Unix commerciaux</li>
@@ -329,8 +329,8 @@ grep-dctrl -P '' -c /var/lib/apt/lists/*jessie*Sources
 
     </div>
 
-    <script src="../lib/js/head.min.js"></script>
-    <script src="../js/reveal.js"></script>
+    <script src="reveal.js/lib/js/head.min.js"></script>
+    <script src="reveal.js/js/reveal.js"></script>
 
     <script>
         // More info https://github.com/hakimel/reveal.js#configuration
@@ -344,31 +344,31 @@ grep-dctrl -P '' -c /var/lib/apt/lists/*jessie*Sources
 
             // More info https://github.com/hakimel/reveal.js#dependencies
             dependencies: [{
-                src: '../lib/js/classList.js',
+                src: 'reveal.js/lib/js/classList.js',
                 condition: function() {
                     return !document.body.classList;
                 }
             }, {
-                src: '../plugin/markdown/marked.js',
+                src: 'reveal.js/plugin/markdown/marked.js',
                 condition: function() {
                     return !!document.querySelector('[data-markdown]');
                 }
             }, {
-                src: '../plugin/markdown/markdown.js',
+                src: 'reveal.js/plugin/markdown/markdown.js',
                 condition: function() {
                     return !!document.querySelector('[data-markdown]');
                 }
             }, {
-                src: '../plugin/highlight/highlight.js',
+                src: 'reveal.js/plugin/highlight/highlight.js',
                 async: true,
                 callback: function() {
                     hljs.initHighlightingOnLoad();
                 }
             }, {
-                src: '../plugin/zoom-js/zoom.js',
+                src: 'reveal.js/plugin/zoom-js/zoom.js',
                 async: true
             }, {
-                src: '../plugin/notes/notes.js',
+                src: 'reveal.js/plugin/notes/notes.js',
                 async: true
             }]
         });

@@ -51,7 +51,7 @@ body {
   color: #000; }
 
   html body {
-  	background:url("../imagesEvoFormation2017/visuelSlidesEvolix.svg");
+  	background:url("../../imagesEvoFormation2017/visuelSlidesEvolix.svg");
   	background-position:center;
   	background-size: cover;
     background-repeat: no-repeat;
