@@ -354,7 +354,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
   </section>
   <section>
     <h4>Installation de Git</h4>
-    <pre><code class="shell">
+    <pre><code data-trim>
     $ su
     # apt install git
     # git --version
@@ -363,7 +363,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
   </section>
   <section>
     <h4>Initialisation du dépôt</h4>
-    <pre><code class="shell">
+    <pre><code data-trim>
     $ cd /etc
     $ su
     # git init
@@ -374,7 +374,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
   </section>
   <section>
     <h4>Premières modifications</h4>
-    <pre><code>
+    <pre><code data-trim>
     # echo "127.0.0.1 foo" >> /etc/hosts
     # git status
     # git diff [HEAD]
@@ -422,75 +422,156 @@ Couche application : HTTP, SMTP, DNS, etc.
     <h2>Introduction à Ansible</h2>
   </section>
   <section>
-    <h2>Qu'est-ce qu'Ansible ?</h2>
-    <h3>Un outil d'automatisation de configuration<br>et gestion d'infrastructure</h3>
+      <h3>Objectifs d'Ansible</h3>
+      <ul>
+          <li>homogénéité</li>
+          <li>fiabilité</li>
+          <li>rapidité</li>
+      </ul>
   </section>
   <section>
-    <h3>Principes de base</h3>
+      <h4>Parfait pour</h4>
+      <ul>
+          <li>tâches répétitives</li>
+          <li>actions urgentes</li>
+          <li>demandes spécifiques</li>
+      </ul>
+  </section>
+  <section>
+      <h3>Principes fondateurs</h3>
     <ul>
-      <li>les <em>tasks</em> sont les unités d'action</li>
-      <li>les <em>playbook</em> organisent l'exécution des tâches</li>
-      <li>les <em>rôles</em> sont comme des paquets de tâches, pour faciliter la réutilisation</li>
-      <li>l'<em>inventaire</em> recense toute l'infrastructure et les moyens d'y accéder</li>
+      <li>Idempotence</li>
+      <li>Pas d'agent</li>
+      <li>Souplesse et légèreté</li>
     </ul>
   </section>
   <section>
-    <h4>Modules</h4>
-    <ul>
-      <li>sert d'abstraction (multi-OS, versions…)</li>
-      <li>permet l'idempotence</li>
-      <li>des centaines disponibles (core, extras…)</li>
-    </ul>
+      <h3>Installation</h3>
+      <p>Paquets pour de nombreuses distributions</p>
+      <pre><code class="hljs nohighlight" data-trim>$ su
+# apt install ansible
+# ansible --version
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+</code></pre>
   </section>
   <section>
-    <pre><code class="yaml" style="max-height: 500px">- command: "date"
-
-- shell: "cat foo.txt | grep bar"
-
-- copy
-    src: "files/foo"
-    dest: "/etc/bar"
-    mode: "0644"
-
-- replace:
-    dest: "/etc/ssh/sshd_config"
-    regexp: '^(Match User ((?!{{ name }}).)*)$'
-    replace: '\1,{{ name }}'
-
-- lineinfile:
-    dest: "/etc/evocheck.cf"
-    line: "IS_APTICRON=0"
-    regexp: "^IS_APTICRON="</code></pre>
+      <h3>Commandes de base</h3>
+      <pre><code class="hljs nohighlight" data-trim>
+        $ ansible localhost --module-name ping
+        $ ansible localhost --module-name ping --one-line
+        $ ansible localhost --module-name setup
+        $ ansible localhost --module-name setup --args "filter=ansible_mem*"
+        $ ansible localhost --module-name lineinfile --args \
+          "dest=/etc/hosts regexp=example.com line='192.168.0.25 example.com'"
+			</code></pre>
   </section>
   <section>
-    <pre><code class="yaml" style="max-height: 500px">- apt:
-    name: '{{ item }}'
-    update_cache: yes
-  with_items: ["vim", "htop"]
-
-- apt_repository:
-    repo: "deb http://mirror.evolix.org/jessie stable main"
-
-- mysql_user:
-    name: mysqladmin
-    password: my_password
-    priv: "*.*:ALL,GRANT"
-    config_file: /root/.my.cnf
-
-- sysctl:
-    name: "vm.max_map_count"
-    value: 262144
-    sysctl_file: "/etc/sysctl.d/elasticsearch.conf"</code></pre>
+      <h3>Éléments de base</h3>
   </section>
-
   <section>
-    <h4>Playbooks</h4>
-    <pre><code class="yaml" style="max-height: 500px">---
-- hosts: all
+      <h4>Modules</h4>
+      <ul>
+          <li>couche d'abstraction du shell</li>
+          <li>homogénéité</li>
+          <li>idempotence</li>
+      </ul>
+  </section>
+  <section>
+      <h4><i>Tasks</i> / <i>Handlers</i></h4>
+      <ul>
+          <li>invocation d'un module avec des paramètres</li>
+          <li>le handler n'est exécuté qu'une fois</li>
+      </ul>
+  </section>
+  <section>
+      <h4><i>Playbooks</i></h4>
+      <ul>
+          <li>exécution procédurale de tâches</li>
+          <li>définition du contexte</li>
+          <li>orchestration complexe</li>
+      </ul>
+  </section>
+  <section>
+      <h4>Rôles</h4>
+      <ul>
+          <li>comme un paquet autonome</li>
+          <li>contient <em>tasks</em>, <em>handlers</em>, variables, <em>templates</em>…</li>
+          <li>inclus dans des <em>playbooks</em></li>
+          <li>stockés localement ou récupérés dans un registre</li>
+      </ul>
+  </section>
+  <section>
+      <h4>Inventaire et variables</h4>
+      <ul>
+          <li>liste des serveurs</li>
+          <li>moyens d'accès</li>
+          <li>variables spécifiques (par hôte ou groupe)</li>
+      </ul>
+  </section>
+  <section>
+      <pre><code class="hljs nohighlight" data-trim>
+				inventory/
+				├── group_vars
+				│   ├── all.yml
+				│   ├── hypervisors.yml
+				│   └── proxies.yml
+				├── hosts
+				├── hosts-dev
+				└── host_vars
+				    ├── stack01-data01.yml
+				    ├── stack01-front01-web01.yml
+				    └── stack01-front01.yml
+		</code></pre>
+  </section>
+  <section>
+      <pre><code class="hljs ini" data-trim style="max-height: 600px">
+				kvm01 ansible_host=192.168.2.1
+				kvm02 ansible_host=192.168.2.2
 
-  tasks:
-  - shell: echo hello World
-    </code></pre>
+				stack01-front01 ansible_host=192.168.2.1 ansible_port=22020
+				stack01-front01-web01 ansible_host=192.168.2.1 ansible_port=22101
+				stack01-data01 ansible_host=192.168.2.1 ansible_port=22010
+
+				[hypervisors]
+				kvm01
+				kvm02
+
+				[fronts]
+				stack01-front01
+
+				[dbs]
+				stack01-data01
+
+				[web]
+				stack01-front01-web01
+		</code></pre>
+  </section>
+  <section>
+      <h4>Variables</h4>
+      <ul>
+          <li>sources multiples (<em>facts</em> ou configuration)</li>
+          <li>règles de précédence pour personnalisation</li>
+      </ul>
+  </section>
+  <section>
+      <h3>Un playbook</h3>
+  </section>
+  <section>
+      <pre><code class="hljs yaml" data-trim>
+        ---
+        - hosts: localhost
+
+          tasks:
+          - name: example.com in /etc/hosts
+            lineinfile:
+              dest: /etc/hosts
+              regexp: example.com
+              line: '192.168.0.25 example.com'
+              state: present
+        </code></pre>
+      <pre><code class="hljs bash">$ ansible-playbook playbook.yml</code></pre>
   </section>
 </section>
 
