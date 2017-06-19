@@ -940,7 +940,9 @@ cp -al
 <li> les fichiers-périphériques.</li>
 </ul>
 </p>
-<p> Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
+	</section>
+	<section>
+<p>Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
 <p>Les 3 droits fondamentaux sont la <b>lecture, l'écriture et l'éxecution</b>.</p>
 	</section>
 	<section>	
@@ -956,6 +958,7 @@ Pour chacune de ces catégories: on note les droits sous la forme rwx.</p>
 <code>[s:sst] u:rwx g:rwx o:rwx</code>
 </pre>
 	</section>
+<section>
 
 	<section>
 <h2>Commandes utiles/essentielles :</h2>
@@ -1006,16 +1009,27 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 </section>
 
 <section>
+	<section>
 <h2>NFS</h2>
+<pre>
+<code>
 # apt install nfs-kernel-server
-
+</code>
+<code>
 # vim /etc/exports
-
+</code>
 /srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
 /srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw)
-
+</pre>
+	</section>
+	<section>
+<pre>
+<code>
 # apt install nfs-common
 # mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
+<code>
+</pre>
+	</section>
 </section>
 
 <section>
