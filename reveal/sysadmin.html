@@ -52,18 +52,18 @@
   </section>
 
   <section>
-  	<h3>Les fichiers de cron</h3>
-  	<pre>
-  		<code data-trim class="hljs nohighlight">
+    <h3>Les fichiers de cron</h3>
+    <pre>
+      <code data-trim class="hljs nohighlight">
         # systemctl status cron
       </code>
       <code data-trim class="hljs nohighlight">
         # vim /etc/crontab
         # vim /etc/default/cron
-  		</code>
-  	</pre>
-  	<pre>
-  	<code data-trim class="hljs nohighlight">
+      </code>
+    </pre>
+    <pre>
+    <code data-trim class="hljs nohighlight">
       # vim /etc/cron.d/example
     </code>
 30 05 * * 0 www-data /usr/local/adm/savelog-weekly
@@ -72,7 +72,7 @@
 
   <section>
     <pre>
-    	<h3>Éditer une table</h3>
+      <h3>Éditer une table</h3>
       <code data-trim class="hljs nohighlight">
         $ crontab -e
         </code>
@@ -93,7 +93,7 @@ MAILTO=alert@example.com
 
   <section>
     <pre>
-    	<h3>Documentation et consultation</h3>
+      <h3>Documentation et consultation</h3>
       <code data-trim class="hljs nohighlight">
         $ man 5 crontab
       </code>
@@ -561,7 +561,7 @@ ansible 2.2.1.0
         $ ansible localhost --module-name setup --args "filter=ansible_mem*"
         $ ansible localhost --module-name lineinfile --args \
           "dest=/etc/hosts regexp=example.com line='192.168.0.25 example.com'"
-			</code></pre>
+      </code></pre>
   </section>
   <section>
       <h3>Éléments de base</h3>
@@ -608,41 +608,41 @@ ansible 2.2.1.0
   </section>
   <section>
       <pre><code class="hljs nohighlight" data-trim>
-				inventory/
-				├── group_vars
-				│   ├── all.yml
-				│   ├── hypervisors.yml
-				│   └── proxies.yml
-				├── hosts
-				├── hosts-dev
-				└── host_vars
-				    ├── stack01-data01.yml
-				    ├── stack01-front01-web01.yml
-				    └── stack01-front01.yml
-		</code></pre>
+        inventory/
+        ├── group_vars
+        │   ├── all.yml
+        │   ├── hypervisors.yml
+        │   └── proxies.yml
+        ├── hosts
+        ├── hosts-dev
+        └── host_vars
+            ├── stack01-data01.yml
+            ├── stack01-front01-web01.yml
+            └── stack01-front01.yml
+    </code></pre>
   </section>
   <section>
       <pre><code class="hljs ini" data-trim style="max-height: 600px">
-				kvm01 ansible_host=192.168.2.1
-				kvm02 ansible_host=192.168.2.2
+        kvm01 ansible_host=192.168.2.1
+        kvm02 ansible_host=192.168.2.2
 
-				stack01-front01 ansible_host=192.168.2.1 ansible_port=22020
-				stack01-front01-web01 ansible_host=192.168.2.1 ansible_port=22101
-				stack01-data01 ansible_host=192.168.2.1 ansible_port=22010
+        stack01-front01 ansible_host=192.168.2.1 ansible_port=22020
+        stack01-front01-web01 ansible_host=192.168.2.1 ansible_port=22101
+        stack01-data01 ansible_host=192.168.2.1 ansible_port=22010
 
-				[hypervisors]
-				kvm01
-				kvm02
+        [hypervisors]
+        kvm01
+        kvm02
 
-				[fronts]
-				stack01-front01
+        [fronts]
+        stack01-front01
 
-				[dbs]
-				stack01-data01
+        [dbs]
+        stack01-data01
 
-				[web]
-				stack01-front01-web01
-		</code></pre>
+        [web]
+        stack01-front01-web01
+    </code></pre>
   </section>
   <section>
       <h4>Variables</h4>
