@@ -860,34 +860,117 @@ Notation décimale :
 umask :
 - Pour gérer droit niveau utilisateurs : commande umask
   Fixé dans le fichier profile ou bashrc (local ou général...)
-  </section>
+</section>
 
-  <section>
+<section>
 <h2>NFS</h2>
+# apt install nfs-kernel-server
+
+# vim /etc/exports
+
+/srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
+/srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw) 
+
+# apt install nfs-common
+# mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
 </section>
 
 <section>
 <h2>DRBD</h2>
-</section>
+# apt install drbd-utils
 
-<section>
-<h2>LVM</h2>
+Sur une installation DRBD on définit :
+
+* des ressources : chaque ressource DRBD a plusieurs paramètres, notamment le second serveur vers qui envoyer/recevoir la réplication
+* des volumes : chaque ressource DRBD peut avoir un ou plusieurs volumes, chaque volume est accessible via un périphérique unique nommé /dev/drbdXX
+
+exemple simple d’une ressource foo avec un volume /dev/drbd42 définie dans un fichier /etc/drbd.d/foo.res entre deux serveurs nommés tic et tac :
+
+resource "foo" {
+    volume 0 {
+        device minor 42;
+        disk /dev/sdz1;
+        meta-disk internal;
+    }
+    on tic {
+        address 192.0.2.1:7014;
+    }
+    on tac {
+        address 192.0.2.2:7014;
+    }
+}
+
+# drbdadm -d adjust all
+# drbdadm adjust all
+
+# drbdadm dump
+# drbdadm create-md [ressource]
+# drbdadm attach/detach [ressource]
+# drbdadm connect/disconnect [ressource]
+# drbdadm adjust/adjust-with-progress [ressource]
+# drbdadm primary/secondary [ressource]
+
+
+$ cat /proc/drbd
+# drbd-overview
 </section>
 
 <section>
 <h2>Virtualisation</h2>
+- KVM/libvirt
+- Xen
+- VMware
+
+Focus sur KVM :
+
+# apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst netcat-openbsd
+
+# virsh list --all
+# virsh start <vm-name>
+# virsh shutdown <vm-name>
+# virsh destroy <vm-name>
+# virsh edit <vm-name>
+# virsh undefine <vm-name>
+# virsh define template.xml
+
+# virt-install --connect=qemu:///system \
+  --name=template \
+  --cpu mode=host-passthrough --vcpus=1 \
+  --ram=512 \
+  --disk path=/path/template.qcow2,bus=virtio,cache=none,size=42,format=qcow2 \
+  --network=bridge:br0,model=virtio \
+  --noautoconsole --graphics vnc,listen=127.0.0.1,keymap=fr \
+  --cdrom=/home/images/debian-8.6.0-amd64-netinst.iso
+
 </section>
 
 <section>
 <h2>Conteneur</h2>
+LXC
+
+# apt install lxc bridge-utils ??libvirt-bin?? debootstrap
+# lxc-create -t debian -n foo
+# lxc-start -n foo -d
+# lxc-attach -n foo
+# lxc-stop -n foo
+# lxc-info -n foo
+# lxc-console -n foo
+# lxc-halt -n foo
+# lxc-destroy -n foo
+
+Docker
+
+# apt install docker-engine
+$ docker ps [options]
+$ docker run [options] IMAGE [commande]
+$ docker stop|kill [options] CONTENEUR
+$ docker rm [options] CONTENEUR
+$ docker rmi [options] IMAGE
+$ docker exec [options] CONTENEUR COMMANDE
 </section>
 
 <section>
-evolinux</h2>
-</section>
-
-<section>
-<h2>auth</h2>
+<h2>Authentification</h2>
 Historiquement sous Unix, l'authentification est gérée par une liste des utilisateurs avec les mots de passe chiffrés accessible à tous, à savoir le fameux fichier /etc/passwd accessible en lecture et la commande passwd « set-uid root »
 
 - Authentification shadow recommandé
@@ -913,8 +996,6 @@ uid=1000(jdoe) gid=1000(jdoe) groupes=20(dialout),24(cdrom),25(floppy),29(audio)
 jdoe@serveur:~$
 
 Restriction au niveau des procédures de login :
-
-
 Fichier  /etc/login.defs :
 
 FAIL_DELAY 10 \ delai minimum entre deux tentatives de login
@@ -924,10 +1005,7 @@ LOG_OK_LOGINS yes \ retenir les tentatives réussies
 LOGIN_TIMEOUT  60 \ delai maximim pour authentification
 CHFN_RESTRICT rwh \ restriction pour la commande chfn
 
-
 Complété par... Linux-PAM (Pluggable Authentication Modules)
-
-
 
 Le fichier /etc/shadow  contient les informations sécurisées, notamment la plus sensible : le mot de passe, mais également des paramètres d'expiration. Voir la commande vipw -s
 foo:$1$mYploS2J$uSouKZPBjUF6D094HPgGj/:13853:0:99999:7:::
@@ -945,7 +1023,6 @@ foo:$1$mYploS2J$uSouKZPBjUF6D094HPgGj/:13853:0:99999:7:::
        ·   nombre de jours, comptés à partir du 1er janvier 1970, depuis que le
            compte est désactivé
        ·   champ réservé
-
 
 Politique de gestion des mots de passe
 
@@ -976,7 +1053,6 @@ jdoe ALL = (ALL) sudoedit /etc/hosts
 
 sudo -l
 
-
 - Le système de gestion des utilisateurs diffère du système d'authentification des utilisateurs
 - Utilisation des UID, GID (pas de réelle nécessité d'avoir une entrée dans /etc/password !!)
 - Correspondances UID<->login, GID<->group faites avec la bibliothèque libnss (Name Services Switch). C'est également le cas des noms de services, protocoles, machines (DNS). On peut d'ailleurs voir cela comme un DNS pour les UID/GID.
@@ -987,10 +1063,9 @@ group:          compat
 shadow:         compat
 hosts:          files dns
 
-
 PAM
-    Mode de fonctionnement très modulaire rendant transparent à l'application l'utilisation de tel ou tel système d'authentification.
-   Des modules PAM existent pour NIS, LDAP, Kerberos, rendant ainsi les trois systèmes d'authentification interchangeables sans que cela nécessite une reconfiguration des logiciels en eux-même ou encore une recompilation des services.
+Mode de fonctionnement très modulaire rendant transparent à l'application l'utilisation de tel ou tel système d'authentification.
+Des modules PAM existent pour NIS, LDAP, Kerberos, rendant ainsi les trois systèmes d'authentification interchangeables sans que cela nécessite une reconfiguration des logiciels en eux-même ou encore une recompilation des services.
 - Répertoire des fichiers de configuration:
   /etc/pam.d/
 - Comportement par défaut:
@@ -1024,7 +1099,6 @@ Exemple /etc/pam.d/login :
            password   required   pam_cracklib.so retry=3 minlen=6 difok=3
            password   required   pam_unix.so use_authtok nullok md5
            session    required   pam_unix.so
-
 
               ACL/QUOTA
               TODO
