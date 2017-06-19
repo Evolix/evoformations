@@ -211,16 +211,27 @@ disable_vrfy_command = yes
 <section>
 <h2>syslog</h2>
 
-Les journaux systèmes sont gérés par syslog, un protocole qui permet de gérer les messages système de façon centralisé. syslog est précisé dans la RFC 3164Il est utilisé sous la forme d'un daemon syslogd chargé de rassembler les messages envoyés par diverses applications (messages kernel, user, daemon, mail, etc.) triés par une facility : LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc. et un certain niveau de severity : LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc. Les messages reçus sont répartis dans différents fichiers situés dans le répertoire /var/log/ ou d'autres façons (serveur syslog distant, terminal, etc.).
-C'est le paquet sysklogd qui assure ce rôle, en incluant le daemon syslogd (et klogd pour intercepter les message du noyau Linux). La répartition des journaux est spécifiée dans le fichier /etc/rsyslog.conf. Le script d'initialisation est rsyslog, on relancera donc le service syslog (suite à un changement dans le fichier de configuration par exemple) ainsi :
-# /etc/init.d/rsyslog restart
-Voici quelques exemples de journaux à surveiller étroitement :
-- les journaux situés dans les fichiers /var/log/auth.log permettent de voir toutes les tentatives de login, (l'adresse IP d'où la tentative est lancée, l'heure exacte, et le résultat).
-- les journaux situés dans les fichiers /var/log/kern.log permettent de voir toutes les messages générés par le noyau (pour repérer les erreurs éventuelles)
-- les journaux situés dans les fichiers /var/log/cron.log donnent des informations sur les scripts exécutés par la crontab
+Rsyslog est le démon syslog par défaut sous Debian. Le protocole syslog permet de gérer la journalisation : les messages sont envoyés par diverses applications (messages kernel, user, daemon, mail, etc.) triés par une facility (LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc.) et un certain niveau de severity (LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc.) ; ils sont reçus par un démon qui les répartit dans différents fichiers situés dans le répertoire /var/log/ ou par d’autres façons (serveur syslog distant, terminal, etc.)
 
-Les journaux logiciels sont des fichiers remplis directement par les applications (dans le cas où l'application utilise syslog, se reporter ci-dessus). On citera par exemple Apache, Horde ou encore MySQL.
+# systemctl status rsyslog
 
+# vim /etc/rsyslog.conf
+
+*.*;auth,authpriv.none;cron,mail,local4,local5,local7.none -/var/log/syslog
+cron.*      /var/log/cron.log
+#mail.info  -/var/log/mail.info
+#mail.warn  -/var/log/mail.warn
+#mail.err   /var/log/mail.err
+local0.*    /var/log/postgresql.log
+local1.*    /var/log/sympa.log
+local4.*    -/var/log/openldap.log
+local5.*    -/var/log/haproxy.log
+local7.*    -/var/log/dhcp.log
+
+</section>
+
+<section>
+<h2>logrotate</h2>
 Rotation des journaux
 Le logiciel logrotate permet de gérer les journaux système et logiciel de façon précise et ordonnée. De façon quotidienne ou hebdomadaire, les journaux sont compressés et datés, avec d'éventuelles actions nécessaires (relance du service, génération de statistiques, etc.). Pour le détail, c'est le paquet logrotate qui contient des scripts lancés par la crontab du système et qui utilisent les fichiers dans le répertoire /etc/logrotate.d/.
 
