@@ -358,8 +358,31 @@ Exceptions dans ignore.d.server/
 
 <section>
 <h2>fail2ban</h2>
-https://wiki.evolix.org/HowtoFail2Ban
+# apt install fail2ban
+
+# fail2ban-client status
+
+# fail2ban-client status ssh
+
+# vim /etc/fail2ban/filter.d/demo :
+
+[Definition]
+failregex =  warning: \[<HOST>\]: authentication failed:
+ignoreregex =
+
+# vim /etc/fail2ban/jail.local
+
+[demo-rule]
+
+enabled = true
+port    = http,https
+filter  = demo
+logpath = /var/log/demo.log
+maxretry = 3
+findtime = 1800
+bantime = 3600
 </section>
+
 
 <section>
   <section>
