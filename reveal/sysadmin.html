@@ -578,29 +578,63 @@ bantime = 3600
 
 <section>
 <h2>Monitoring</h2>
+- statistiques
+* nombreuses métriques locales
+* Munin, Collectd/Grafana, Beats/ELK
 
-Il existe de nombreux programmes évolués permettant de générer des courbes et statistiques.
-Citons Nagios, Munin, etc.
-Le plus connu d'entre eux est certainement Nagios qui permet de surveiller de nombreux services (SMTP, POP3, HTTP, NNTP, PING, etc.) mais également les ressources (charge processeur, utilisation des disques, etc.).
-La mise en place de Nagios (ou d'un équivalent) pour un nombre de serveurs dépassant la dizaine est fortement conseillée.
+- alerting
+* surveillance de services SMTP, POP3, HTTP, NNTP, PING, etc. + ressources (charge processeur, utilisation des disques, etc.)
+* Nagios, Icinga, Zabbix, Monit
 </section>
 
 <section>
 
 <h2>Sécurité</h2>
+sécurité physique
+- protection du BIOS par mot de passe
+- protection du boot loader
+- empêcher le reboot
+- clear_console
+- reporting
+
+sécurité logicielle
+- gestion des mots de passe
+- configuration sécurisée
+- veille
+- mises à jour de sécurité
+- sauvegardes
+- firewall
 </section>
 
 <section>
 <h2>réseau / iptables</h2>
 
-Couche physique : Ethernet
-(adresses MAC)
-Couche réseau : IPv4
-(adressage, HostID, NetID, Masque,
-Brodcast, protocole ARP, ICMP)
-Couche transport : TCP, UDP
-(notion de ports, mode connecté)
+Rappels réseau
+
+Couche physique : Ethernet (adresses MAC)
+Couche réseau : IPv4 (adressage, HostID, NetID, Masque, Brodcast, protocole ARP, ICMP)
+Couche transport : TCP, UDP (notion de ports, mode connecté)
 Couche application : HTTP, SMTP, DNS, etc.
+
+# iptables -L -t filter -v
+
+• INPUT: les chaînes appliquées sur INPUT concerneront tout paquet à destination de localhost
+• OUTPUT:  les chaînes appliquées sur OUTPUT concerneront tout paquet en provenance de localhost
+• FORWARD: le paquet n'est pas destiné à la machine locale, mais il doit être relayé sur une autre interface. 
+Les chaînes de FORWARD ne concerneront pas les paquets à destination ou venant de la machine locale.
+
+Exemple de règles :
+
+# iptables -A INPUT -i eth1 -j ACCEPT
+# iptables -A INPUT -p tcp --sport 143 --dport 1024:65535 -s 31.170.8.33 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+minifirewall
+
+# cd /etc/default && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall.conf" -O minifirewall
+# cd /etc/init.d && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall"
+# chmod 700 /etc/init.d/minifirewall
+# chmod 600 /etc/default/minifirewall
+
 </section>
 
 <section>
