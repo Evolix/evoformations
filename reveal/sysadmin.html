@@ -306,15 +306,23 @@ local7.*    -/var/log/dhcp.log
 </section>
 
 <section>
+<section>
 <h2>logrotate</h2>
-Le logiciel logrotate permet de gérer la rotation des journaux système et applicatif de façon précise et ordonnée.
-
+<p>Le logiciel logrotate permet de gérer la rotation des journaux système et applicatif de façon précise et ordonnée.</p>
+</section>
+<section>
+<p>
 Logrotate est exécuté tous les jours (cron.daily) : de façon quotidienne (ou
 moins fréquente), les journaux sont compressés et datés, avec d'éventuelles
 actions nécessaires (relance du service, génération de statistiques, etc.).
+</p>
+</section>
 
+<section>
+<pre>
+<code>
 # vim /etc/logrotate.d/dpkg
-
+</code>
 /var/log/dpkg.log {
         monthly
         rotate 12
@@ -324,51 +332,66 @@ actions nécessaires (relance du service, génération de statistiques, etc.).
         notifempty
         create 644 root root
 }
-
-Note : le programme "savelog" permet une rotation ultrasimple de journaux en ajoutant un suffixe et conservant 7 versions.
+</pre>
+<p>Note : le programme "savelog" permet une rotation ultrasimple de journaux en ajoutant un suffixe et conservant 7 versions.</p>
+</section>
 </section>
 
 <section>
+	<section>
 <h2>log2mail</h2>
-
-Pour surveiller précisement un fichier journal et recevoir immédiatemment des
+<p>Pour surveiller précisement un fichier journal et recevoir immédiatemment des
 alertes par mail si certains termes apparaissent dans ce fichier, vous pouvez
-utiliser le logiciel log2mail.
-
+utiliser le logiciel log2mail.</p>
+	</section>
+	<section>
+<pre>
+<code>
 # apt install log2mail
-
+</code>
+<code>
 # vim /etc/log2mail/config/default
-
+</code>
 file = /var/log/mail.log
 pattern = "fatal"
 mailto = admin@example.com
 template = /etc/log2mail/mail
-
+<code>
 # /etc/init.d/log2mail restart
+</code>
+</pre>
+	</section>
 </section>
 
 <section>
+	<section>
 <h2>logcheck</h2>
-
-Logcheck est un outil qui permet d’envoyer les logs par mail, plus précisément les lignes inconnues (non répertoriées dans ses règles) trouvées dans certains journaux.
-
+<p>Logcheck est un outil qui permet d’envoyer les logs par mail, plus précisément les lignes inconnues (non répertoriées dans ses règles) trouvées dans certains journaux.</p>
+	</section>
+	<section>
+<pre>
+<code>
 # aptitude install logcheck logcheck-database
-
-Fichier /etc/logcheck/logcheck.conf :
+</code>
+<p>Fichier <tt>/etc/logcheck/logcheck.conf</tt> :</p>
 
 REPORTLEVEL="server"
 SENDMAILTO="alert@example.com"
 MAILASATTACH=0
 FQDN=1
 TMP="/tmp"
-
-Exceptions dans ignore.d.server/
-
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[IPTABLES DROP\] : IN=eth0 OUT= MAC=.*
+	</section>
+	<section>
+<p>Exceptions dans ignore.d.server/</p>
+<pre>
+<code>^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[IPTABLES DROP\] : IN=eth0 OUT= MAC=.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ log2mail\[[0-9]+\]: Logfile [.[:alnum:]/]+ rotated. Listening to new file.$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: Could not read request from client, bailing out...$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: INFO: SSL Socket Shutdown.$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: clock is now [[:alnum:]]+$
+</code>
+</pre>
+	</section>
 </section>
 
 <section>
