@@ -325,7 +325,26 @@ template = /etc/log2mail/mail
 
 <section>
 <h2>logcheck</h2>
-https://wiki.evolix.org/HowtoLogcheck
+
+Logcheck est un outil qui permet d’envoyer les logs par mail, plus précisément les lignes inconnues (non répertoriées dans ses règles) trouvées dans certains journaux.
+
+# aptitude install logcheck logcheck-database
+
+Fichier /etc/logcheck/logcheck.conf :
+
+REPORTLEVEL="server"
+SENDMAILTO="alert@example.com"
+MAILASATTACH=0
+FQDN=1
+TMP="/tmp"
+
+Exceptions dans ignore.d.server/
+
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[IPTABLES DROP\] : IN=eth0 OUT= MAC=.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ log2mail\[[0-9]+\]: Logfile [.[:alnum:]/]+ rotated. Listening to new file.$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: Could not read request from client, bailing out...$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: INFO: SSL Socket Shutdown.$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: clock is now [[:alnum:]]+$
 </section>
 
 <section>
