@@ -265,7 +265,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     <ul>
       <li>conserver différentes versions dans le temps</li>
       <li>naviguer dans l'historique</li>
-      <li>gérer les divergences et convergences de variantes</li>
+      <li>gérer des branches</li>
       <li>travailler en équipe</li>
     </ul>
   </section>
@@ -289,7 +289,7 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
   <section>
     <h4>Décentralisé</h4>
     <ul>
-      <li>Tout est local, ou presque</li>
+      <li>Tout est local (le plus souvent)</li>
       <li>échanges possibles entre dépôts (FS ou réseau)</li>
       <li>tout l'historique est disponible</li>
       <li>pereine et fiable (copies autonomes et complètes)
@@ -353,11 +353,20 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
     <p>Une <em>bonne pratique</em> Evolix.</p>
   </section>
   <section>
+    <h4>Installation de Git</h4>
+    <pre><code class="shell">
+    $ su
+    # apt install git
+    # git --version
+    git version 2.11.0
+    </code></pre>
+  </section>
+  <section>
     <h4>Initialisation du dépôt</h4>
     <pre><code class="shell">
     $ cd /etc
     $ su
-    # git init .
+    # git init
     # git status
     # git add .
     # git commit -m "commit initial"
@@ -419,11 +428,69 @@ Couche application : HTTP, SMTP, DNS, etc.
   <section>
     <h3>Principes de base</h3>
     <ul>
-      <li>les <em>tasks</em> utilisent des modules servant d'abstraction (OS, versions…)</li>
+      <li>les <em>tasks</em> sont les unités d'action</li>
       <li>les <em>playbook</em> organisent l'exécution des tâches</li>
       <li>les <em>rôles</em> sont comme des paquets de tâches, pour faciliter la réutilisation</li>
       <li>l'<em>inventaire</em> recense toute l'infrastructure et les moyens d'y accéder</li>
     </ul>
+  </section>
+  <section>
+    <h4>Modules</h4>
+    <ul>
+      <li>sert d'abstraction (multi-OS, versions…)</li>
+      <li>permet l'idempotence</li>
+      <li>des centaines disponibles (core, extras…)</li>
+    </ul>
+  </section>
+  <section>
+    <pre><code class="yaml" style="max-height: 500px">- command: "date"
+
+- shell: "cat foo.txt | grep bar"
+
+- copy
+    src: "files/foo"
+    dest: "/etc/bar"
+    mode: "0644"
+
+- replace:
+    dest: "/etc/ssh/sshd_config"
+    regexp: '^(Match User ((?!{{ name }}).)*)$'
+    replace: '\1,{{ name }}'
+
+- lineinfile:
+    dest: "/etc/evocheck.cf"
+    line: "IS_APTICRON=0"
+    regexp: "^IS_APTICRON="</code></pre>
+  </section>
+  <section>
+    <pre><code class="yaml" style="max-height: 500px">- apt:
+    name: '{{ item }}'
+    update_cache: yes
+  with_items: ["vim", "htop"]
+
+- apt_repository:
+    repo: "deb http://mirror.evolix.org/jessie stable main"
+
+- mysql_user:
+    name: mysqladmin
+    password: my_password
+    priv: "*.*:ALL,GRANT"
+    config_file: /root/.my.cnf
+
+- sysctl:
+    name: "vm.max_map_count"
+    value: 262144
+    sysctl_file: "/etc/sysctl.d/elasticsearch.conf"</code></pre>
+  </section>
+
+  <section>
+    <h4>Playbooks</h4>
+    <pre><code class="yaml" style="max-height: 500px">---
+- hosts: all
+
+  tasks:
+  - shell: echo hello World
+    </code></pre>
   </section>
 </section>
 
