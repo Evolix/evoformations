@@ -48,18 +48,32 @@
 
 <section>
 <h2>Cron</h2>
+	<pre>Les fichiers de cron</pre>
+	<pre>
+		<code>
 # systemctl status cron
-
 # vim /etc/crontab
 # vim /etc/default/cron
-
+		</code>
+	</pre>
+	<pre>
+	<code>
 # vim /etc/cron.d/example
-
+	</code>
 30 05 * * 0 www-data /usr/local/adm/savelog-weekly
+</pre>
+</section>
 
+<section>
+<pre>
+<code>
 $ crontab -e
+</code>
+</pre>
+<pre>
+<code>
 # crontab -u jdoe -e
-
+</code>
 0,30,45,51 * * * * /usr/local/adm/send-data
 */15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
 00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
@@ -69,14 +83,24 @@ $ crontab -e
 00 00 1 1 * /usr/local/bin/happy-new-year
 MAILTO=alert@example.com
 @daily /usr/local/bin/minuit-check
-
-$ man 5 crontab
-
-$ crontab -l
-# crontab -u jdoe -l
+</pre>
 </section>
 
 <section>
+<pre>
+<code>
+$ man 5 crontab
+</code>
+<code>
+$ crontab -l
+</code>
+<code>
+# crontab -u jdoe -l
+</code>
+</section>
+
+<section>
+
 <h2>ntpd</h2>
 $ date
 # apt install ntp
