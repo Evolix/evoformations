@@ -47,9 +47,33 @@
             </section>
 
 <section>
-<h2>crontab</h2>
+<h2>Cron</h2>
+# systemctl status cron
 
-https://wiki.evolix.org/HowtoCron
+# vim /etc/crontab
+# vim /etc/default/cron
+
+# vim /etc/cron.d/example
+
+30 05 * * 0 www-data /usr/local/adm/savelog-weekly
+
+$ crontab -e
+# crontab -u jdoe -e
+
+0,30,45,51 * * * * /usr/local/adm/send-data
+*/15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
+00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
+10 03 * * 1-6 nice -10 /usr/local/adm/sauvegarde-daily
+30 05 * * 0 /usr/local/adm/savelog-weekly
+30 06 1 * * /usr/local/adm/savelog-monthly
+00 00 1 1 * /usr/local/bin/happy-new-year
+MAILTO=alert@example.com
+@daily /usr/local/bin/minuit-check
+
+$ man 5 crontab
+
+$ crontab -l
+# crontab -u jdoe -l
 </section>
 
 <section>
