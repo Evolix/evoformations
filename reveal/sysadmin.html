@@ -588,96 +588,103 @@ bantime  = 3600
 </section>
 
 <section>
-<h2>Monitoring</h2>
-<p>
-<ul>
-<li>statistiques
-<ul>
-<li>nombreuses métriques locales</li>
-<li>Munin, Collectd/Grafana, Beats/ELK</li>
-</ul>
-</li>
-<li>alerting
-<ul>
-<li>surveillance de services SMTP, POP3, HTTP, NNTP, PING, etc. + ressources (charge processeur, utilisation des disques, etc.)</li>
-<li>Nagios, Icinga, Zabbix, Monit</li>
-</ul>
-</li>
+  <h2>Monitoring</h2>
+  <ul>
+    <li>statistiques
+      <ul>
+        <li>nombreuses métriques locales</li>
+        <li>Munin, Collectd/Grafana, Beats/ELK</li>
+      </ul>
+    </li>
+    <li>alerting
+      <ul>
+        <li>surveillance de services SMTP, POP3, HTTP, NNTP, PING, etc. + ressources (charge processeur, utilisation des disques, etc.)</li>
+        <li>Nagios, Icinga, Zabbix, Monit</li>
+      </ul>
+    </li>
+  </ul>
 </section>
 
 <section>
+  <section>
+    <h2>Sécurité</h2>
+  </section>
 	<section>
-<h2>Sécurité</h2>
-<p>
-<ul>
-<li>sécurité physique
-<ul>
-<li> protection du BIOS par mot de passe</li>
-<li> protection du boot loader</li>
-<li> empêcher le reboot</li>
-<li> clear_console</li>
-<li> reporting</li>
-</ul>
-</li>
-</ul>
+    <h3>Sécurité physique</h3>
+    <ul>
+      <li>protection du BIOS par mot de passe</li>
+      <li>protection du boot loader</li>
+      <li>empêcher le reboot</li>
+      <li>clear_console</li>
+      <li>reporting</li>
+      <li>fermeture de session en cas d'inactivité</li>
+    </ul>
 	</section>
 	<section>
-<h2>Sécurité (suite)</h2>
-<ul>
-<li>
-sécurité logicielle
-<ul>
-<li> gestion des mots de passe</li>
-<li> configuration sécurisée</li>
-<li> veille</li>
-<li> mises à jour de sécurité</li>
-<li> sauvegardes</li>
-<li> firewall</li>
-</ul>
-</li>
+    <h3>Sécurité logicielle</h3>
+    <ul>
+      <li>gestion des mots de passe</li>
+      <li>configuration sécurisée</li>
+      <li>veille</li>
+      <li>mises à jour de sécurité</li>
+      <li>sauvegardes</li>
+      <li>firewall</li>
+    </ul>
 	</section>
 </section>
 
 <section>
 	<section>
 <h2>Réseau / iptables</h2>
-<p>Rappels réseau</p>
-<ul>
-<li>Couche physique : Ethernet (adresses MAC)</li>
-<li>Couche réseau : IPv4 (adressage, HostID, NetID, Masque, Brodcast, protocole ARP, ICMP)</li>
-<li>Couche transport : TCP, UDP (notion de ports, mode connecté)</li>
-<li>Couche application : HTTP, SMTP, DNS, etc.</li>
-</ul>
+  </section>
+  <section>
+    <h3>Rappels réseau</h3>
+    <ul>
+      <li>Couche physique : Ethernet (adresses MAC)</li>
+      <li>Couche réseau : IPv4 (adressage, HostID, NetID, Masque, Brodcast, protocole ARP, ICMP)</li>
+      <li>Couche transport : TCP, UDP (notion de ports, mode connecté)</li>
+      <li>Couche application : HTTP, SMTP, DNS, etc.</li>
+    </ul>
 	</section>
+
 	<section>
-<pre>
-<code>
+    <h3>Afficher les règles du firewall</h3>
+    <pre>
+    <code data-trim class="hljs nohighlight">
 # iptables -L -t filter -v
-</code>
-</pre>
-<p>
-<ul>
-<li>INPUT: les chaînes appliquées sur INPUT concerneront tout paquet à destination de localhost</li>
-<li>OUTPUT:  les chaînes appliquées sur OUTPUT concerneront tout paquet en provenance de localhost</li>
-<li>FORWARD: le paquet n'est pas destiné à la machine locale, mais il doit être relayé sur une autre interface.
-Les chaînes de FORWARD ne concerneront pas les paquets à destination ou venant de la machine locale.</li>
-</ul>
-</p>
+    </code>
+    </pre>
 	</section>
+
 	<section>
-<h2>Réseau / iptables (suite)</h2>
-<p>Exemple de règles :<p>
-<pre>
+    <ul>
+    <li>INPUT: les chaînes appliquées sur INPUT concerneront tout paquet à destination de localhost</li>
+    <li>OUTPUT:  les chaînes appliquées sur OUTPUT concerneront tout paquet en provenance de localhost</li>
+    <li>FORWARD: le paquet n'est pas destiné à la machine locale, mais il doit être relayé sur une autre interface.
+    Les chaînes de FORWARD ne concerneront pas les paquets à destination ou venant de la machine locale.</li>
+    </ul>
+	</section>
+
+	<section>
+  <h3>Exemple de règles :</h3>
+  <pre>
+  <code data-trim class="hljs nohighlight">
 # iptables -A INPUT -i eth1 -j ACCEPT
-# iptables -A INPUT -p tcp --sport 143 --dport 1024:65535 -s 31.170.8.33 -m state --state ESTABLISHED,RELATED -j ACCEPT
-<pre>
-<p>Etude de minifirewall</p>
-<code>
-# cd /etc/default && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall.conf" -O minifirewall
-# cd /etc/init.d && wget "https://forge.evolix.org/projects/minifirewall/repository/revisions/master/raw/minifirewall"
-# chmod 700 /etc/init.d/minifirewall
-# chmod 600 /etc/default/minifirewall
-</code>
+  </code>
+
+  <code data-trim class="hljs nohighlight">
+# iptables -A INPUT -p tcp --sport 143 --dport 1024:65535 \
+    -s 31.170.8.33 -m state --state ESTABLISHED,RELATED -j ACCEPT
+  </code>
+  </pre>
+</section>
+
+<section>
+  <h3>Analyse de minifirewall</h3>
+  <ul>
+    <li>Dépôt du projet :<a href="https://forge.evolix.org/projects/minifirewall/repository/">forge.evolix.org/projects/minifirewall/repository/</a></li>
+    <li>Instruction d'installation : <a href="https://forge.evolix.org/projects/minifirewall/wiki">forge.evolix.org/projects/minifirewall/wiki</a></li>
+  </ul>
 	</section>
 </section>
 
