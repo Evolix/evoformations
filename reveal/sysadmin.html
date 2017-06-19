@@ -131,7 +131,39 @@ Modifier une unité
 
 <section>
 <h2>Postfix</h2>
-https://wiki.evolix.org/HowtoPostfix
+# apt install postfix
+
+Configuration process : /etc/postfix/master.cf
+Configuration options : /etc/postfix/main.cf
+
+# vim main.cf
+
+smtpd_banner = $myhostname ESMTP mail server
+biff = no
+append_dot_mydomain = no
+myhostname = hosting.example.com
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = $myhostname
+mydestination = $myhostname localhost.localdomain localhost
+relayhost =
+mynetworks = 127.0.0.0/8
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = ipv4
+disable_vrfy_command = yes
+
+# date | mail -s test jdoe@example.com
+# mailq
+# qshape deferred
+# postcat -vq < queue_id > > message.txt
+# postsuper -d < queue_id >
+# postsuper -d ALL
+# postsuper -r < queue_id >
+# postsuper -r ALL
+
+# mailq | tail -n +2 | awk 'BEGIN { RS = "" } /example\.com$/ { print $1 }' | tr -d '*!' | postsuper -d -
 </section>
 
 <section>
