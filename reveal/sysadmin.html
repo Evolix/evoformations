@@ -110,6 +110,7 @@ $ crontab -l
 <section>
   <section>
     <h2>ntpd</h2>
+    Démon de protocole de temps réseau.
   </section>
   <section>
     <pre>
@@ -148,6 +149,7 @@ $ timedatectl
 <section>
   <section>
     <h2>systemd</h2>
+    Gestionnaire système et service
   </section>
   <section>
     <h3>systemd est un gestionnaire de services</h3>
@@ -205,13 +207,13 @@ $ timedatectl
 <section>
   <section>
     <h2>Postfix</h2>
+    Agent de transport de courriers électroniques
   </section>
   <section>
-    <h3>Installation</h3>
+    <h3>Installation et configuration</h3>
     <pre><code data-trim class="hljs nohighlight">
 # apt install postfix
     </code></pre>
-    <h3>Configuration</h3>
     <ul>
       <li>process : /etc/postfix/master.cf</li>
       <li>options : /etc/postfix/main.cf</li>
@@ -320,6 +322,7 @@ local7.*    -/var/log/dhcp.log
   </section>
 
   <section>
+    <h3>Exemple de configuration</h3>
     <pre>
     <code data-trim class="hljs nohighlight">
 # vim /etc/logrotate.d/dpkg
@@ -345,6 +348,7 @@ local7.*    -/var/log/dhcp.log
     alertes par mail si certains termes apparaissent dans ce fichier.</p>
 	</section>
 	<section>
+    <h3>Installation, configuration et gestion</h3>
     <pre>
     <code data-trim class="hljs nohighlight">
 # apt install log2mail
@@ -369,6 +373,7 @@ template = /etc/log2mail/mail
     <p>Logcheck envoie par mail, les lignes inconnues (non répertoriées dans ses règles) trouvées dans certains journaux.</p>
 	</section>
 	<section>
+    <h3>Installation et configuration</h3>
     <pre>
       <code data-trim class="hljs nohighlight">
 # aptitude install logcheck logcheck-database
@@ -397,43 +402,49 @@ TMP="/tmp"
 
 <section>
 	<section>
-<h2>fail2ban</h2>
+    <h2>fail2ban</h2>
+    <p>Exécute des actions à la détection de comportements anormaux.</p>
 	</section>
 	<section>
-<pre>
-<code>
+    <h3>Installation et commandes utiles</h3>
+    <pre>
+      <code data-trim class="hljs nohighlight">
 # apt install fail2ban
-</code>
-<code>
+      </code>
+      <code data-trim class="hljs nohighlight">
 # fail2ban-client status
-</code>
-<code>
+      </code>
+      <code data-trim class="hljs nohighlight">
 # fail2ban-client status ssh
-</code>
-<code>
+      </code>
+    </pre>
+	</section>
+	<section>
+    <h3>Exemple de filtre</h3>
+    <pre>
+      <code data-trim class="hljs nohighlight">
 # vim /etc/fail2ban/filter.d/demo :
-</code>
+      </code>
 [Definition]
 failregex =  warning: \[<HOST>\]: authentication failed:
 ignoreregex =
-</pre>
+    </pre>
 	</section>
 	<section>
-<h2>fail2ban (suite)</h2>
-<pre>
-<code>
+    <h3>Exemple de <em>jail</em></h3>
+    <pre>
+      <code data-trim class="hljs nohighlight">
 # vim /etc/fail2ban/jail.local
-</code>
+      </code>
 [demo-rule]
-
-enabled = true
-port    = http,https
-filter  = demo
-logpath = /var/log/demo.log
+enabled  = true
+port     = http,https
+filter   = demo
+logpath  = /var/log/demo.log
 maxretry = 3
 findtime = 1800
-bantime = 3600
-</pre>
+bantime  = 3600
+    </pre>
 	</section>
 </section>
 
@@ -881,7 +892,7 @@ umask :
 # vim /etc/exports
 
 /srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
-/srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw) 
+/srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw)
 
 # apt install nfs-common
 # mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
