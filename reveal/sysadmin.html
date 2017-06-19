@@ -844,14 +844,22 @@ ansible 2.2.1.0
 </section>
 
 <section>
+	<section>
 <h2>OpenSSH</h2>
-
-- SSH: Secure Shell
-- Outils: 
-  Client: ssh, scp, sftp 
-  Serveur: ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server
-- Configuration de sshd_config
-
+<p>
+<ul>
+<li> SSH: Secure Shell</li>
+<li> Outils: 
+	<ul>
+	<li>Client: ssh, scp, sftp</li>
+	<li>Serveur: ssh-add, ssh-agent, ssh-keygen, ssh-keysign, ssh-keyscan, et sftp-server</li>
+	</ul>
+</li>
+</ul>
+	</section>
+	<section>
+<h2>Configuration de sshd_config</h2>
+<pre>
 Port 22
 Port 2222
 
@@ -863,37 +871,55 @@ Match Address 192.0.2.1,192.0.2.2
     PasswordAuthentication yes
 Match User foo,bar
     PasswordAuthentication no
-
+</code>
+<code>
 $ ssh-keygen
 $ cat .ssh/id_rsa.pub
 $ vim .ssh/authorized_keys
-$ ssh-agent
-
-scp   fichier-local    identité-distante@hôte-distant:chemin/fichier
-scp   identité-distante@hôte-distant:chemin/fichier   fichier-local
-
+</code>
+</pre>
+	</section>
+	<section>
+<h2>OpenSSH (suite)</h2>
+<pre>
+<code>$ ssh-agent</code>
+<code>scp   fichier-local    identité-distante@hôte-distant:chemin/fichier</code>
+<code>scp   identité-distante@hôte-distant:chemin/fichier   fichier-local</code>
+</pre>
+	</section>
 </section>
 
 <section>
-<h2>sauvegardes</h2>
+	<section>
+<h2>Sauvegardes</h2>
+	</section>
+	<section>
+<p>
 File-system (totales ou incrémentales)
-
+<pre>
+<code>
 tar -cpvf
 cpio, pax
-
 dump/restore, partimage
 dd
-
+</code>
+<code>
 umount /file-system
+</code>
+<code>
 dump 0uf /dev/rst0 /file-system
-
-
-LA solution magique...
-
+</code>
+	</section>
+	<section>
+<h2>LA solution magique...</h2>
+<pre>
+<code>
 rsync -av --delete
 cp -al
-
-EvoBackup : https://forge.evolix.org/projetcs/evobackup
+</code>
+</pre>
+<p>EvoBackup :<br><a href="https://forge.evolix.org/projetcs/evobackup">https://forge.evolix.org/projetcs/evobackup</a></p>
+	</section>
 </section>
 
 <section>
