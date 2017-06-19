@@ -9,8 +9,9 @@ based on dark.css by Ivan Sagalaev
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  background: #3f3f3f;
+  background: #363736;
   color: #dcdcdc;
+  padding:15px !important;
 }
 
 .hljs-keyword,

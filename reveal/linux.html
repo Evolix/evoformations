@@ -1,63 +1,63 @@
 <!doctype html>
 <html lang="fr">
 
-    <head>
-        <meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
 
-        <title>Formation Evolix : Linux et distributions</title>
+    <title>Formation Evolix : Linux et distributions</title>
 
-        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-        <meta name="author" content="Hakim El Hattab">
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
 
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="../css/reveal.css">
-        <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+    <link rel="stylesheet" href="../css/reveal.css">
+    <link rel="stylesheet" href="../css/theme/beige.css" id="theme">
 
-        <!-- Theme used for syntax highlighting of code -->
-        <link rel="stylesheet" href="../lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="../lib/css/zenburn.css">
 
-        <!-- Printing and PDF exports -->
-        <script>
-            var link = document.createElement( 'link' );
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = window.location.search.match( ../print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-            document.getElementsByTagName( 'head' )[0].appendChild( link );
-        </script>
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(.. / print - pdf / gi) ? '../css/print/pdf.css' : '../css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
 
-        <!--[if lt IE 9]>
+    <!--[if lt IE 9]>
         <script src="../lib/js/html5shiv.js"></script>
         <![endif]-->
-    </head>
+</head>
 
-    <body>
+<body>
 
-        <div class="reveal">
+    <div class="reveal">
 
-            <!-- Any section element inside of this container is displayed as a slide -->
-            <div class="slides">
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
 
-<section>
-<h1>Formation Evolix</h1>
-<h3>Linux et distributions</h3>
-</section>
+            <section>
+                <h1>Formation Evolix</h1>
+                <h3>Linux et distributions</h3>
+            </section>
 
-<section>
-<h2>Historique</h2>
-<ul>
-<li>1991 : Lancement du projet Linux par Linus Torvalds, coordination par Internet</li>
-<li>1993 : Fiabilité de Linux déjà à la hauteur des Unix commerciaux</li>
-<li>1994 : Reconnaissance de Linux par les membres du projet GNU et entraide</li>
-</ul>
-<img src="" border="0">
-</section>
+            <section>
+                <h2>Historique</h2>
+                <img src="../imagesEvoFormation2017/linus_torvalds.jpg" border="0">
+                <ul>
+                    <li>1991 : Lancement du projet Linux par Linus Torvalds, coordination par Internet</li>
+                    <li>1993 : Fiabilité de Linux déjà à la hauteur des Unix commerciaux</li>
+                    <li>1994 : Reconnaissance de Linux par les membres du projet GNU et entraide</li>
+                </ul>
+            </section>
 
-<section>
-<pre>
+            <section>
+                <pre style="background-color:white;box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);">
 Newsgroups: comp.os.minix
 Date: 25 Aug 91 20:57:08 GMT
 Subject: What would you like to see most in minix?
@@ -83,197 +83,297 @@ PS.  Yes - it's free of any minix code, and it has a multi-threaded fs.
 It is NOT protable (uses 386 task switching etc), and it probably never
 will support anything other than AT-harddisks, as that's all I have :-(.
 </pre>
-</section>
+            </section>
 
-<section>
-<h2>Versions</h2>
-<ul>
-<li>mars 1994 : version 1.0</li>
-<li>juillet 1996 : version 2.0</li>
-<li>janvier 1999 : version 2.2</li>
-<li>janvier 2001 : version 2.4</li>
-<li>décembre 2003 : version 2.6</li>
-<li>juillet 2011 : version 3.0</li>
-<li>avril 2015 : version 4.0</li>
-<li>aujourd'hui : 4.11</li>
-</ul>
-</section>
+            <section>
+                <h2>Versions</h2>
+                <ul>
+                    <li>Mars 1994 : version 1.0</li>
+                    <li>Juillet 1996 : version 2.0</li>
+                    <li>Janvier 1999 : version 2.2</li>
+                    <li>Janvier 2001 : version 2.4</li>
+                    <li>Décembre 2003 : version 2.6</li>
+                    <li>Juillet 2011 : version 3.0</li>
+                    <li>Avril 2015 : version 4.0</li>
+                    <li>Aujourd'hui : 4.11</li>
+                </ul>
+            </section>
 
-<section>
-<h2>Linux, juste un noyau</h2>
-interface de programmation pour utiliser le matériel (clavier, écran, disque)
-multi-taches et multi-utilisateurs
-gestion du CPU, pile réseau, filesystems
-monolitique + modulaire VS micro-noyau (Mach, Hurd)
-</section>
+            <section>
+                <h2>Linux, juste un noyau…</h2>
+                <ul>
+                    <li>Interface de programmation pour utiliser le matériel (clavier, écran, disque)</li>
+                    <li>Multi-taches et multi-utilisateurs</li>
+                    <li>gestion du CPU, pile réseau, filesystems</li>
+                    <li>Monolitique + modulaire VS micro-noyau (Mach, Hurd)</li>
+                </ul>
+            </section>
 
-<section>
-<h2>TP</h2>
-wget https://git.kernel.org/torvalds/t/linux-4.12-rc5.tar.gz
-tar xvf linux-4.12-rc5.tar.gz
-cd linux-4.12-rc5
-apt install libqt4-dev
-make xconfig
-</section>
+            <section>
+                <h2>Démo</h2>
+                <pre>
+    <code>
+$ wget https://git.kernel.org/torvalds/t/linux-4.12-rc5.tar.gz
+$ tar xvf linux-4.12-rc5.tar.gz
+$ cd linux-4.12-rc5
+# apt install libqt4-dev
+$ make xconfig
+    </code>
+</pre>
+            </section>
 
-<section>
-<h2>Un noyau de système d'exploitation</h2>
-ce ne sont pas des commandes
-ce ne sont pas des fichiers
-ça ne s'utilise pas tout seul
-il faut ajouter des logiciels (outils, services, etc.)
-ne fait pas partie de Linux : cron, passwd, login, tar, mount, libc, coreutils
-</section>
+            <section>
+                <h2>…Un noyau de système d'exploitation</h2>
+                <ul>
+                    <li>Ce ne sont pas des commandes</li>
+                    <li>Ce ne sont pas des fichiers</li>
+                    <li>Ça ne s'utilise pas tout seul</li>
+                    <li>Il faut ajouter des logiciels (outils, services, etc.)</li>
+                    <li>Ne fait pas partie de Linux : cron, passwd, login, tar, mount, libc, coreutils</li>
+                </ul>
+            </section>
 
-<section>
-<h2>GNU/Linux</h2>
-<p>Outils GNU :</p>
-<ul>
-<li>GCC : compilateur</li>
-<li>glibc : librairie C (printf,malloc,open,etc.)</li>
-<li>Bash : shell</li>
-<li>GRUB : boot loader</li>
-<li>coreutils : ls, cat, chmod, du, su, etc.</li>
-</ul>
-<p>Autres outils : OpenSSH, sudo, Vim, systemd</p>
-</section>
+            <section>
+                <h2>Outils GNU</h2>
+                <ul>
+                    <li>GCC : compilateur</li>
+                    <li>glibc : librairie C (printf,malloc,open,etc.)</li>
+                    <li>Bash : shell</li>
+                    <li>GRUB : boot loader</li>
+                    <li>coreutils : ls, cat, chmod, du, su, etc.</li>
+                </ul>
+                <p>Autres outils : OpenSSH, sudo, Vim, systemd</p>
+            </section>
 
-<section>
-<h2></h2>
-</section>
+            <section>
+                <h2></h2>
+            </section>
 
-<section>
-<h2>Distributions GNU/Linux</h2>
-<ul>
-<li>Red Hat</li>
-<li>CentOS</li>
-<li>Debian</li>
-<li>Ubuntu</li>
-</ul>
-</section>
+            <section>
+                <h2>Distributions</h2>
+                <ul>
+                    <li>Red Hat</li>
+                    <li>CentOS</li>
+                    <li>Debian</li>
+                    <li>Ubuntu</li>
+                </ul>
+            </section>
 
-<section>
-<h2>Organisation des fichiers</h2>
-Norme FHS
-</section>
+            <section>
+                <h2>Organisation des fichiers</h2> Norme FHS
+            </section>
 
-<section>
-<h2>Red Hat</h2>
-- Entreprise fondée en 1993 :
-  - Siège social à Raleigh (USA)
-  - Cotée en bourse, CA de 2500 M$
-  - bureaux à travers le monde
-  - 10000 employés
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Carte d'identité</h3>
+                <ul>
+                    <li>Fondation : 1993</li>
+                    <li>Siège social : Raleigh</li>
+                    <li>CA : 2500 M$</li>
+                    <li>Nombre d'employés : 10000</li>
+                </ul>
+            </section>
 
-- Quatre centres de support dans le monde :
-  Amerique, Europe, Asie, Pacifique
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Carte d'identité (suite)</h3>
+                <ul>
+                    <li>Cotée en bourse</li>
+                    <li>Des bureaux dans le monde entier</li>
+                    <li>4 centres de support : Amérique, Asie, Europe, Pacifique</li>
+                    <li>Un des plus gros contributeurs à la communauté du Libre</li>
+                </ul>
+            </section>
 
-- Un des plus gros contributeurs à la communauté du Libre 
-</section>
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Équipe</h3>
+                <ul>
+                    <li>Des développeurs du noyau Linux</li>
+                    <li>Des mainteneurs de GCC</li>
+                    <li>Des développeurs d'Apache</li>
+                </ul>
+            </section>
 
-<section>
-<h2>Red Hat</h2>
-- Équipe :
-  parmi les développeurs,
-  développeurs du noyau Linux
-  mainteneurs de GCC 
-  développeurs d'Apache
-- Les versions :
-   ­ Redhat version 9, plus supportée
-   ­ Red Hat Entreprise/Advanced Server, obsolète
-   ­ Redhat Desktop
-   ­ Redhat Entreprise Linux 7 (RHEL)
-- Dérivés : Fedora et CentOS
-- Ansible, OpenStack, JBOSS, etc.
-</section>
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Versions</h3>
+                <ul>
+                    <li>Redhat version 9 : plus supportée</li>
+                    <li>Red Hat Entreprise/Advanced Server : obsolète</li>
+                    <li>Redhat Desktop</li>
+                    <li>Redhat Entreprise Linux 7 (RHEL)</li>
+                </ul>
+            </section>
 
-<section>
-<h2>Red Hat</h2>
-    Système de packages RPM :
-   ­ installation facile et rapide (pas de compilation)
-   ­ gestion des dépendances
-   ­ notoriété et abondance de dépôts RPM
-   ­ bénéficie d'améliorations constantes
-   Voir www.rpm.org
-</section>
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Dérivés</h3>
+                <ul>
+                    <li>Fedora</li>
+                    <li>CentOS</li>
+                </ul>
+            </section>
 
-<section>
-<h2>CentOS</h2>
-Community enterprise Operating System
-utilisation uniquement des sources de RH
-donc binary compatible avec RH
-CentOS 7
-</section>
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Autres produits</h3>
+                <ul>
+                    <li>Ansible</li>
+                    <li>OpenStack</li>
+                    <li>JBOSS</li>
+                </ul>
+            </section>
 
-<section>
-<h2>Debian</h2>
-Spécificités : 
-- Lancement par Ian Murdock en août 1993
-- Basé sur un contrat social  
-- DFSG - Debian Free Software Guidelines
-- Plusieurs milliers de développeurs Debian
-    ldapsearch -x -h db.debian.org -b dc=debian,dc=org | grep ^uid: | wc -l
-     2080
-- Des dizaines de milliers de paquets “sources”
-    grep-dctrl -P '' -c /var/lib/apt/lists/*jessie*Sources
-    21019
-- Debian 7 : sortie en 2013, support jusqu'en 2016 (support LTS jusqu'en 2018)
-- Debian 8 : sortie en 2015, support jusqu'en 2018 (support LTS jusqu'en 2020)
-- Debian 9 : sortie en 2017, support jusqu'en 2020 (support LTS jusqu'en 2022)
-</section>
+            <section>
+                <h2>Red Hat</h2>
+                <h3>Caractéristiques</h3>
+                <ul>
+                    <li>Système de packages RPM :</li>
+                    <li>Installation facile et rapide (pas de compilation)</li>
+                    <li>Gestion des dépendances</li>
+                    <li>Notoriété et abondance de dépôts RPM</li>
+                    <li>Bénéficie d'améliorations constantes</li>
+                </ul>
+                <p>
+                    Voir www.rpm.org
+                </p>
+            </section>
 
-<section>
-<h2>Ubuntu</h2>
-Créé par Mark Shuttleworth, ancien-développeur Debian,
-multi-millionnaire après avoir revendu l'entreprise Thawte
-Développé par l'entreprise Canonical crée en 2004
-Basée sur Debian
-Versions LTS publiées tous les 2 ans (support 5 ans)
-Versions publiées tous les 6 mois avec support limité
-- version 16.04 LTS (Xenial Xerus59) publiée en avril 2016
-- version 17.04 (Zesty Zapus) publiée en avril 2017
-</section>
+            <section>
+                <h2>CentOS</h2>
+                <h3>Carte d'identité</h3>
+                <ul>
+                    <li>Fondation : 2004</li>
+                    <li>Fondateur : Lance Davis</li>
+                    <li>Community enterprise Operating System</li>
+                    <li>Utilisation uniquement des sources de RH</li>
+                    <li>Binary compatible avec RH</li>
+                    <li>Version : CentOS 7</li>
+                </ul>
+            </section>
 
-<section>
-<h2></h2>
-<ul>
-<li></li>
-<li></li>
-</ul>
-<p></p>
-<img src="" border="0">
-</section>
+            <section>
+                <h2>Debian</h2>
+                <h3>Carte d'identité</h3>
+                <ul>
+                    <li>Fondation : 1993</li>
+                    <li>Fondateur : Ian Murdock</li>
+                    <li>Basé sur un contrat social</li>
+                    <li>DFSG - Debian Free Software Guidelines</li>
+                </ul>
+            </section>
 
-            </div>
+            <section>
+                <h2>Debian</h2>
+                <h3>Carte d'identité (suite)</h3>
+                <ul>
+                    <li>Plusieurs milliers de développeurs Debian
+                        <pre><code>
+ldapsearch -x -h db.debian.org -b dc=debian,dc=org | grep ^uid: | wc -l
+2080
+                        </code></pre>
+                    </li>
+                    <li>Des dizaines de milliers de paquets “sources”
+                        <pre><code>
+grep-dctrl -P '' -c /var/lib/apt/lists/*jessie*Sources
+21019
+                        </code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Debian</h2>
+                <h3>Versions</h3>
+                <ul>
+                    <li>Debian 7 (2013) : support jusqu'en 2016 (support LTS jusqu'en 2018)</li>
+                    <li>Debian 8 (2015): support jusqu'en 2018 (support LTS jusqu'en 2020)</li>
+                    <li>Debian 9 (2017): support jusqu'en 2020 (support LTS jusqu'en 2022)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ubuntu</h2>
+                <h3>Carte d'identité</h3>
+                <ul>
+                    <li>Fondation : 2004</li>
+                    <li>Fondateur : Mark Shuttleworth</li>
+                    <li>Entreprise : Canonical</li>
+                    <li>Basée sur Debian</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ubuntu</h2>
+                <h3>Versions</h3>
+                <ul>
+                    <li>Versions LTS : tous les 2 ans (support 5 ans)</li>
+                    <li>Versions : tous les 6 mois avec support limité</li>
+                    <li>Version 16.04 LTS (Xenial Xerus59) : avril 2016</li>
+                    <li>Version 17.04 (Zesty Zapus) : avril 2017</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2></h2>
+                <ul>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <p></p>
+                <img src="" border="0">
+            </section>
 
         </div>
 
-        <script src="../lib/js/head.min.js"></script>
-        <script src="../js/reveal.js"></script>
+    </div>
 
-        <script>
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
 
-            // More info https://github.com/hakimel/reveal.js#configuration
-            Reveal.initialize({
-                controls: true,
-                progress: true,
-                history: true,
-                center: true,
+    <script>
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
 
-                transition: 'slide', // none/fade/slide/convex/concave/zoom
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
 
-                // More info https://github.com/hakimel/reveal.js#dependencies
-                dependencies: [
-                    { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
-                    { src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    { src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    { src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-                    { src: '../plugin/zoom-js/zoom.js', async: true },
-                    { src: '../plugin/notes/notes.js', async: true }
-                ]
-            });
+            // More info https://github.com/hakimel/reveal.js#dependencies
+            dependencies: [{
+                src: '../lib/js/classList.js',
+                condition: function() {
+                    return !document.body.classList;
+                }
+            }, {
+                src: '../plugin/markdown/marked.js',
+                condition: function() {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            }, {
+                src: '../plugin/markdown/markdown.js',
+                condition: function() {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            }, {
+                src: '../plugin/highlight/highlight.js',
+                async: true,
+                callback: function() {
+                    hljs.initHighlightingOnLoad();
+                }
+            }, {
+                src: '../plugin/zoom-js/zoom.js',
+                async: true
+            }, {
+                src: '../plugin/notes/notes.js',
+                async: true
+            }]
+        });
+    </script>
 
-        </script>
+</body>
 
-    </body>
 </html>
