@@ -396,21 +396,34 @@ TMP="/tmp"
 </section>
 
 <section>
+	<section>
 <h2>fail2ban</h2>
+	</section>
+	<section>
+<pre>
+<code>
 # apt install fail2ban
-
+</code>
+<code>
 # fail2ban-client status
-
+</code>
+<code>
 # fail2ban-client status ssh
-
+</code>
+<code>
 # vim /etc/fail2ban/filter.d/demo :
-
+</code>
 [Definition]
 failregex =  warning: \[<HOST>\]: authentication failed:
 ignoreregex =
-
+</pre>
+	</section>
+	<section>
+<h2>fail2ban (suite)</h2>
+<pre>
+<code>
 # vim /etc/fail2ban/jail.local
-
+</code>
 [demo-rule]
 
 enabled = true
@@ -420,6 +433,8 @@ logpath = /var/log/demo.log
 maxretry = 3
 findtime = 1800
 bantime = 3600
+</pre>
+	</section>
 </section>
 
 
