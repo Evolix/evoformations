@@ -47,58 +47,66 @@
             </section>
 
 <section>
-<h2>Cron</h2>
-	<pre>Les fichiers utiles :</pre>
-	<pre>
-		<code>
-# systemctl status cron
-# vim /etc/crontab
-# vim /etc/default/cron
-		</code>
-	</pre>
-	<pre>
-	<code>
-# vim /etc/cron.d/example
-	</code>
-30 05 * * 0 www-data /usr/local/adm/savelog-weekly
-</pre>
-</section>
+  <section>
+    <h2>Cron</h2>
+  </section>
 
-<section>
-<h2>Cron (suite)</h2>
-<pre>
-<code>
-$ crontab -e
-</code>
-</pre>
-<pre>
-<code>
-# crontab -u jdoe -e
-</code>
-0,30,45,51 * * * * /usr/local/adm/send-data
-*/15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
-00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
-10 03 * * 1-6 nice -10 /usr/local/adm/sauvegarde-daily
-30 05 * * 0 /usr/local/adm/savelog-weekly
-30 06 1 * * /usr/local/adm/savelog-monthly
-00 00 1 1 * /usr/local/bin/happy-new-year
-MAILTO=alert@example.com
-@daily /usr/local/bin/minuit-check
-</pre>
-</section>
+  <section>
+  	<h3>Les fichiers de cron</h3>
+  	<pre>
+  		<code data-trim class="hljs nohighlight">
+  # systemctl status cron
+      </code>
+      <code data-trim class="hljs nohighlight">
+  # vim /etc/crontab
+  # vim /etc/default/cron
+  		</code>
+  	</pre>
+  	<pre>
+  	<code data-trim>
+      # vim /etc/cron.d/example
+      30 05 * * 0 www-data /usr/local/adm/savelog-weekly
+    </code>
+    </pre>
+  </section>
 
-<section>
-<h2>Cron (suite)</h2>
-<pre>
-<code>
-$ man 5 crontab
-</code>
-<code>
-$ crontab -l
-</code>
-<code>
-# crontab -u jdoe -l
-</code>
+  <section>
+    <pre>
+    	<h3>Éditer une table</h3>
+      <code data-trim class="hljs nohighlight">
+        $ crontab -e
+        </code>
+        <code data-trim class="hljs nohighlight">
+        # crontab -u jdoe -e
+      </code>
+      <code data-trim class="hljs nohighlight">
+        0,30,45,51 * * * * /usr/local/adm/send-data
+        */15 * * * * /usr/local/adm/check-nis 1>/dev/null 2>&1
+        00 01 * * * nice -10 find /inf -name core -exec rm -f {} \;
+        10 03 * * 1-6 nice -10 /usr/local/adm/sauvegarde-daily
+        30 05 * * 0 /usr/local/adm/savelog-weekly
+        30 06 1 * * /usr/local/adm/savelog-monthly
+        00 00 1 1 * /usr/local/bin/happy-new-year
+        MAILTO=alert@example.com
+        @daily /usr/local/bin/minuit-check
+      </code>
+    </pre>
+  </section>
+
+  <section>
+    <pre>
+    	<h3>Documentation et consultation</h3>
+      <code data-trim class="hljs nohighlight">
+        $ man 5 crontab
+      </code>
+      <code data-trim class="hljs nohighlight">
+        $ crontab -l
+      </code>
+      <code data-trim class="hljs nohighlight">
+        # crontab -u jdoe -l
+      </code>
+    </pre>
+  </section>
 </section>
 
 <section>
@@ -266,7 +274,7 @@ Journaux principaux :
 * auth.log : authentification système (login, su, getty)
 * daemon.log : relatif aux daemons
 * mail.* : relatifs aux mails
-* kern.log : générés par le noyau 
+* kern.log : générés par le noyau
 * user.log : générés par des programmes utilisateur
 * debug : messages de debug
 * messages : messages d'infos
