@@ -256,30 +256,28 @@ disable_vrfy_command = yes
   </code></pre>
   </section>
 </section>
-</section>
 
 <section>
-<h2>syslog</h2>
-<p> Rsyslog est le démon syslog par défaut sous Debian. </p>
-</section>
-<section>
-<p>Le protocole syslog permet de gérer la journalisation, les messages sont :</p>
-<p>
-<ul>
-<li>envoyés par diverses applications (messages kernel, user, daemon, mail, etc.)</li>
-<li>triés par :
-	<ul>
-	<li>une facility (LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc.)</li> 
-	<li>un certain niveau de severity (LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc.) ;</li> 
-	</ul></li>
-<li>reçus par un démon qui les répartit dans différents fichiers situés dans le répertoire <tt>/var/log/</tt> ou par d’autres façons (serveur syslog distant, terminal, etc.)</li>
-</p>
-</section>
-<section>
-<h2>syslog (suite)</h2>
-<pre>
-<code># systemctl status rsyslog</code>
-<code># vim /etc/rsyslog.conf</code>
+  <section>
+  <h2>syslog</h2>
+  <p>Rsyslog est le démon syslog par défaut sous Debian. </p>
+  </section>
+
+  <section>
+  <h3>Le protocole syslog gère la journalisation</h3>
+  Les messages sont :
+  <ul>
+  <li>émis par diverses applications (messages kernel, user, daemon, mail, etc.)</li>
+  <li>triés par <em>facility</em> (LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc.)</li>
+  <li>ordonnés par <em>severity</em> (LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc.) ;</li>
+  <li>reçus par un démon qui les répartit dans différents fichiers situés dans le répertoire <tt>/var/log/</tt> ou par d’autres façons (serveur syslog distant, terminal, etc.)</li>
+  </ul>
+  </section>
+
+  <section>
+    <pre>
+      <code data-trim class="hljs nohighlight"># systemctl status rsyslog</code>
+      <code data-trim class="hljs nohighlight"># vim /etc/rsyslog.conf</code>
 *.*;auth,authpriv.none;cron,mail,local4,local5,local7.none -/var/log/syslog
 cron.*      /var/log/cron.log
 #mail.info  -/var/log/mail.info
@@ -290,20 +288,22 @@ local1.*    /var/log/sympa.log
 local4.*    -/var/log/openldap.log
 local5.*    -/var/log/haproxy.log
 local7.*    -/var/log/dhcp.log
-</pre>
-</section>
-<section>
-<h2>Journaux principaux :</h2>
-<ul>
-<li>auth.log : authentification système (login, su, getty)</li>
-<li>daemon.log : relatif aux daemons</li>
-<li>mail.* : relatifs aux mails</li>
-<li>kern.log : générés par le noyau</li>
-<li>user.log : générés par des programmes utilisateur</li>
-<li>debug : messages de debug</li>
-<li>messages : messages d'infos</li>
-<li>syslog : tous les messages (sauf exceptions définies)</li>
-</ul>
+    </pre>
+  </section>
+
+  <section>
+    <h3>Journaux principaux :</h3>
+    <ul>
+      <li>auth.log : authentification système (login, su, getty)</li>
+      <li>daemon.log : relatif aux daemons</li>
+      <li>mail.* : relatifs aux mails</li>
+      <li>kern.log : générés par le noyau</li>
+      <li>user.log : générés par des programmes utilisateur</li>
+      <li>debug : messages de debug</li>
+      <li>messages : messages d'infos</li>
+      <li>syslog : tous les messages (sauf exceptions définies)</li>
+    </ul>
+  </section>
 </section>
 
 <section>
