@@ -41,34 +41,34 @@
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
 
-<section>
-<h1>Formation Evolix</h1>
-<h3>Administration système & réseau & sécurité</h3>
-</section>
+            <section>
+            <h1>Formation Evolix</h1>
+            <h3>Administration système & réseau & sécurité</h3>
+            </section>
 
 <section>
-crontab
+<h2>crontab</h2>
 
 https://wiki.evolix.org/HowtoCron
 </section>
 
 <section>
-ntpd
+<h2>ntpd</h2>
 https://wiki.evolix.org/HowtoNTP
 </section>
 
 <section>
-systemd
+<h2>systemd</h2>
 https://wiki.evolix.org/HowtoSystemd
 </section>
 
 <section>
-Postfix
+<h2>Postfix</h2>
 https://wiki.evolix.org/HowtoPostfix
 </section>
 
 <section>
-syslog
+<h2>syslog</h2>
 
 Les journaux systèmes sont gérés par syslog, un protocole qui permet de gérer les messages système de façon centralisé. syslog est précisé dans la RFC 3164Il est utilisé sous la forme d'un daemon syslogd chargé de rassembler les messages envoyés par diverses applications (messages kernel, user, daemon, mail, etc.) triés par une facility : LOG_KERN, LOG_CRON, LOG_DAEMON, LOG_MAIL, LOG_AUTH, etc. et un certain niveau de severity : LOG_EMERG, LOG_ALERT, LOG_ERR, LOG_WARNING, etc. Les messages reçus sont répartis dans différents fichiers situés dans le répertoire /var/log/ ou d'autres façons (serveur syslog distant, terminal, etc.).
 C'est le paquet sysklogd qui assure ce rôle, en incluant le daemon syslogd (et klogd pour intercepter les message du noyau Linux). La répartition des journaux est spécifiée dans le fichier /etc/rsyslog.conf. Le script d'initialisation est rsyslog, on relancera donc le service syslog (suite à un changement dans le fichier de configuration par exemple) ainsi :
@@ -117,7 +117,7 @@ Les journaux applicatifs sont générés par chaque application. Ils sont souven
 </section>
 
 <section>
-log2mail
+<h2>log2mail</h2>
 
 Surveiller les journaux avec log2mail
 Pour surveiller précisement un fichier journal et recevoir des alertes par mail si certains termes apparaissent dans ce fichier, vous pouvez utiliser le logiciel log2mail. Sa configuration se déroule dans le fichier /etc/log2mail/config/default. Par exemple, si vous voulez préciser que vous voulez recevoir un mail dès que le terme fatal apparaît dans le fichier /var/log/mail.log, ajoutez ces lignes :
@@ -133,17 +133,17 @@ Nous avons reconnu le terme "%m" dans "%F" %n fois : %l
 </section>
 
 <section>
-logcheck
+<h2>logcheck</h2>
 https://wiki.evolix.org/HowtoLogcheck
 </section>
 
 <section>
-fail2ban
+<h2>fail2ban</h2>
 https://wiki.evolix.org/HowtoFail2Ban
 </section>
 
 <section>
-logrotate
+<h2>logrotate</h2>
 
 L'un des points essentiels est la rotation des journaux, c'est-à-dire l'action de fermer le journal actuel (et éventuellement le compresser) et d'en ouvrir un autre.
 Le programme principal est logrotate
@@ -154,12 +154,124 @@ Note : mentionner l'existence de savelog. L'option "-d" de savelog permet d'util
 </section>
 
 <section>
-intro Git
-HowtoGit
+  <section>
+    <h2>Introduction à Git</h2>
+  </section>
+  <section>
+    <h3>Qu'est-ce que Git ?</h3>
+    <p>Système de contrôle de versions, open-source, décentralisé, conçu pour être efficace et rapide.</p>
+  </section>
+  <section>
+    <h4>Contrôle de versions</h4>
+    <ul>
+      <li>conserver différentes versions dans le temps</li>
+      <li>naviguer dans l'historique</li>
+      <li>gérer les divergences et convergences de variantes</li>
+      <li>travailler en équipe</li>
+    </ul>
+  </section>
+  <section>
+    <h4>outils connus ?</h4>
+    <ul>
+      <li>cp-old <pre>cp main.c main.c.old</pre></li>
+      <li>RCS, CVS, SVN</li>
+      <li>GIT, Mercurial, Bazar, Darcs, GNU Arch…</li>
+      <li>Perforce, IBM Rational, Visual SourceSafe…</li>
+    </ul>
+  </section>
+  <section>
+    <h4>Open-source</h4>
+    <ul>
+      <li>License GPL v2</li>
+      <li>Créé par Linus Torvalds pour le noyau Linux</li>
+      <li>multi-plateformes</li>
+    </ul>
+  </section>
+  <section>
+    <h4>Décentralisé</h4>
+    <ul>
+      <li>Tout est local, ou presque</li>
+      <li>échanges entre dépôts, par filesystem ou réseau</li>
+      <li>tout l'historique est disponible</li>
+      <li>pereine et fiable (copies autonomes et complètes)
+    </ul>
+  </section>
+  <section>
+    <h4>Rapide, efficace</h4>
+    <ul>
+      <li>simple base de données clés/valeurs</li>
+      <li>écrit en C, très portable</li>
+      <li>adapté à toutes les tailles de projets</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Concepts de base</h3>
+  </section>
+  <section>
+    <h4>Historique</h4>
+    <ul>
+      <li>métadonnées sur le commit</li>
+      <li>liaison(s) avec le(s) parent(s)</li>
+      <li>visualisation chonologique</li>
+    </ul>
+  </section>
+  <section>
+    <h4>commit, tree, blob</h4>
+    <ul>
+      <li>un commit point sur un arbre</li>
+      <li>chaque élément pointe sur un autre arbre</li>
+      <li>ou sur un "blob" (contenu final)</li>
+    </ul>
+  </section>
+  <section>
+    <h4>les branches</h4>
+    <ul>
+      <li>la botte secrète de Git</li>
+      <li>faciles à créer, fusionner, détruire</li>
+      <li>éphémères ou durables</li>
+      <li>locales ou partagées</li>
+      <li>la base d'un workflow d'équipe</li>
+    </ul>
+  </section>
+  <section>
+    <h4>3 zones</h4>
+    <ul>
+      <li>working copy : ce que voit votre éditeur</li>
+      <li>staging area : préparer des commits</li>
+      <li>repository : la base de données interne</li>
+    </ul>
+  </section>
+  <section>
+    <h4>Utilisation</h4>
+    <ul>
+      <li>en ligne de commande</li>
+      <li>dans un outil (graphique) dédié</li>
+      <li>intégré aux éditeurs…</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Aller plus loin</h3>
+    <p>Le livre <strong>Pro Git</strong> est incontournable,<br>pour le débutant comme pour l'expert.</p>
+    <p>https://git-scm.com/book/fr/v2</p>
+  </section>
+  <section>
+    <h3>En pratique /etc/.git</h3>
+    <p>Une <em>bonne pratique</em> Evolix depuis 1337.</p>
+  </section>
+  <section>
+    <pre><code>
+    $ su
+    # cd /etc
+    # git init .
+    # git status
+    # git add .
+    # git commit -m "commit initial"
+    </code></pre>
+  </section>
 </section>
 
 <section>
-Monitoring
+<h2>Monitoring</h2>
 
 Il existe de nombreux programmes évolués permettant de générer des courbes et statistiques.
 Citons Nagios, Munin, etc.
@@ -169,11 +281,11 @@ La mise en place de Nagios (ou d'un équivalent) pour un nombre de serveurs dép
 
 <section>
 
-Sécurité
+<h2>Sécurité</h2>
 </section>
 
 <section>
-réseau / iptables
+<h2>réseau / iptables</h2>
 
 Couche physique : Ethernet
 (adresses MAC)
@@ -186,19 +298,19 @@ Couche application : HTTP, SMTP, DNS, etc.
 </section>
 
 <section>
-intro ansible
+<h2>intro ansible</h2>
 </section>
 
 <section>
-ssh
+<h2>ssh</h2>
 </section>
 
 <section>
-sauvegardes
+<h2>sauvegardes</h2>
 </section>
 
 <section>
-Gestion des droits
+<h2>Gestion des droits</h2>
 Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers: les fichiers, les répertoires, les liens symboliques, les fichiers-périphériques.
 Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).
 Les 3 droits fondamentaux sont la lecture, l'écriture et l'éxecution.
@@ -232,31 +344,31 @@ umask :
   </section>
 
   <section>
-NFS
+<h2>NFS</h2>
 </section>
 
 <section>
-DRBD
+<h2>DRBD</h2>
 </section>
 
 <section>
-LVM
+<h2>LVM</h2>
 </section>
 
 <section>
-Virtualisation
+<h2>Virtualisation</h2>
 </section>
 
 <section>
-Conteneur
+<h2>Conteneur</h2>
 </section>
 
 <section>
-evolinux
+evolinux</h2>
 </section>
 
 <section>
-auth
+<h2>auth</h2>
 Historiquement sous Unix, l'authentification est gérée par une liste des utilisateurs avec les mots de passe chiffrés accessible à tous, à savoir le fameux fichier /etc/passwd accessible en lecture et la commande passwd « set-uid root »
 
 - Authentification shadow recommandé
@@ -393,9 +505,7 @@ Exemple /etc/pam.d/login :
            password   required   pam_cracklib.so retry=3 minlen=6 difok=3
            password   required   pam_unix.so use_authtok nullok md5
            session    required   pam_unix.so
-           </section>
 
-            <section>
 
               ACL/QUOTA
               TODO
