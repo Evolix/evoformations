@@ -297,17 +297,20 @@ De façon quotidienne (ou moins fréquente), les journaux sont compressés et da
 <section>
 <h2>log2mail</h2>
 
-Surveiller les journaux avec log2mail
-Pour surveiller précisement un fichier journal et recevoir des alertes par mail si certains termes apparaissent dans ce fichier, vous pouvez utiliser le logiciel log2mail. Sa configuration se déroule dans le fichier /etc/log2mail/config/default. Par exemple, si vous voulez préciser que vous voulez recevoir un mail dès que le terme fatal apparaît dans le fichier /var/log/mail.log, ajoutez ces lignes :
-file = /var/log/mail.log
-pattern = "fatal"
-mailto = maintenance@example.com
-template = /etc/log2mail/template.mail-fatal
-Dans ce cas, on devra avoir un fichier /etc/log2mail/template.mail-fatal qui définit la structure du mail qui sera envoyé. Voici un exemple simple :
-From: %f
-To: %t
-Subject: [LOG2MAIL] Erreur fatale pour mail.log
-Nous avons reconnu le terme "%m" dans "%F" %n fois : %l
+Pour surveiller précisement un fichier journal et recevoir immédiatemment des
+alertes par mail si certains termes apparaissent dans ce fichier, vous pouvez
+utiliser le logiciel log2mail.
+
+# apt install log2mail
+
+# vim /etc/log2mail/config/default
+
+file = /var/log/mail.log
+pattern = "fatal"
+mailto = admin@example.com
+template = /etc/log2mail/mail
+
+# /etc/init.d/log2mail restart
 </section>
 
 <section>
