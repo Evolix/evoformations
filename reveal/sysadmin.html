@@ -108,97 +108,97 @@ $ crontab -l
 </section>
 
 <section>
-<section>
-  <h2>ntpd</h2>
-</section>
-<section>
-  <pre>
-    <code data-trim class="hljs nohighlight">
+  <section>
+    <h2>ntpd</h2>
+  </section>
+  <section>
+    <pre>
+      <code data-trim class="hljs nohighlight">
 $ date
-    </code>
-    <code data-trim class="hljs nohighlight">
+      </code>
+      <code data-trim class="hljs nohighlight">
 # apt install ntp
-    </code>
-    <code data-trim class="hljs nohighlight">
+      </code>
+      <code data-trim class="hljs nohighlight">
 # cat /etc/ntp.conf :
-    </code>
+      </code>
 server ntp.evolix.net
-  </pre>
-</section>
+    </pre>
+  </section>
 
   <section>
-  <pre>
-  <code data-trim class="hljs nohighlight">
+    <pre>
+      <code data-trim class="hljs nohighlight">
 # ntpq -p
-  </code>
-  <code data-trim class="hljs nohighlight">
+      </code>
+      <code data-trim class="hljs nohighlight">
 $ timedatectl
-  </code>
-  <code data-trim class="hljs nohighlight">
+      </code>
+      <code data-trim class="hljs nohighlight">
 # hwclock --show
-  </code>
-  <code data-trim class="hljs nohighlight">
+      </code>
+      <code data-trim class="hljs nohighlight">
 # hwclock --systohc
-  </code>
-  </pre>
+      </code>
+    </pre>
   </section>
 
 </section>
 
 <section>
   <section>
-  <h2>systemd</h2>
+    <h2>systemd</h2>
   </section>
   <section>
     <h3>systemd est un gestionnaire de services</h3>
     <p>Alternative au System V, installé par défaut depuis Debian 8.</p>
     <pre>
-    <code data-trim class="hljs nohighlight"># systemctl status</code>
-    <code data-trim class="hljs nohighlight"># systemctl list-units</code>
-    <code data-trim class="hljs nohighlight"># systemctl --failed</code>
-    <code data-trim class="hljs nohighlight"># systemctl list-unit-files</code>
+      <code data-trim class="hljs nohighlight"># systemctl status</code>
+      <code data-trim class="hljs nohighlight"># systemctl list-units</code>
+      <code data-trim class="hljs nohighlight"># systemctl --failed</code>
+      <code data-trim class="hljs nohighlight"># systemctl list-unit-files</code>
     </pre>
   </section>
 
   <section>
-  <ul>
-  <li>Unités par défaut : /usr/lib/systemd/system/</li>
-  <li>Modifications manuelles : /etc/systemd/system/</li>
-  </ul>
-  <pre>
-  <code data-trim class="hljs nohighlight"># systemctl start &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl stop &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl restart &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl reload &lt;unité&gt;</code>
-  </pre>
+    <ul>
+      <li>Unités par défaut : /usr/lib/systemd/system/</li>
+      <li>Modifications manuelles : /etc/systemd/system/</li>
+    </ul>
+    <pre>
+      <code data-trim class="hljs nohighlight"># systemctl start &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl stop &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl restart &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl reload &lt;unité&gt;</code>
+    </pre>
   </section>
 
   <section>
-  <pre>
-  <code data-trim class="hljs nohighlight"># systemctl status &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl is-enabled &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl enable &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl disable &lt;unité&gt;</code>
-  </pre>
+    <pre>
+      <code data-trim class="hljs nohighlight"># systemctl status &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl is-enabled &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl enable &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl disable &lt;unité&gt;</code>
+    </pre>
   </section>
 
   <section>
-  <pre>
-  <code data-trim class="hljs nohighlight"># systemctl reboot</code>
-  <code data-trim class="hljs nohighlight"># systemctl poweroff</code>
-  <code data-trim class="hljs nohighlight"># systemd-analyze</code>
-  </pre>
+    <pre>
+      <code data-trim class="hljs nohighlight"># systemctl reboot</code>
+      <code data-trim class="hljs nohighlight"># systemctl poweroff</code>
+      <code data-trim class="hljs nohighlight"># systemd-analyze</code>
+    </pre>
   </section>
 
   <section>
-  <h2>Modifier une unité</h2>
-  <pre>
-  <code data-trim class="hljs nohighlight"># cp -a /lib/systemd/system/&lt;service&gt;.service /etc/systemd/system/</code>
-  <code data-trim class="hljs nohighlight"># vim /etc/systemd/system/&lt;service&gt;.service</code>
-  <code data-trim class="hljs nohighlight"># systemctl cat ssh</code>
-  <code data-trim class="hljs nohighlight"># systemctl edit &lt;unité&gt;</code>
-  <code data-trim class="hljs nohighlight"># systemctl daemon-reload</code>
-  </pre>
+    <h2>Modifier une unité</h2>
+    <pre>
+      <code data-trim class="hljs nohighlight"># cp -a /lib/systemd/system/&lt;service&gt;.service /etc/systemd/system/</code>
+      <code data-trim class="hljs nohighlight"># vim /etc/systemd/system/&lt;service&gt;.service</code>
+      <code data-trim class="hljs nohighlight"># systemctl cat ssh</code>
+      <code data-trim class="hljs nohighlight"># systemctl edit &lt;unité&gt;</code>
+      <code data-trim class="hljs nohighlight"># systemctl daemon-reload</code>
+    </pre>
   </section>
 </section>
 
@@ -219,7 +219,7 @@ $ timedatectl
   </section>
   <section>
   <pre>
-<code># vim main.cf</code>
+  <code># vim main.cf</code>
 smtpd_banner = $myhostname ESMTP mail server
 biff = no
 append_dot_mydomain = no
@@ -235,12 +235,12 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = ipv4
 disable_vrfy_command = yes
-</pre>
-</section>
+  </pre>
+  </section>
 
-<section>
-<pre>
-<code class="hljs nohighlight" data-trim style="max-height: 500px">
+  <section>
+  <pre>
+  <code class="hljs nohighlight" data-trim style="max-height: 500px">
 # date | mail -s test jdoe@example.com
 # mailq
 # qshape deferred
@@ -253,7 +253,8 @@ disable_vrfy_command = yes
 # mailq | tail -n +2 | \
     awk 'BEGIN { RS = "" } /example\.com$/ { print $1 }' | \
     tr -d '*!' | postsuper -d -
-</code></pre>
+  </code></pre>
+  </section>
 </section>
 </section>
 
