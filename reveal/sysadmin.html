@@ -1185,11 +1185,14 @@ $ docker exec [options] CONTENEUR COMMANDE</code>
 
   <section>
     <h3>Gestion des utilisateurs</h3>
-    <h4>Utilitaires basiques</h4>
-    useradd, groupadd, userdel, groupdel, usermod, groupmod, chsh, chfn (paquet passwd sous Debian)
-    <h4>Utilitaires convivaux</h4>
-    adduser, addgroup, deluser et delgroup (paquet adduser sous Debian)
-    Ils tiennent compte de valeurs par défaut dans le fichier /etc/adduser.conf :
+    <h4>Utilitaires basiques : paquet Debian "passwd"</h4>
+    useradd, groupadd, userdel, groupdel, usermod, groupmod, chsh, chfn
+  </section>
+  <section>
+    <h3>Gestion des utilisateurs</h3>
+    <h4>Utilitaires convivaux : paquet Debian "adduser"</h4>
+    adduser, addgroup, deluser et delgroup
+    <br>Ils tiennent sont configurables via /etc/adduser.conf :
 <pre>
 DSHELL=/bin/bash
 DHOME=/home
@@ -1200,129 +1203,182 @@ DIR_MODE=0750
   </section>
 
   <section>
+    <h3>« Profil » pour un utilisateur créé</h3>
+
+Il se trouve dans le répertoire /etc/skel/
   </section>
 
-« Profil » pour un utilisateur créé :
-Il se trouve dans le répertoire /etc/skel/
+  <section>
+    Les utilisateurs
+    <ul>
+      <li>sont identifiés par leur nom de compte</li>
+      <li>appartiennent à un groupe primaire (voir /etc/passwd)</li>
+      <li>peuvent appartenir à des groupes secondaire (voir /etc/group)</li>
+    </ul>
+  </section>
 
-Les utilisateurs sont identifiés par leur nom de compte et par leur appartenance à  un groupe par défaut(informations dans /etc/passwd). En plus, les utilisateurs peuvent appartenir à d'autres groupes (informations /etc/group).
-
-jdoe@serveur:~$ whoami
+  <section>
+    <pre>
+      <code data-trim class="hljs nohighlight">jdoe@serveur:~$ whoami</code>
 jdoe
-jdoe@serveur:~$ groups
+      <code data-trim class="hljs nohighlight">jdoe@serveur:~$ groups</code>
 jdoe dialout cdrom floppy audio video plugdev
-jdoe@serveur:~$ id
+      <code data-trim class="hljs nohighlight">jdoe@serveur:~$ id</code>
 uid=1000(jdoe) gid=1000(jdoe) groupes=20(dialout),24(cdrom),25(floppy),29(audio),44(video),46(plugdev),1000(jdoe)
-jdoe@serveur:~$
+    </pre>
+  </section>
 
-Restriction au niveau des procédures de login :
-Fichier  /etc/login.defs :
-
+  <section>
+    <h3>Restriction de login</h3>
+    <pre>
+      <code data-trim class="hljs nohighlight">cat /etc/login.defs</code>
 FAIL_DELAY 10 \ delai minimum entre deux tentatives de login
 FAILLOG_ENAB  yes \ journaliser les tentatives ratées
 LOG_UNKFAIL_ENAB yes \ retenir les identifiants iconnus essayés
 LOG_OK_LOGINS yes \ retenir les tentatives réussies
 LOGIN_TIMEOUT  60 \ delai maximim pour authentification
 CHFN_RESTRICT rwh \ restriction pour la commande chfn
+    </pre>
+    Complété par… Linux-PAM (à suivre)
+  </section>
 
-Complété par... Linux-PAM (Pluggable Authentication Modules)
-
-Le fichier /etc/shadow  contient les informations sécurisées, notamment la plus sensible : le mot de passe, mais également des paramètres d'expiration. Voir la commande vipw -s
+  <section>
+    <h3>/etc/shadow</h3>
+    Contient les infos sécurisées, notamment le mot de passe, mais également des paramètres d'expiration.
+    <pre><code data-trim class="hljs nohighlight"># vipw -s</code>
 foo:$1$mYploS2J$uSouKZPBjUF6D094HPgGj/:13853:0:99999:7:::
+    </pre>
+  </section>
 
-       ·   nom de connexion de l´utilisateur (« login »)
-       ·   mot de passe chiffré
-       ·   nombre de jours, comptés à partir du 1er janvier 1970,
-       depuis le dernier changement de mot de passe
-       ·   nombre de jours à attendre avant de pouvoir changer le mot de passe
-       ·   nombre de jours après lesquels le mot de passe doit être changé
-       ·   nombre de jours avant la fin de validité du mot de passe et pendant
-           lesquels l´utilisateur est averti
-       ·   nombre de jours après la fin de validité provoquant la désactivation du
-           compte
-       ·   nombre de jours, comptés à partir du 1er janvier 1970, depuis que le
-           compte est désactivé
-       ·   champ réservé
+  <section>
+    <h3>Politique de gestion des mots de passe</h3>
+    <ul>
+      <li>Mot de passe aléatoire ou quasi-aléatoire</li>
+      <li>Trace écrite bannie</li>
+      <li>Empêcher mot de passe trop simple pour les utilisateurs: librairie cracklib</li>
+      <li>Programme de génération de mot de passe: otp, apg, makepasswd, pwgen</li>
+      <li>Programme pour cracker les mots de passe: John the Ripper</li>
+    </ul>
+  </section>
 
-Politique de gestion des mots de passe
+  <section>
+    <h3>Qui est root ?</h3>
+    <ul>
+      <li>UID=0</li>
+      <li>su, su -, su -c</li>
+    </ul>
+  </section>
 
-- Mot de passe aléatoire ou quasi-aléatoire
-- Trace écrite bannie
-- Empêcher mot de passe trop simple pour les utilisateurs: librairie cracklib
-- Programme de génération de mot de passe:
-  otp, apg, makepasswd, pwgen
-- Programme pour cracker les mots de passe:
-  John the Ripper
+  <section>
+    <h3>sudo</h3>
+    <ul>
+      <li>Droits délégués (administration partagée, utilisation de scripts, etc.)</li>
+      <li>Éditer les droits : commande visudo</li>
+      <li>sudo -u, sudo sh -c,</li>
+    </ul>
+    <pre><code data-trim class="hljs nohighlight"># apt install sudo</code></pre>
+  </section>
 
-Qui est root ?
-- UID=0
-- su, su -, su -c
-sudo
-- Droits délégués (administration partagée, utilisation de scripts, etc.)
-- Éditer les droits : commande visudo
-- sudo -u, sudo sh -c,
-
-# apt install sudo
-# visudo
-
+  <section>
+    <h3>Configuration</h3>
+    <pre><code data-trim class="hljs nohighlight"># visudo</code>
 jdoe ALL = ALL
 jdoe ALL = NOPASSWD: ALL
 jdoe ALL = /usr/sbin/tcpdump
 jdoe ALL = (foo) /bin/kill
 jdoe ALL = (ALL) sudoedit /etc/hosts
+    </pre>
+    Pour lister les droits :
+    <pre><code data-trim class="hljs nohighlight"># sudo -l</code></pre>
+  </section>
 
-sudo -l
+  <section>
+    <h3>Système de gestion des utilisateurs</h3>
+    <h3>!=</h3>
+    <h3>Système d'authentification des utilisateurs</h3>
+  </section>
 
-- Le système de gestion des utilisateurs diffère du système d'authentification des utilisateurs
-- Utilisation des UID, GID (pas de réelle nécessité d'avoir une entrée dans /etc/password !!)
-- Correspondances UID<->login, GID<->group faites avec la bibliothèque libnss (Name Services Switch). C'est également le cas des noms de services, protocoles, machines (DNS). On peut d'ailleurs voir cela comme un DNS pour les UID/GID.
-Voir le fichier /etc/nsswitch.conf :
+  <section>
+    <ul>
+      <li>Les UID et GID peuvent exister sans entrée dans /etc/password</li>
+      <li>Correspondances UID<->login, GID<->group faites par <em>libnss</em> (Name Services Switch)</li>
+      <li>Idem pour les noms de services, protocoles, machines (DNS)</li>
+    </ul>
+  </section>
 
+  <section>
+    <pre><code data-trim class="hljs nohighlight">#cat /etc/nsswitch.conf</code>
 passwd:         compat
 group:          compat
 shadow:         compat
 hosts:          files dns
+</pre>
+</section>
 
-PAM
-Mode de fonctionnement très modulaire rendant transparent à l'application l'utilisation de tel ou tel système d'authentification.
-Des modules PAM existent pour NIS, LDAP, Kerberos, rendant ainsi les trois systèmes d'authentification interchangeables sans que cela nécessite une reconfiguration des logiciels en eux-même ou encore une recompilation des services.
-- Répertoire des fichiers de configuration:
-  /etc/pam.d/
-- Comportement par défaut:
-  /etc/pam.d/other.
-- Syntaxe des fichiers
-  "type" "niveau" "module" "arguments"
-- /etc/security/access.conf permet de gérer les permissions de       login  (si activé dans PAM)
-- /etc/security/limits.conf permet d'imposer des limites diverses   sur les groupes ou les identifiants
-Syntaxe des fichiers
-  "type" "niveau" "module" "arguments"
+<section>
+  <h3>Pluggable Authentication Module – PAM</h3>
+  <ul>
+    <li>Système de gestion très modulaire</li>
+    <li>Abstraction transparente des système d'authentification</li>
+    <li>Utilisable directement par les applications</li>
+  </ul>
+  </section>
 
-"type" peut être :
-auth : authentification
-account : vérification des types de services autorisés
-session : tâches à effectuer avant/après l'accès
-password : mécanismes d'authentification
+  <section>
+    <h4>Modules PAM</h4>
+    <ul>
+      <li>NIS</li>
+      <li>LDAP</li>
+      <li>Kerberos</li>
+    </ul>
+    <p>Ils deviennent interchangeables sans reconfiguration ou recompilation des services.</p>
+    </section>
 
-"niveau" peut être :
-required : le succès à cette étape est nécessaire
-requisite : le succès est nécessaire et l'accès est refusé en cas d'erreur
-sufficient : le succès à cette étape suffit
-optional : l'accès pourra etre refusé en fonction d'autres paramètres
+    <section>
+      <ul>
+        <li>Configuration : /etc/pam.d/</li>
+        <li>Comportement par défaut : /etc/pam.d/other</li>
+        <li>Syntaxe : "type niveau module arguments"</li>
+        <li>/etc/security/access.conf : permissions de login</li>
+        <li>/etc/security/limits.conf : limites diverses</li>
+      </ul>
+    </section>
 
-Exemple /etc/pam.d/login :
-           # Authenticate the user
-           auth       required   pam_unix.so
-           # Ensure users account and password are still active
-           account    required   pam_unix.so
-           # Change the users password, but at first check the strength
-           # with pam_cracklib(8)
-           password   required   pam_cracklib.so retry=3 minlen=6 difok=3
-           password   required   pam_unix.so use_authtok nullok md5
-           session    required   pam_unix.so
+    <section>
+      <h4>Syntaxe des fichiers : "type"</h4>
+      <ul>
+        <li>auth : authentification</li>
+        <li>account : vérification des types de services autorisés</li>
+        <li>session : tâches à effectuer avant/après l'accès</li>
+        <li>password : mécanismes d'authentification</li>
+      </ul>
+    </section>
 
-              ACL/QUOTA
-              TODO
+    <section>
+      <h4>Syntaxe des fichiers : "niveau"</h4>
+      <ul>
+        <li>required : le succès à cette étape est nécessaire</li>
+        <li>requisite : le succès est nécessaire et l'accès est refusé en cas d'erreur</li>
+        <li>sufficient : le succès à cette étape suffit</li>
+        <li>optional : l'accès pourra etre refusé en fonction d'autres paramètres</li>
+      </ul>
+    </section>
+
+    <section>
+      <h4>Exemple /etc/pam.d/login</h4>
+<pre>
+# Authenticate the user
+auth       required   pam_unix.so
+# Ensure users account and password are still active
+account    required   pam_unix.so
+# Change the users password, but at first check the strength
+# with pam_cracklib(8)
+password   required   pam_cracklib.so retry=3 minlen=6 difok=3
+password   required   pam_unix.so use_authtok nullok md5
+session    required   pam_unix.so
+</pre>
             </section>
+          </section>
 
             </div>
 
