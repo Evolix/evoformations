@@ -46,7 +46,232 @@
 <h3>Services HTTP</h3>
 </section>
 
-https://wiki.evolix.org/HowtoApache
+Apache est le serveur HTTP le plus utilisé sur le web depuis 1996.
+
+# apt install apache2-mpm-itk libapache2-mod-evasive apachetop libwww-perl
+
+/etc/apache2/
+|-- apache2.conf
+|       `--  ports.conf
+|-- mods-enabled
+|       |-- *.load
+|       `-- *.conf
+|-- conf-enabled
+|       `-- *.conf
+`-- sites-enabled
+        `-- *.conf
+
+# a2enmod rewrite expires headers rewrite cgi
+
+ServerTokens Prod
+Timeout 10
+KeepAliveTimeout 2
+MaxKeepAliveRequests 10
+ServerLimit 250
+#MaxClients 250
+MaxRequestWorkers 250
+StartServers 50
+MinSpareServers 20
+MaxSpareServers 30
+MaxRequestsPerChild 100
+<Directory /home/>
+    AllowOverride None
+    Require all granted
+</Directory>
+<IfModule mod_ssl.c>
+SSLProtocol all -SSLv2 -SSLv3
+SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4
+</IfModule>
+
+/etc/apache2/envvars
+umask 007
+
+VirtualHost
+
+Le terme VirtualHost correspond à la séparation de plusieurs sites sur un même serveur HTTP. Apache permet d’avoir des VirtualHost basés sur des noms de domaine différents (ou des adresses IP différentes).
+
+Exemple d’un VirtualHost basé sur un nom de domaine via /etc/apache2/sites-available/example.conf :
+
+<VirtualHost *:80>
+    ServerName www.example.com
+    ServerAlias example.com
+
+    DocumentRoot /home/example/www/
+    <Directory /home/example/www/>
+        Options SymLinksIfOwnerMatch
+        AllowOverride AuthConfig Limit FileInfo Indexes
+    </Directory>
+
+    ScriptAlias /cgi-foo /usr/lib/cgi-bin/
+    <Directory /usr/lib/cgi-bin/>
+        Options ExecCGI -MultiViews
+        AllowOverride None
+
+        AuthType Basic
+        AuthName "Restricted"
+        AuthUserFile /home/example/.htpasswd
+        require valid-user
+
+        Deny from all
+        Include ipaddr_whitelist.conf
+        Allow from 192.0.2.43
+        Satisfy any
+    </Directory>
+
+    AssignUserID www-example example
+    MaxClientsVHost 150
+
+    CustomLog /var/log/apache2/access.log vhost_combined
+    CustomLog /home/example/log/access.log combined
+    ErrorLog  /home/example/log/error.log
+
+    RewriteEngine On
+    UseCanonicalName On
+    RewriteCond %{HTTP_HOST} !^www.example.com$
+    RewriteRule ^/(.*) http://%{SERVER_NAME}/$1 [L,R]
+
+</VirtualHost>
+# vim: set filetype=apache expandtab shiftwidth=4 softtabstop=4 tabstop=4 :
+
+# adduser example
+# adduser --ingroup example www-example
+# mkdir /home/example/{www,log,awstats} && chown example: /home/example/{www,log,awstats}
+# a2ensite example
+
+
+Gestion des droits
+Séparation complète des VirtualHost
+
+L’utilisation d’Apache-ITK nous permet d’utiliser des utilisateurs/groupes Unix distincts pour chaque VirtualHost. Il est donc impossible pour un utilisateur d’accéder en lecture à des fichiers d’un autre site, même si un langage dynamique comme PHP est utilisé.
+
+# chmod 750 /home/example
+
+Restriction en écriture pour Apache
+
+Par défaut on souhaite donner uniquement un droit de lecture à Apache, sauf sur certains répertoires du type uploads/, cache/, etc. On utilise pour cela un utilisateur distinct pour Apache (www-example) et la gestion du code via FTP/SSH/SFTP/SCP/RSYNC (example), le groupe étant identique. Ainsi on donnera la permission g+w pour les répertoires nécessitant un droit en écriture pour Apache. Les fichiers uploadés via Apache auront des permissions adéquats (g+rwX) pour être lus/modifiés/effacés via FTP/SSH/SFTP/SCP/RSYNC (l’opération chmod est impossible mais n’est pas nécessaire car le umask d’Apache est forcé à 007).
+
+# echo "umask 027" >> /etc/profile
+# find /home/example -type f -user www-example -exec chmod 660 {} \;
+# find /home/example -type d -user www-example -exec chmod 770 {} \;
+
+Attention, il ne faut jamais forcer les droits récursivement sur toute l’arborescence. Si la restriction en écriture pour Apache est impossible à gérer, on n’utilisera pas d’utilisateur distinct en indiquant AssignUserID example example ce qui éliminera 100% des problèmes de droits (mais pose des problèmes de sécurité).
+
+
+
+ssl
+
+# a2enmod ssl
+
+# openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -out demande.csr
+# openssl x509 -req -days 3650 -sha256 -in demande.csr -signkey private.key -out certificate.crt
+# mv private.key /etc/ssl/private/ && chown root:ssl-cert /etc/ssl/private/private.key && chmod 640 /etc/ssl/private/private.key
+# mv certificate.crt /etc/ssl/certs/ && chown root:root /etc/ssl/certs/certificate.crt && chmod 644 /etc/ssl/certs/certificate.crt
+
+<VirtualHost *:80 *:443>
+    ServerName secure.example.com
+    ServerAlias www.example.com example.com
+
+    SSLEngine on
+    SSLProtocol all -SSLv2 -SSLv3
+    SSLCertificateKeyFile /etc/ssl/private/private.key
+    SSLCertificateFile /etc/ssl/certs/certificate.crt
+    #SSLCertificateChainFile /etc/ssl/certs/certificates_chain.pem
+
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R=permanent]
+</VirtualHost>
+
+
+logs
+
+CustomLog log/global_access.log vhost_combined
+CustomLog log/access.log combined
+
+SetEnvIf User-Agent "Foo" dontlog
+CustomLog log/access.log combined env=!dontlog
+
+ErrorLog  log/error.log
+
+
+HTTP Basic Authentication (mod_auth_basic)
+
+AuthType Basic
+AuthName "Restricted"
+AuthUserFile /foo/.htpasswd
+AuthGroupFile /dev/null
+require valid-user
+
+RW rule
+
+RedirectPermanent / http://new.example.com
+
+RedirectMatch ^/(.*)$ http://new.example.com/$1
+
+# GET / --> /sub/
+RedirectMatch ^/$ /sub/
+
+RewriteRule ^/(.*) http://new.example.com/$1 [L,R=permanent]
+
+RewriteCond %{REQUEST_URI} !^/foo.txt
+RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R]
+
+# le drapeau NC pour ne pas tenir compte de la casse
+RewriteRule ^/FoO.tXt /sub/ [L,R,NC]
+
+# empêcher des requêtes POST sur une URL particulière
+RewriteCond %{REQUEST_METHOD} POST
+RewriteRule ^/foo.txt [L,F]
+
+
+mod_evasive
+
+fail2ban
+
+
+$ apachetop -f access.log -T 3600 -q
+
+<IfModule mod_status.c>
+ExtendedStatus On
+    <Location /server-status-XXXX>
+        SetHandler server-status
+        Deny from all
+        Include ipaddr_whitelist.conf
+        Allow from 192.0.2.43
+        Allow from 127.0.0.1
+    </Location>
+</IfModule>
+
+
+
+
+NGINX
+
+# aptitude install nginx
+
+https://wiki.evolix.org/HowtoNginx
+
+
+HAPROXY
+
+https://wiki.evolix.org/HowtoHaproxy
+
+
+VARNISH
+
+https://wiki.evolix.org/HowtoVarnish
+
+PHP
+
+https://wiki.evolix.org/HowtoLAMP/PHP
+
+LE
+
+# apt install certbot
+
+https://wiki.evolix.org/HowtoLetsEncrypt
+
+
 
 
 
