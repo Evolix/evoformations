@@ -82,59 +82,170 @@
 <section>
 <h2>Survivre dans un Shell</h2>
 <ul>
-<li>cd, cp, mv, rm, touch</li>
+<li>cd, cp, mv, rm</li>
 <li>touch, mkdir, mktemp, ln</li>
 <li>sort, wc, uniq, tr</li>
 <li>echo, cat, head, tail, read</li>
 </ul>
 </section>
 
-alias/unalias
-~/.profile
-
-
 <section>
-Commandes avancées
-
-<li>grep, find</li>
-/bin/dash zsh
-sed / awk
-xargs
+<h2>Environnement shell</h2>
+<li>alias/unalias</li>
+<li>~/.profile, ~/.bashrc</li>
+<li>dash, zsh</li>
 </section>
 
 <section>
-script BASH
-http://www.tuteurs.ens.fr/unix/shell/
+<h2>Commandes avancées</h2>
+<li>grep, find</li>
+<li>sed, awk</li>
+<li>xargs</li>
+</section>
 
-variables
+<section>
+<h2>script BASH</h2>
 
+test.sh
+
+<pre><code>
+#!/bin/bash
+
+echo test
+</code></pre>
+
+<pre><code>
+$ chmod +x test.sh
+$ ./test.sh
+$ bash test.sh
+
+$ mv test.sh test
+$ ./test
+</code></pre>
+</section>
+
+<section>
+<h3>variables</h3>
+
+<pre><code>
 VAR=foo
 VAR=$RANDOM
 VAR=`pwd`
 
-arguments
-
-    > : change la sortie standard de la commande pour la placer dans un fichier.
-    < : change l'entrée standard de la commande pour la prendre dans un fichier.
-    | : branche la sortie standard de la commande de gauche sur l'entrée standard de la commande de droite.
-    >> : change la sortie standard pour l'ajouter à la fin d'un fichier existant.
-    || : exécuter la commande suivante si la première a échoué.
-    && : n'exécuter la commande suivante que si la première a réussi.
-    1>
-    2>
-    2>&1
-
-echo $((1+1))
+$ env
 
 ${i.%ext}
 ${i#/home/}
+</code></pre>
+</section>
 
-<li>if, test, exit, seq, while, for, case</li>
+<section>
+<h3>arguments</h3>
+
+<pre><code>
+$0  Le nom de la commande (i.e. : du script)
+$1, $2, etc.    Le premier, deuxième, etc, argument passés au script
+$*  La liste de tous les arguments passés au script
+$#  Le nombre d'arguments passés au script
+</code></pre>
 
 </section>
 
 <section>
-apt install screen  tmux
+
+<pre><code>
+test -f /etc/info.cf && . /etc/info.cf
+
+if, test, exit, seq, while, for, case
+</code></pre>
+</section>
+
+<section>
+
+<pre><code>
+> : change la sortie standard de la commande pour la placer dans un fichier.
+< : change l'entrée standard de la commande pour la prendre dans un fichier.
+| : branche la sortie standard de la commande de gauche sur l'entrée standard de la commande de droite.
+>> : change la sortie standard pour l'ajouter à la fin d'un fichier existant.
+|| : exécuter la commande suivante si la première a échoué.
+&& : n'exécuter la commande suivante que si la première a réussi.
+1>
+2>
+2>&1
+</code></pre>
+</section>
+
+<section>
+<h3>envoi d'email</h3>
+
+<pre><code>
+cat foo.tpl | sed -e "s/__TO__/$TO/ ; s/__TEXT__/$TEXT/" | \
+    sendmail -oi -t -f return-path@example.com
+</code></pre>
+</section>
+
+<section>
+<h3>Opérations mathématiques</h3>
+
+<pre><code>
+echo $((1+1))
+echo "1+1" | bc
+echo "3/2" | bc -l
+</code></pre>
+</section>
+
+<section>
+<h3>TP</h3>
+
+<p>écrire un script qui selon les arguments renvoient un email contenant le
+nombre de fichiers/répertoires/liens dans /etc (avec une alerte par rapport à
+un seuil situé dans un fichier de configuration)</p>
+
+<pre><code>
+$ shellcheck script.sh
+</code></pre>
+
+</section>
+
+<section>
+<a href="http://exercism.io/languages/bash/exercises">http://exercism.io/languages/bash/exercise</a>
+</section>
+
+<section>
+<h2>screen</h2>
+
+<pre><code>
+# apt install screen
+
+$ screen -ls
+$ screen -r foo
+$ screen -rd foo
+$ screen -x
+</code></pre>
+
+<pre>
+Ctrl+a+d : sortir du screen
+Ctrl+a+a : faire un Ctrl+a
+Ctrl+a+Echap OU Ctrl+a+[ : remonter dans le buffer d'un screen
+Ctrl+a+s : freezer le screen courant
+Ctrl+a+q : defreezer le screen courant (utile quand on freeze par erreur...)
+</pre>
+</section>
+
+<section>
+<h2>tmux</h2>
+
+<pre><code>
+# apt install tmux
+
+$ tmux ls
+$ tmux attach -t X
+</code></pre>
+
+<pre>
+Ctrl+b+d : sortir du screen
+</pre>
+
 </section>
 
             </div>
