@@ -1008,20 +1008,18 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 	<section>
 <h2>NFS</h2>
 <pre>
-<code>
-# apt install nfs-kernel-server
+<code># apt install nfs-kernel-server
 </code>
-<code>
-# vim /etc/exports
+<code># vim /etc/exports
 </code>
 /srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
 /srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw)
 </pre>
 	</section>
 	<section>
+<h2>NFS (suite)</h2>
 <pre>
-<code>
-# apt install nfs-common
+<code># apt install nfs-common
 # mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
 </code>
 </pre>
@@ -1038,8 +1036,8 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 	<section>
 <p>Sur une installation DRBD on définit :
 <ul>
-<li>des ressources : chaque ressource DRBD a plusieurs paramètres, notamment le second serveur vers qui envoyer/recevoir la réplication</li>
-<li>des volumes : chaque ressource DRBD peut avoir un ou plusieurs volumes, chaque volume est accessible via un périphérique unique nommé /dev/drbdXX</li>
+<li>des <b>ressources</b> : chaque ressource DRBD a plusieurs paramètres, notamment le second serveur vers qui envoyer/recevoir la réplication</li>
+<li>des <b>volumes</b> : chaque ressource DRBD peut avoir un ou plusieurs volumes, chaque volume est accessible via un périphérique unique nommé /dev/drbdXX</li>
 </ul>
 </p>
 	</section>
@@ -1060,8 +1058,10 @@ resource "foo" {
     }
 }
 </pre>
-<code>
-# drbdadm -d adjust all
+	</section>
+	<section>
+<pre>
+<code># drbdadm -d adjust all
 # drbdadm adjust all
 
 # drbdadm dump
@@ -1075,6 +1075,7 @@ resource "foo" {
 $ cat /proc/drbd
 # drbd-overview
 </code>
+</pre>
 	</section>
 </section>
 
@@ -1088,17 +1089,17 @@ $ cat /proc/drbd
 </ul>
 <p>Focus sur KVM :</p>
 <pre>
-<code># apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst netcat-openbsd</code>
+<code># apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst</code>
+<code># apt install netcat-openbsd</code>
 </pre>
 	</section>
 	<section>
-<pre><code>
-# virsh list --all
-# virsh start <vm-name>
-# virsh shutdown <vm-name>
-# virsh destroy <vm-name>
-# virsh edit <vm-name>
-# virsh undefine <vm-name>
+<pre><code># virsh list --all
+# virsh start < vm-name >
+# virsh shutdown < vm-name >
+# virsh destroy < vm-name >
+# virsh edit < vm-name >
+# virsh undefine < vm-name >
 # virsh define template.xml
 </code></pre>
 	</section>
@@ -1108,7 +1109,8 @@ $ cat /proc/drbd
   --name=template \
   --cpu mode=host-passthrough --vcpus=1 \
   --ram=512 \
-  --disk path=/path/template.qcow2,bus=virtio,cache=none,size=42,format=qcow2 \
+  --disk path=/path/template.qcow2, \
+  bus=virtio,cache=none,size=42,format=qcow2 \
   --network=bridge:br0,model=virtio \
   --noautoconsole --graphics vnc,listen=127.0.0.1,keymap=fr \
   --cdrom=/home/images/debian-8.6.0-amd64-netinst.iso
