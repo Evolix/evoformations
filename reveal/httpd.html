@@ -396,18 +396,68 @@ https://wiki.evolix.org/HowtoLAMP/PHP
 </section>
 
 <section>
-<section>
-<h2>Let's Encrypt</h2>
-
-# apt install certbot
-
-https://wiki.evolix.org/HowtoLetsEncrypt
-  </section>
+  <section>
+  <h2>Let's Encrypt</h2>
+  <ul>
+    <li>Autorité de certification</li>
+    <li>propose des certificats X-509</li>
+    <li>DV – Domain Validation</li>
+  </ul>
 </section>
 
+<section>
+<h3>Principes de base</h3>
+<ul>
+  <li>gratuit</li>
+  <li>automatique</li>
+  <li>sécurisé</li>
+  <li>transparent</li>
+  <li>ouvert</li>
+  <li>cooperatif</li>
+</ul>
+</section>
 
+<section>
+  <h3>Composants</h3>
+  <ul>
+    <li>Protocole ACME (standard IETF en janvier 2018)</li>
+    <li>Boulder : serveur ACME</li>
+    <li>Certbot : client ACME pour gérer des certificats</li>
+    <li>des dizaines d'autres clients tiers</li>
+  </ul>
+</section>
 
+<section>
+  <h3>Installation de certbot</h3>
+  <pre><code data-trim class="hljs nohighlight">
+  # apt install certbot
+  </code></pre>
+  <ul>
+    <li>création du compte Let's Encrypt</li>
+    <li>création de certificats</li>
+    <li>auto-configuration du serveur web</li>
+    <li>renouvellement/révocation de certificats</li>
+  </ul>
+  </section>
 
+<section>
+  <h3>3 Challenges pour la validation</h3>
+  <ul>
+    <li>HTTP – ressource signée</li>
+    <li>DNS – enregistrement DNS signé</li>
+    <li>TLS-SNI – certificat TLS contenant une signature</li>
+  </ul>
+</section>
+
+<section>
+  <h3>Particularités</h3>
+  <ul>
+    <li>Durée de vie de 90 jours</li>
+    <li>Entièrement automatisé</li>
+    <li>… donc seulement DV et pas OV ou EV</li>
+  </ul>
+</section>
+</section>
             </div>
 
         </div>
