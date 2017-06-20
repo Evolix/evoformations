@@ -122,9 +122,13 @@ $ date
 # apt install ntp
       </code>
       <code data-trim class="hljs nohighlight">
-# cat /etc/ntp.conf :
+# vim /etc/ntp.conf :
       </code>
 server ntp.evolix.net
+      <code data-trim class="hljs nohighlight">
+# syctemctl restart ntp
+# syctemctl status ntp
+      </code>
     </pre>
   </section>
 
@@ -380,7 +384,7 @@ template = /etc/log2mail/mail
 # aptitude install logcheck logcheck-database
       </code>
       <code data-trim class="hljs nohighlight">
-# cat /etc/logcheck/logcheck.conf
+# vim /etc/logcheck/logcheck.conf
       </code>
 REPORTLEVEL="server"
 SENDMAILTO="alert@example.com"
@@ -390,11 +394,9 @@ TMP="/tmp"
 	</section>
 
 	<section>
-    <h3>Exceptions dans ignore.d.server/</h3>
+    Exceptions dans /etc/logcheck/ignore.d.server/
     <pre>
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[IPTABLES DROP\] : IN=eth0 OUT= MAC=.*
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ log2mail\[[0-9]+\]: Logfile [.[:alnum:]/]+ rotated. Listening to new file.$
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: Could not read request from client, bailing out...$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nrpe\[[0-9]+\]: INFO: SSL Socket Shutdown.$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: clock is now [[:alnum:]]+$
     </pre>
@@ -553,7 +555,6 @@ bantime  = 3600
   <section>
     <h4>Installation de Git</h4>
     <pre><code data-trim class="hljs nohighlight">
-    $ su
     # apt install git
     # git --version
     git version 2.11.0
@@ -599,7 +600,7 @@ bantime  = 3600
     </li>
     <li>alerting
       <ul>
-        <li>surveillance de services SMTP, POP3, HTTP, NNTP, PING, etc. + ressources (charge processeur, utilisation des disques, etc.)</li>
+        <li>surveillance de services HTTP, SMTP, POP3, SQL etc. + ressources (charge processeur, utilisation des disques, etc.)</li>
         <li>Nagios, Icinga, Zabbix, Monit</li>
       </ul>
     </li>
@@ -683,7 +684,7 @@ bantime  = 3600
 <section>
   <h3>Analyse de minifirewall</h3>
   <ul>
-    <li>Dépôt du projet :<a href="https://forge.evolix.org/projects/minifirewall/repository/">forge.evolix.org/projects/minifirewall/repository/</a></li>
+    <li>Dépôt du projet : <a href="https://forge.evolix.org/projects/minifirewall/repository/">forge.evolix.org/projects/minifirewall/repository/</a></li>
     <li>Instruction d'installation : <a href="https://forge.evolix.org/projects/minifirewall/wiki">forge.evolix.org/projects/minifirewall/wiki</a></li>
   </ul>
 	</section>
@@ -724,7 +725,7 @@ bantime  = 3600
   <section>
       <h3>Installation</h3>
       <p>Paquets pour de nombreuses distributions</p>
-      <pre><code class="hljs nohighlight" data-trim>$ su
+      <pre><code class="hljs nohighlight" data-trim>
 # apt install ansible
 # ansible --version
 ansible 2.2.1.0
@@ -867,7 +868,7 @@ ansible 2.2.1.0
  <section>
   <h2>Configuration du serveur</h2>
     <pre>
-      <code data-trim class="hljs nohighlight"># cat /etc/ssh/sshd_config</code>
+      <code data-trim class="hljs nohighlight"># vim /etc/ssh/sshd_config</code>
 Port 22
 Port 2222
 
@@ -1143,7 +1144,7 @@ $ cat /proc/drbd
 </pre>
 	</section>
 	<section>
-<h2>Conteneur (suite)</h2>
+<h2>Conteneur</h2>
 <h3>Docker</h3>
 <pre>
 <code data-trim class="hljs nohighlight">
@@ -1214,7 +1215,7 @@ Il se trouve dans le répertoire /etc/skel/
     <ul>
       <li>sont identifiés par leur nom de compte</li>
       <li>appartiennent à un groupe primaire (voir /etc/passwd)</li>
-      <li>peuvent appartenir à des groupes secondaire (voir /etc/group)</li>
+      <li>peuvent appartenir à des groupes secondaires (voir /etc/group)</li>
     </ul>
   </section>
 
@@ -1223,16 +1224,16 @@ Il se trouve dans le répertoire /etc/skel/
       <code data-trim class="hljs nohighlight">jdoe@serveur:~$ whoami</code>
 jdoe
       <code data-trim class="hljs nohighlight">jdoe@serveur:~$ groups</code>
-jdoe dialout cdrom floppy audio video plugdev
+jdoe dialout cdrom audio video plugdev
       <code data-trim class="hljs nohighlight">jdoe@serveur:~$ id</code>
-uid=1000(jdoe) gid=1000(jdoe) groupes=20(dialout),24(cdrom),25(floppy),29(audio),44(video),46(plugdev),1000(jdoe)
+uid=1000(jdoe) gid=1000(jdoe) groupes=20(dialout),24(cdrom),29(audio),44(video)
     </pre>
   </section>
 
   <section>
     <h3>Restriction de login</h3>
     <pre>
-      <code data-trim class="hljs nohighlight">cat /etc/login.defs</code>
+      <code data-trim class="hljs nohighlight"># vim /etc/login.defs</code>
 FAIL_DELAY 10 \ delai minimum entre deux tentatives de login
 FAILLOG_ENAB  yes \ journaliser les tentatives ratées
 LOG_UNKFAIL_ENAB yes \ retenir les identifiants iconnus essayés
@@ -1308,7 +1309,7 @@ jdoe ALL = (ALL) sudoedit /etc/hosts
   </section>
 
   <section>
-    <pre><code data-trim class="hljs nohighlight">#cat /etc/nsswitch.conf</code>
+    <pre><code data-trim class="hljs nohighlight"># vim /etc/nsswitch.conf</code>
 passwd:         compat
 group:          compat
 shadow:         compat
