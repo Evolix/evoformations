@@ -118,9 +118,10 @@ $ /sbin/modinfo md_mod
 # cat /proc/mdstat
                     </code>
                 </pre>
-                    <code>
                 <pre>
-# mdadm --create /dev/md42 --chunk=64 --metadata=default --level=raid1 --raid-devices=2 /dev/sdy1 /dev/sdz1
+		    <code>
+# mdadm --create /dev/md42 --chunk=64 --metadata=default --level=raid1 \
+--raid-devices=2 /dev/sdy1 /dev/sdz1
 # mdadm --detail /dev/md42
                     </code>
                 </pre>
@@ -156,7 +157,8 @@ mdadm: added /dev/sdz2
 Personalities : [raid1]
 md2: active raid1 sda1[1] sdz1[0]
       1893933820 blocks super 1.2 [2/1] [U_]
-      [>....................]  recovery =  4.0% (75859776/1893933820) finish=493.5min speed=61391K/sec
+      [>....................]  recovery =  
+      4.0% (75859776/1893933820) finish=493.5min speed=61391K/sec
                     </code>
                 </pre>
             </section>
@@ -182,7 +184,7 @@ md2: active raid1 sda1[1] sdz1[0]
                     <li>Fichiers standards : /etc/resolv.conf, /etc/hosts</li>
                     <li>Configuration statique ou dynamique (DHCP) ?</li>
                     <li>Configuration réseau : pas de standard sous Linux...</li>
-                    <li>apt install net-tool</li>
+                    <li><pre><code>apt install net-tool</code></pre></li>
                     <li>Outils réseaux de base : ifconfig, ping, route, ip, netstat, traceroute</li>
                 </ul>
             </section>
