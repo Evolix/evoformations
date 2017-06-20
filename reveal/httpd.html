@@ -46,77 +46,107 @@
 <h3>Services HTTP</h3>
 </section>
 
-Apache est le serveur HTTP le plus utilisé sur le web depuis 1996.
+<section>
+  <section>
+    <h2>Apache</h2>
+    Serveur HTTP le plus utilisé, depuis 1996
+  </section>
 
-# apt install apache2-mpm-itk libapache2-mod-evasive apachetop libwww-perl
+  <section>
+    <h3>Installation</h3>
+    <pre><code data-trim class="hljs nohighlight">
+# apt install apache2-mpm-itk \
+              libapache2-mod-evasive apachetop libwww-perl
+    </code></pre>
+  </section>
 
+  <section>
+    <h3>Fichiers de configuration</h3>
+    <pre>
 /etc/apache2/
-|-- apache2.conf
-|       `--  ports.conf
-|-- mods-enabled
-|       |-- *.load
-|       `-- *.conf
-|-- conf-enabled
-|       `-- *.conf
-`-- sites-enabled
-        `-- *.conf
+├── apache2.conf
+├── conf-available
+│   └── *.conf
+├── conf-enabled
+│   └── *.conf -> ../conf-available/*.conf
+├── envvars
+├── magic
+├── mods-available
+│   ├── *.conf
+│   └── *.load
+├── mods-enabled
+│   ├── *.conf -> ../mods-available/*.conf
+│   └── *.load -> ../mods-available/*.load
+├── ports.conf
+├── sites-available
+│   └── *.conf
+└── sites-enabled
+    └── *.conf -> ../sites-available/*.conf
+    </pre>
+  </section>
 
-# a2enmod rewrite expires headers rewrite cgi
+  <section>
+    <h3>Des modules à la carte</h3>
+    <pre><code data-trim class="hljs nohighlight">
+      # a2enmod rewrite expires headers rewrite cgi
+    </code></pre>
+  </section>
 
-ServerTokens Prod
-Timeout 10
-KeepAliveTimeout 2
-MaxKeepAliveRequests 10
-ServerLimit 250
-#MaxClients 250
-MaxRequestWorkers 250
-StartServers 50
-MinSpareServers 20
-MaxSpareServers 30
-MaxRequestsPerChild 100
-<Directory /home/>
-    AllowOverride None
-    Require all granted
-</Directory>
-<IfModule mod_ssl.c>
-SSLProtocol all -SSLv2 -SSLv3
-SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4
-</IfModule>
+  <section>
+    <h3>Optimisations "Evolix"</h3>
+    <pre><code data-trim class="apache" style="max-height: 500px">
+      ServerTokens Prod
+      Timeout 10
+      KeepAliveTimeout 2
+      MaxKeepAliveRequests 10
+      ServerLimit 250
+      #MaxClients 250
+      MaxRequestWorkers 250
+      StartServers 50
+      MinSpareServers 20
+      MaxSpareServers 30
+      MaxRequestsPerChild 100
+      <Directory /home/>
+          AllowOverride None
+          Require all granted
+      </Directory>
+      <IfModule mod_ssl.c>
+      SSLProtocol all -SSLv2 -SSLv3
+      SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4
+      </IfModule>
+    </code></pre>
+  </section>
 
-/etc/apache2/envvars
+<section>
+  <h4>Forcer le umask</h4>
+<pre><code data-trim class="hljs nohighlight"># grep umask /etc/apache2/envvars</code>
 umask 007
+</pre>
+</section>
 
-VirtualHost
 
-Le terme VirtualHost correspond à la séparation de plusieurs sites sur un même serveur HTTP. Apache permet d’avoir des VirtualHost basés sur des noms de domaine différents (ou des adresses IP différentes).
+<section>
+    <h3>VirtualHost</h3>
+    <ul>
+      <li>Permet de séparer de plusieurs sites sur un même serveur HTTP</li>
+      <li>Séparation par nom de domaine ou par adresses IP</li>
+    </ul>
+</section>
 
-Exemple d’un VirtualHost basé sur un nom de domaine via /etc/apache2/sites-available/example.conf :
 
-<VirtualHost *:80>
+    <section>
+      <h4>VirtualHost basé sur un nom de domaine</h4>
+<!-- Je n'ai pas trouvé le moyen d'avoir du code à balise qui soit proprement affiché tout en conservant le texte brut intacte.  -->
+      <pre><code data-trim class="hljs nohighlight" style="max-height: 600px">
+&lt;VirtualHost *:80&gt;
     ServerName www.example.com
     ServerAlias example.com
 
     DocumentRoot /home/example/www/
-    <Directory /home/example/www/>
+    &lt;Directory /home/example/www/&gt;
         Options SymLinksIfOwnerMatch
         AllowOverride AuthConfig Limit FileInfo Indexes
-    </Directory>
-
-    ScriptAlias /cgi-foo /usr/lib/cgi-bin/
-    <Directory /usr/lib/cgi-bin/>
-        Options ExecCGI -MultiViews
-        AllowOverride None
-
-        AuthType Basic
-        AuthName "Restricted"
-        AuthUserFile /home/example/.htpasswd
-        require valid-user
-
-        Deny from all
-        Include ipaddr_whitelist.conf
-        Allow from 192.0.2.43
-        Satisfy any
-    </Directory>
+    &lt;/Directory&gt;
 
     AssignUserID www-example example
     MaxClientsVHost 150
@@ -129,45 +159,92 @@ Exemple d’un VirtualHost basé sur un nom de domaine via /etc/apache2/sites-av
     UseCanonicalName On
     RewriteCond %{HTTP_HOST} !^www.example.com$
     RewriteRule ^/(.*) http://%{SERVER_NAME}/$1 [L,R]
+&lt;/VirtualHost&gt;
+    </code></pre>
 
-</VirtualHost>
-# vim: set filetype=apache expandtab shiftwidth=4 softtabstop=4 tabstop=4 :
+</section>
 
+<section>
+  <h4>Activation du site</h4>
+  <pre><code data-trim class="hljs nohighlight">
 # adduser example
 # adduser --ingroup example www-example
-# mkdir /home/example/{www,log,awstats} && chown example: /home/example/{www,log,awstats}
+# mkdir /home/example/{www,log,awstats}
+# chown example: /home/example/{www,log,awstats}
 # a2ensite example
+    </code></pre>
+    </section>
 
-
-Gestion des droits
-Séparation complète des VirtualHost
-
-L’utilisation d’Apache-ITK nous permet d’utiliser des utilisateurs/groupes Unix distincts pour chaque VirtualHost. Il est donc impossible pour un utilisateur d’accéder en lecture à des fichiers d’un autre site, même si un langage dynamique comme PHP est utilisé.
-
+    <section>
+      <h3>Gestion des droits avec Apache-ITK</h3>
+      <ul>
+        <li>user/group distincts pour chaque VirtualHost</li>
+        <li>séparation stricte des droits</li>
+        <li>… y compris la lecture</li>
+        <li>… y compris avec PHP</li>
+      </ul>
+      <pre><code data-trim class="hljs nohighlight">
 # chmod 750 /home/example
+      </code></pre>
+      </section>
 
-Restriction en écriture pour Apache
-
-Par défaut on souhaite donner uniquement un droit de lecture à Apache, sauf sur certains répertoires du type uploads/, cache/, etc. On utilise pour cela un utilisateur distinct pour Apache (www-example) et la gestion du code via FTP/SSH/SFTP/SCP/RSYNC (example), le groupe étant identique. Ainsi on donnera la permission g+w pour les répertoires nécessitant un droit en écriture pour Apache. Les fichiers uploadés via Apache auront des permissions adéquats (g+rwX) pour être lus/modifiés/effacés via FTP/SSH/SFTP/SCP/RSYNC (l’opération chmod est impossible mais n’est pas nécessaire car le umask d’Apache est forcé à 007).
-
+    <section>
+      <h3>Restriction en écriture pour Apache</h3>
+      <ul>
+        <li>Lecture seule pour Apache, sauf certains répertoires (uploads/, cache/)</li>
+        <li>utilisateur dédié pour l'écriture par Apache : www-example</li>
+        <li>… et pour FTP/SSH/SFTP/SCP/RSYNC : example</li>
+        <li>groupe commun pour tous et droits accordés au groupe</li>
+        <li>pas besoin de chmod, Apache a son umask à 007</li>
+      </ul>
+      <pre><code data-trim class="hljs nohighlight">
 # echo "umask 027" >> /etc/profile
 # find /home/example -type f -user www-example -exec chmod 660 {} \;
 # find /home/example -type d -user www-example -exec chmod 770 {} \;
+      </code></pre>
+      </section>
 
-Attention, il ne faut jamais forcer les droits récursivement sur toute l’arborescence. Si la restriction en écriture pour Apache est impossible à gérer, on n’utilisera pas d’utilisateur distinct en indiquant AssignUserID example example ce qui éliminera 100% des problèmes de droits (mais pose des problèmes de sécurité).
+    <section>
+      <h4>Attention !</h4>
+      <p><strong>Ne jamais forcer les droits<br>récursivement sur toute l’arborescence.</strong></p>
+<p>Si la restriction en écriture pour Apache est impossible :</p>
+<ul>
+  <li>plus d’utilisateur distinct</li>
+  <li>"AssignUserID example example" élimine 100% des soucis de droits</li>
+  <li>… mais réduction de la sécurité</li>
+</ul>
 
+  </section>
 
-
-ssl
-
+  <section>
+    <h2>HTTPS ‑ TLS/SSL</h2>
+  </section>
+<section>
+    <h3>Activation du module SSL pour Apache</h3>
+  <pre><code data-trim class="hljs nohighlight">
 # a2enmod ssl
+  </code></pre>
+</section>
+<section>
+    <h3>Création d'un certificat</h3>
+  <pre><code data-trim class="hljs nohighlight">
+# openssl req -newkey rsa:2048 -sha256 -nodes \
+    -keyout private.key -out demande.csr
+# openssl x509 -req -days 3650 -sha256 -in demande.csr \
+    -signkey private.key -out certificate.crt
+# mv private.key /etc/ssl/private/
+# chown root:ssl-cert /etc/ssl/private/private.key
+# chmod 640 /etc/ssl/private/private.key
+# mv certificate.crt /etc/ssl/certs
+# chown root:root /etc/ssl/certs/certificate.crt
+# chmod 644 /etc/ssl/certs/certificate.crt
+  </code></pre>
+</section>
 
-# openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -out demande.csr
-# openssl x509 -req -days 3650 -sha256 -in demande.csr -signkey private.key -out certificate.crt
-# mv private.key /etc/ssl/private/ && chown root:ssl-cert /etc/ssl/private/private.key && chmod 640 /etc/ssl/private/private.key
-# mv certificate.crt /etc/ssl/certs/ && chown root:root /etc/ssl/certs/certificate.crt && chmod 644 /etc/ssl/certs/certificate.crt
-
-<VirtualHost *:80 *:443>
+<section>
+    <h3>Modification du VirtualHost</h3>
+    <pre><code data-trim class="apache">
+&lt;VirtualHost *:80 *:443&gt;
     ServerName secure.example.com
     ServerAlias www.example.com example.com
 
@@ -175,16 +252,19 @@ ssl
     SSLProtocol all -SSLv2 -SSLv3
     SSLCertificateKeyFile /etc/ssl/private/private.key
     SSLCertificateFile /etc/ssl/certs/certificate.crt
-    #SSLCertificateChainFile /etc/ssl/certs/certificates_chain.pem
+    # SSLCertificateChainFile /etc/ssl/certs/certificates_chain.pem
 
     RewriteEngine On
     RewriteCond %{HTTPS} !=on
     RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R=permanent]
-</VirtualHost>
+&lt;/VirtualHost&gt;
+    </code></pre>
+  </section>
 
-
-logs
-
+  <section>
+    <h3>logs</h3>
+Apache propose plusieurs formats de logs
+<pre><code data-trim class="hljs nohighlight">
 CustomLog log/global_access.log vhost_combined
 CustomLog log/access.log combined
 
@@ -192,18 +272,24 @@ SetEnvIf User-Agent "Foo" dontlog
 CustomLog log/access.log combined env=!dontlog
 
 ErrorLog  log/error.log
+</code></pre>
+</section>
 
+<section>
+    <h3>Authentification "HTTP Basic"</h3>
+    Le module mod_auth_basic est disponible par défaut.
+    <pre><code data-trim class="apache">
+    AuthType Basic
+    AuthName "Restricted"
+    AuthUserFile /foo/.htpasswd
+    AuthGroupFile /dev/null
+    require valid-user
+    </code></pre>
+</section>
 
-HTTP Basic Authentication (mod_auth_basic)
-
-AuthType Basic
-AuthName "Restricted"
-AuthUserFile /foo/.htpasswd
-AuthGroupFile /dev/null
-require valid-user
-
-RW rule
-
+<section>
+    <h3>Règles de ré-écriture</h3>
+    <pre><code data-trim class="apache" style="max-height: 500px">
 RedirectPermanent / http://new.example.com
 
 RedirectMatch ^/(.*)$ http://new.example.com/$1
@@ -222,55 +308,102 @@ RewriteRule ^/FoO.tXt /sub/ [L,R,NC]
 # empêcher des requêtes POST sur une URL particulière
 RewriteCond %{REQUEST_METHOD} POST
 RewriteRule ^/foo.txt [L,F]
+</code></pre>
+</section>
 
+<section>
+    <h3>mod_evasive</h3>
+    <p>Limite les accès, notamment les dénis de service </p>
+    <pre><code data-trim class="apache">
+&lt;IfModule mod_evasive20.c&gt;
+    DOSHashTableSize    3097
+    DOSPageCount        5
+    DOSSiteCount        30
+    DOSPageInterval     3
+    DOSSiteInterval     1
+    DOSBlockingPeriod   60
+    DOSEmailNotify      security@example.com
+&lt;/IfModule&gt;
+</code></pre>
+</section>
 
-mod_evasive
+<section>
+  <h3>Fail2ban</h3>
+  <ul>
+    <li>recherche de comportements anormaux dans les logs</li>
+    <li>blocage temporaire ou permanent, via firewall</li>
+  </ul>
+</section>
 
-fail2ban
+<section>
+  <h3>Apachetop</h3>
+  Affiche en direct des stats sur le traffic, d'après les logs.
+  <pre><code data-trim class="hljs nohighlight">
+  $ apachetop -f access.log -T 3600 -q
+  </code></pre>
+</section>
 
-
-$ apachetop -f access.log -T 3600 -q
-
-<IfModule mod_status.c>
-ExtendedStatus On
-    <Location /server-status-XXXX>
+<section>
+  <h3>mod_status</h3>
+  Génère une page web résumant l'état d'Apache.
+<pre><code data-trim class="apache">
+&lt;IfModule mod_status.c&gt;
+    ExtendedStatus On
+    &lt;Location /server-status-XXXX&gt;
         SetHandler server-status
         Deny from all
         Include ipaddr_whitelist.conf
         Allow from 192.0.2.43
         Allow from 127.0.0.1
-    </Location>
-</IfModule>
+    &lt;/Location&gt;
+&lt;/IfModule&gt;
+    </code></pre>
+  </section>
+</section>
 
-
-
-
-NGINX
+<section>
+<section>
+<h2>NGINX</h2>
 
 # aptitude install nginx
 
 https://wiki.evolix.org/HowtoNginx
+  </section>
+</section>
 
-
-HAPROXY
+<section>
+<section>
+<h2>HAPROXY</h2>
 
 https://wiki.evolix.org/HowtoHaproxy
+  </section>
+</section>
 
-
-VARNISH
+<section>
+<section>
+<h2>VARNISH</h2>
 
 https://wiki.evolix.org/HowtoVarnish
+  </section>
+</section>
 
-PHP
+<section>
+<section>
+<h2>PHP</h2>
 
 https://wiki.evolix.org/HowtoLAMP/PHP
+  </section>
+</section>
 
-LE
+<section>
+<section>
+<h2>Let's Encrypt</h2>
 
 # apt install certbot
 
 https://wiki.evolix.org/HowtoLetsEncrypt
-
+  </section>
+</section>
 
 
 
