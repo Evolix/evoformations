@@ -1119,10 +1119,11 @@ $ cat /proc/drbd
 </section>
 
 <section>
+	<section>
 <h2>Conteneur</h2>
-LXC
-
-# apt install lxc bridge-utils ??libvirt-bin?? debootstrap
+<h3>LXC</h3>
+<pre>
+<code># apt install lxc bridge-utils debootstrap
 # lxc-create -t debian -n foo
 # lxc-start -n foo -d
 # lxc-attach -n foo
@@ -1130,17 +1131,22 @@ LXC
 # lxc-info -n foo
 # lxc-console -n foo
 # lxc-halt -n foo
-# lxc-destroy -n foo
-
-Docker
-
-# apt install docker-engine
+# lxc-destroy -n foo</code>
+</pre>
+	</section>
+	<section>
+<h2>Conteneur (suite)</h2>
+<h3>Docker</h3>
+<pre>
+<code># apt install docker-engine
 $ docker ps [options]
 $ docker run [options] IMAGE [commande]
 $ docker stop|kill [options] CONTENEUR
 $ docker rm [options] CONTENEUR
 $ docker rmi [options] IMAGE
-$ docker exec [options] CONTENEUR COMMANDE
+$ docker exec [options] CONTENEUR COMMANDE</code>
+</pre>
+	</section>
 </section>
 
 <section>
