@@ -362,37 +362,172 @@ RewriteRule ^/foo.txt [L,F]
 </section>
 
 <section>
-<section>
-<h2>NGINX</h2>
+  <section>
+    <h2>Nginx</h2>
+    <p>Serveur web, alternative à Apache</p>
+  </section>
 
-# aptitude install nginx
+  <section>
+    <h3>Installation</h3>
+  <pre><code data-trim class="hljs nohighlight">
+  # aptitude install nginx
+  # nginx -v
+  </code>
+nginx version: nginx/1.10.3
+  </pre>
+  </section>
 
+  <section>
 https://wiki.evolix.org/HowtoNginx
-  </section>
+</section>
 </section>
 
 <section>
-<section>
-<h2>HAPROXY</h2>
-
-https://wiki.evolix.org/HowtoHaproxy
+  <section>
+    <h2>HAProxy</h2>
+    <p>Proxy et load-balancer TCP/HTTP/HTTPS</p>
   </section>
+
+  <section>
+    <h3>Installation</h3>
+  <pre><code data-trim class="hljs nohighlight">
+  # apt install haproxy
+  # varnishd -v
+  </code>
+HA-Proxy version 1.7.5-2 2017/05/17
+Copyright 2000-2017 Willy Tarreau &lt;willy@haproxy.org&gt;
+  </pre>
+  </section>
+
+  <section>
+    <h3>Configuration minimale</h3>
+    <pre><code data-trim class="hljs haproxy">
+global
+      log 127.0.0.1 local5 debug
+
+defaults
+      mode     http
+
+listen www
+      bind *:80
+      balance roundrobin
+      option httpchk OPTIONS * HTTP/1.1\r\nHost:\ www.example.com
+      stats uri /haproxy-stats
+      stats auth foo:bar
+      server www00 192.0.2.1:80 maxconn 50 check inter 10s
+      server www01 192.0.2.2:80 maxconn 50 check inter 10s
+      </code></pre>
+  </section>
+
+  <section>
+    <h3>Configuration avancée</h3>
+    <ul>
+      <li>gestion fine des performances</li>
+      <li>multiples IP/domaines écoutés</li>
+      <li>différents algorithmes de load-balancing</li>
+    </ul>
+  </section>
+
+<section>
+  <h4>TLS/SSL</h4>
+  <ul>
+    <li>terminaison SSL ou transmission transparente</li>
+    <li>multi certificats et SNI</li>
+    <li>agrafage OCSP facilitée</li>
+  </ul>
 </section>
 
 <section>
-<section>
-<h2>VARNISH</h2>
-
-https://wiki.evolix.org/HowtoVarnish
-  </section>
+  <h4>mode TCP</h4>
+  <pre><code data-trim class="hljs haproxy">
+listen memcached 127.0.0.1:11211
+    option tcp-check
+    server nosql00 192.0.2.3:11211 check
+    server nosql01 192.0.2.4:11211 check backup
+    </code></pre>
 </section>
 
 <section>
+  <h4>mode MySQL (simple)</h4>
+  <pre><code data-trim class="hljs haproxy">
+listen mysql 127.0.0.1:3306
+    mode tcp
+    option mysql-check user haproxy_check
+    server sql00 192.0.2.1:3306 check
+    </code></pre>
+</section>
+
 <section>
-<h2>PHP</h2>
+  <h4>mode MySQL (avancé)</h4>
+  Si le test de connexion à MySQL ne suffit pas,<br>on indique un programme pour un test personnalisé<br>qui indiquera à HAProxy si le backend va bien.
+</section>
+
+<section>
+  <h4>Dashboard</h4>
+  Une interface web permet de suivre l'état du proxy.
+</section>
+
+</section>
+
+<section>
+  <section>
+    <h2>Varnish</h2>
+    <p>Accélérateur web : cache et reverse-proxy</p>
+  </section>
+
+<section>
+  <h3>Installation</h3>
+<pre><code data-trim class="hljs nohighlight">
+# apt install varnish
+# varnishd -V
+</code>
+varnishd (varnish-4.0.2 revision bfe7cd1)
+Copyright (c) 2006 Verdens Gang AS
+Copyright (c) 2006-2014 Varnish Software AS
+</pre>
+</section>
+
+<section>
+<h3>Configuration minimale</h3>
+<p>Varnish relaie les requêtes vers le port 8080 local.</p>
+<pre><code data-trim class="hljs varnish">
+backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
+}
+</code></pre>
+</section>
+
+<section>
+<h3>Logs</h3>
+Par défaut les logs sont gardés en mémoire (taille fixe) pour les performances.
+<pre><code data-trim class="hljs nohighlight">
+# varnishstat
+# varnishtop -i ReqURL
+# varnishlog
+# varnishnsca
+</code></pre>
+Filtres possibles
+<pre><code data-trim class="hljs nohighlight">
+# varnishlog -q 'TxHeader eq MISS' -q "ReqHeader \
+             ~ '^Host: example\.com$'" | grep RxURL
+# varnishncsa -q "ReqHeader eq 'X-Cache: MISS'"
+</code></pre>
+</section>
+
+<section>
+<h3>Syntaxe VCL</h3>
+</section>
+
+</section>
+
+<section>
+  <section>
+    <h2>PHP</h2>
+    <p>Langage de programmation très adapté au web.</p>
+  </section>
 
 https://wiki.evolix.org/HowtoLAMP/PHP
-  </section>
 </section>
 
 <section>
