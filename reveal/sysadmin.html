@@ -221,7 +221,7 @@ $ timedatectl
   </section>
   <section>
   <pre>
-  <code># vim main.cf</code>
+  <code data-trim class="hljs nohighlight"># vim main.cf</code>
 smtpd_banner = $myhostname ESMTP mail server
 biff = no
 append_dot_mydomain = no
@@ -551,7 +551,7 @@ bantime  = 3600
   </section>
   <section>
     <h4>Installation de Git</h4>
-    <pre><code data-trim>
+    <pre><code data-trim class="hljs nohighlight">
     $ su
     # apt install git
     # git --version
@@ -560,7 +560,7 @@ bantime  = 3600
   </section>
   <section>
     <h4>Initialisation du dépôt</h4>
-    <pre><code data-trim>
+    <pre><code data-trim class="hljs nohighlight">
     $ cd /etc
     $ su
     # git init
@@ -571,7 +571,7 @@ bantime  = 3600
   </section>
   <section>
     <h4>Premières modifications</h4>
-    <pre><code data-trim>
+    <pre><code data-trim class="hljs nohighlight">
     # echo "127.0.0.1 foo" >> /etc/hosts
     # git status
     # git diff [HEAD]
@@ -899,50 +899,53 @@ $ vim .ssh/authorized_keys
 	<section>
     <h2>Sauvegardes</h2>
 	</section>
+
 	<section>
-<p>
-File-system (totales ou incrémentales)
-<pre>
-<code>
-tar -cpvf
-cpio, pax
-dump/restore, partimage
-dd
-</code>
-<code>
-umount /file-system
-</code>
-<code>
-dump 0uf /dev/rst0 /file-system
-</code>
+    <p>
+    File-system (totales ou incrémentales)
+    <pre>
+    <code data-trim class="hljs nohighlight">
+    tar -cpvf
+    cpio, pax
+    dump/restore, partimage
+    dd
+    </code>
+    <code data-trim class="hljs nohighlight">
+    umount /file-system
+    </code>
+    <code data-trim class="hljs nohighlight">
+    dump 0uf /dev/rst0 /file-system
+    </code>
 	</section>
+
 	<section>
-<h2>LA solution magique...</h2>
-<pre>
-<code>
-rsync -av --delete
-cp -al
-</code>
-</pre>
-<p>EvoBackup :<br><a href="https://forge.evolix.org/projetcs/evobackup">forge.evolix.org/projetcs/evobackup</a></p>
+    <h2>LA solution magique...</h2>
+    <pre>
+    <code data-trim class="hljs nohighlight">
+    rsync -av --delete
+    cp -al
+    </code>
+    </pre>
+    <p>EvoBackup :<br><a href="https://forge.evolix.org/projetcs/evobackup">forge.evolix.org/projetcs/evobackup</a></p>
 	</section>
+
 </section>
 
 <section>
 	<section>
-<h2>Gestion des droits</h2>
-<p>Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers:
-<ul>
-<li>les fichiers,</li>
-<li>les répertoires,</li>
-<li>les liens symboliques,</li>
-<li> les fichiers-périphériques.</li>
-</ul>
-</p>
+    <h2>Gestion des droits</h2>
+    <p>Sous les systèmes de type Unix ou Linux, il existe plusieurs types de fichiers:
+    <ul>
+    <li>les fichiers,</li>
+    <li>les répertoires,</li>
+    <li>les liens symboliques,</li>
+    <li> les fichiers-périphériques.</li>
+    </ul>
+    </p>
 	</section>
 	<section>
-<p>Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
-<p>Les 3 droits fondamentaux sont la <b>lecture, l'écriture et l'éxecution</b>.</p>
+    <p>Un fichier appartient à un utilisateur (en fait un numéro d'utilisateur) et à un groupe (en fait un numéro de groupe).</p>
+    <p>Les 3 droits fondamentaux sont la <b>lecture, l'écriture et l'éxecution</b>.</p>
 	</section>
 	<section>
 <p>Pour un fichier, ces 3 droits sont définis pour 3 catégories:
@@ -954,7 +957,7 @@ cp -al
 </p>
 <p>Pour chacune de ces catégories: on note les droits sous la forme rwx.</p>
 <pre>
-<code>[s:sst] u:rwx g:rwx o:rwx</code>
+<code data-trim class="hljs nohighlight">[s:sst] u:rwx g:rwx o:rwx</code>
 </pre>
 	</section>
 	<section>
@@ -964,30 +967,30 @@ cp -al
 <li>su, newgrp, login, who, w, w.procps</li>
 </ul>
 <pre>
-<code>
+<code data-trim class="hljs nohighlight">
 $ chmod < catégorie >+< nouveau_droit > fichier
 </code>
-<code>
+<code data-trim class="hljs nohighlight">
 $ chmod < nouveaux_droits > fichier
 </code>
 </pre>
 	</section>
 	<section>
-<p>Droits pour un répertoire :</p>
-<pre>
-<code>r = lister, x = traverser, w = écrire (et même effacer !!)</code>
-</pre>
-<p>Droits spéciaux :
-<ul>
-<li> Exécutables setuid ou setgid</li>
-<li> Répertoire setgid ou stickybit</li>
-</ul>
-</p>
+    <p>Droits pour un répertoire :</p>
+    <pre>
+    <code data-trim class="hljs nohighlight">r = lister, x = traverser, w = écrire (et même effacer !!)</code>
+    </pre>
+    <p>Droits spéciaux :
+    <ul>
+    <li> Exécutables setuid ou setgid</li>
+    <li> Répertoire setgid ou stickybit</li>
+    </ul>
+    </p>
 	</section>
 	<section>
 <p> Notation décimale :</p>
 <pre>
-<code>
+<code data-trim class="hljs nohighlight">
 777 = ?
 700 = ?
 600 = ?
@@ -1006,23 +1009,25 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 
 <section>
 	<section>
-<h2>NFS</h2>
-<pre>
-<code># apt install nfs-kernel-server
-</code>
-<code># vim /etc/exports
-</code>
-/srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
-/srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw)
-</pre>
+    <h2>NFS</h2>
+    <pre>
+    <code data-trim class="hljs nohighlight">
+    # apt install nfs-kernel-server
+    </code>
+    <code data-trim class="hljs nohighlight">
+    # vim /etc/exports
+    </code>
+    /srv/nfs 192.0.2.4(rw,root_squash,sync,no_subtree_check)
+    /srv/nfs2 192.0.2.0/27(ro) 192.0.242(rw)
+    </pre>
 	</section>
 	<section>
-<h2>NFS (suite)</h2>
-<pre>
-<code># apt install nfs-common
-# mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
-</code>
-</pre>
+    <pre>
+    <code data-trim class="hljs nohighlight">
+    # apt install nfs-common
+    # mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
+    </code>
+    </pre>
 	</section>
 </section>
 
@@ -1030,7 +1035,7 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 	<section>
 	<h2>DRBD</h2>
 <pre>
-<code>#apt install drbd-utils</code>
+<code data-trim class="hljs nohighlight">#apt install drbd-utils</code>
 </pre>
 	</section>
 	<section>
@@ -1061,7 +1066,7 @@ resource "foo" {
 	</section>
 	<section>
 <pre>
-<code># drbdadm -d adjust all
+<code data-trim class="hljs nohighlight"># drbdadm -d adjust all
 # drbdadm adjust all
 
 # drbdadm dump
@@ -1071,7 +1076,7 @@ resource "foo" {
 # drbdadm adjust/adjust-with-progress [ressource]
 # drbdadm primary/secondary [ressource]
 </code>
-<code>
+<code data-trim class="hljs nohighlight">
 $ cat /proc/drbd
 # drbd-overview
 </code>
@@ -1089,12 +1094,13 @@ $ cat /proc/drbd
 </ul>
 <p>Focus sur KVM :</p>
 <pre>
-<code># apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst</code>
-<code># apt install netcat-openbsd</code>
+<code data-trim class="hljs nohighlight"># apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst</code>
+<code data-trim class="hljs nohighlight"># apt install netcat-openbsd</code>
 </pre>
 	</section>
 	<section>
-<pre><code># virsh list --all
+<pre><code data-trim class="hljs nohighlight">
+# virsh list --all
 # virsh start < vm-name >
 # virsh shutdown < vm-name >
 # virsh destroy < vm-name >
@@ -1104,7 +1110,7 @@ $ cat /proc/drbd
 </code></pre>
 	</section>
 	<section>
-<pre><code>
+<pre><code data-trim class="hljs nohighlight">
 # virt-install --connect=qemu:///system \
   --name=template \
   --cpu mode=host-passthrough --vcpus=1 \
@@ -1123,7 +1129,8 @@ $ cat /proc/drbd
 <h2>Conteneur</h2>
 <h3>LXC</h3>
 <pre>
-<code># apt install lxc bridge-utils debootstrap
+<code data-trim class="hljs nohighlight">
+# apt install lxc bridge-utils debootstrap
 # lxc-create -t debian -n foo
 # lxc-start -n foo -d
 # lxc-attach -n foo
@@ -1138,7 +1145,8 @@ $ cat /proc/drbd
 <h2>Conteneur (suite)</h2>
 <h3>Docker</h3>
 <pre>
-<code># apt install docker-engine
+<code data-trim class="hljs nohighlight">
+# apt install docker-engine
 $ docker ps [options]
 $ docker run [options] IMAGE [commande]
 $ docker stop|kill [options] CONTENEUR
@@ -1150,18 +1158,50 @@ $ docker exec [options] CONTENEUR COMMANDE</code>
 </section>
 
 <section>
-<h2>Authentification</h2>
-Historiquement sous Unix, l'authentification est gérée par une liste des utilisateurs avec les mots de passe chiffrés accessible à tous, à savoir le fameux fichier /etc/passwd accessible en lecture et la commande passwd « set-uid root »
+  <section>
+    <h2>Authentification</h2>
+  </section>
 
-- Authentification shadow recommandé
-Le mot de passe chiffré est dans le fichier /etc/shadow inaccessible en lecture. Commande pour activer/désactiver l'authentification shadow :
+  <section>
+    <h3>/etc/passwd</h3>
+    Historiquement sous Unix, l'authentification est gérée par une <strong>liste des utilisateurs avec les mots de passe chiffrés accessible à tous</strong>, à savoir le fameux fichier <strong>/etc/passwd</strong> accessible en lecture et la commande passwd « set-uid root »
+  </section>
+
+  <section>
+    <h3>/etc/shadow recommandé</h3>
+    Le mot de passe chiffré est dans le fichier /etc/shadow inaccessible en lecture.
+    Commande pour activer/désactiver l'authentification shadow :
+    <pre>
+      <code  data-trim class="hljs nohighlight">
 # shadowconfig on/off
+      </code>
+    </pre>
+  </section>
 
-- Groupes UNIX :
-Les groupes d'un système sont dans le fichier /etc/group
-Programmes de gestion des utilisateurs :
-Utilitaires basiques : useradd, groupadd, userdel, groupdel, usermod, groupmod, chsh, chfn (paquet passwd sous Debian)
-Utilitaires convivaux : adduser, addgroup, deluser et delgroup (paquet adduser sous Debian) avec valeurs par défaut dans le fichier /etc/adduser.conf :
+  <section>
+    <h3>Groupes UNIX</h3>
+    Les groupes d'un système sont dans le fichier /etc/group
+  </section>
+
+  <section>
+    <h3>Gestion des utilisateurs</h3>
+    <h4>Utilitaires basiques</h4>
+    useradd, groupadd, userdel, groupdel, usermod, groupmod, chsh, chfn (paquet passwd sous Debian)
+    <h4>Utilitaires convivaux</h4>
+    adduser, addgroup, deluser et delgroup (paquet adduser sous Debian)
+    Ils tiennent compte de valeurs par défaut dans le fichier /etc/adduser.conf :
+<pre>
+DSHELL=/bin/bash
+DHOME=/home
+SKEL=/etc/skel
+QUOTAUSER="forquota"
+DIR_MODE=0750
+</pre>
+  </section>
+
+  <section>
+  </section>
+
 « Profil » pour un utilisateur créé :
 Il se trouve dans le répertoire /etc/skel/
 
