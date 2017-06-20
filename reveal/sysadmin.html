@@ -950,29 +950,25 @@ cp -al
 <li>l'utilisateur,</li>
 <li>le groupe</li>
 <li>et le "reste du monde".</li>
-</ul></p>
-<p>
-Pour chacune de ces catégories: on note les droits sous la forme rwx.</p>
+</ul>
+</p>
+<p>Pour chacune de ces catégories: on note les droits sous la forme rwx.</p>
 <pre>
 <code>[s:sst] u:rwx g:rwx o:rwx</code>
 </pre>
 	</section>
-<section>
-
 	<section>
 <h2>Commandes utiles/essentielles :</h2>
-<p>
 <ul>
 <li>ls -l, stat, chmod, chown, chgrp</li>
 <li>su, newgrp, login, who, w, w.procps</li>
 </ul>
-</p>
 <pre>
 <code>
-$ chmod <catégorie>+<nouveau_droit> fichier
+$ chmod < catégorie >+< nouveau_droit > fichier
 </code>
 <code>
-$ chmod <nouveaux_droits> fichier
+$ chmod < nouveaux_droits > fichier
 </code>
 </pre>
 	</section>
@@ -989,7 +985,7 @@ $ chmod <nouveaux_droits> fichier
 </p>
 	</section>
 	<section>
-<p> Notation décimale :
+<p> Notation décimale :</p>
 <pre>
 <code>
 777 = ?
@@ -1000,6 +996,7 @@ $ chmod <nouveaux_droits> fichier
 775 = ?
 701 = ?
 </code>
+</pre>
 <p>
 umask : Pour gérer droit niveau utilisateurs : commande umask
 Fixé dans le fichier profile ou bashrc (local ou général...)
@@ -1026,22 +1023,29 @@ Fixé dans le fichier profile ou bashrc (local ou général...)
 <code>
 # apt install nfs-common
 # mount -t nfs -o nfsvers=3 192.0.2.1:/srv/nfs /mnt
-<code>
+</code>
 </pre>
 	</section>
 </section>
 
 <section>
-<h2>DRBD</h2>
-# apt install drbd-utils
-
-Sur une installation DRBD on définit :
-
-* des ressources : chaque ressource DRBD a plusieurs paramètres, notamment le second serveur vers qui envoyer/recevoir la réplication
-* des volumes : chaque ressource DRBD peut avoir un ou plusieurs volumes, chaque volume est accessible via un périphérique unique nommé /dev/drbdXX
-
-exemple simple d’une ressource foo avec un volume /dev/drbd42 définie dans un fichier /etc/drbd.d/foo.res entre deux serveurs nommés tic et tac :
-
+	<section>
+	<h2>DRBD</h2>
+<pre>
+<code>#apt install drbd-utils</code>
+</pre>
+	</section>
+	<section>
+<p>Sur une installation DRBD on définit :
+<ul>
+<li>des ressources : chaque ressource DRBD a plusieurs paramètres, notamment le second serveur vers qui envoyer/recevoir la réplication</li>
+<li>des volumes : chaque ressource DRBD peut avoir un ou plusieurs volumes, chaque volume est accessible via un périphérique unique nommé /dev/drbdXX</li>
+</ul>
+</p>
+	</section>
+	<section>
+<p>Exemple simple d’une ressource foo avec un volume /dev/drbd42 définie dans un fichier /etc/drbd.d/foo.res entre deux serveurs nommés tic et tac :</p>
+<pre>
 resource "foo" {
     volume 0 {
         device minor 42;
@@ -1055,7 +1059,8 @@ resource "foo" {
         address 192.0.2.2:7014;
     }
 }
-
+</pre>
+<code>
 # drbdadm -d adjust all
 # drbdadm adjust all
 
@@ -1065,22 +1070,29 @@ resource "foo" {
 # drbdadm connect/disconnect [ressource]
 # drbdadm adjust/adjust-with-progress [ressource]
 # drbdadm primary/secondary [ressource]
-
-
+</code>
+<code>
 $ cat /proc/drbd
 # drbd-overview
+</code>
+	</section>
 </section>
 
 <section>
+	<section>
 <h2>Virtualisation</h2>
-- KVM/libvirt
-- Xen
-- VMware
-
-Focus sur KVM :
-
-# apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst netcat-openbsd
-
+<ul>
+<li>KVM/libvirt</li>
+<li>Xen</li>
+<li>VMware</li>
+</ul>
+<p>Focus sur KVM :</p>
+<pre>
+<code># apt install qemu-kvm bridge-utils qemu-utils libvirt-bin virtinst netcat-openbsd</code>
+</pre>
+	</section>
+	<section>
+<pre><code>
 # virsh list --all
 # virsh start <vm-name>
 # virsh shutdown <vm-name>
@@ -1088,7 +1100,10 @@ Focus sur KVM :
 # virsh edit <vm-name>
 # virsh undefine <vm-name>
 # virsh define template.xml
-
+</code></pre>
+	</section>
+	<section>
+<pre><code>
 # virt-install --connect=qemu:///system \
   --name=template \
   --cpu mode=host-passthrough --vcpus=1 \
@@ -1097,7 +1112,8 @@ Focus sur KVM :
   --network=bridge:br0,model=virtio \
   --noautoconsole --graphics vnc,listen=127.0.0.1,keymap=fr \
   --cdrom=/home/images/debian-8.6.0-amd64-netinst.iso
-
+</code></pre>
+	</section>
 </section>
 
 <section>
