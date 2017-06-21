@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
 
         <!-- Theme used for syntax highlighting of code -->
-        <link rel="sftylesheet" href="reveal.js/lib/css/zenburn.css">
+        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
 
         <!-- Printing and PDF exports -->
         <script>
@@ -139,7 +139,7 @@ umask 007
     <section>
       <h4>VirtualHost basé sur un nom de domaine</h4>
 <!-- Je n'ai pas trouvé le moyen d'avoir du code à balise qui soit proprement affiché tout en conservant le texte brut intacte.  -->
-      <pre><code data-trim class="hljs nohighlight" style="max-height: 600px">
+      <pre><code data-trim class="apache" style="max-height: 600px">
 &lt;VirtualHost *:80>
     ServerName www.example.com
     ServerAlias example.com
@@ -208,7 +208,7 @@ umask 007
 
     <section>
       <h4>Attention !</h4>
-      <p><strong>Ne jamais forcer les droits<br>récursivement sur toute l’arborescence.</strong> #NEVER777</p>
+      <p><strong>Ne jamais forcer les droits récursivement<br>sur toute l’arborescence.</strong> <mark>#NEVER777</mark></p>
 <p>Si la restriction en écriture pour Apache est impossible :</p>
 <ul>
   <li>plus d’utilisateur distinct</li>
@@ -246,7 +246,7 @@ umask 007
 <section>
     <h3>Modification du VirtualHost</h3>
     <pre><code data-trim class="apache">
-&lt;VirtualHost *:80 *:443&gt;
+&lt;VirtualHost *:80 *:443>
     ServerName secure.example.com
     ServerAlias www.example.com example.com
 
@@ -259,14 +259,14 @@ umask 007
     RewriteEngine On
     RewriteCond %{HTTPS} !=on
     RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R=permanent]
-&lt;/VirtualHost&gt;
+&lt;/VirtualHost>
     </code></pre>
   </section>
 
   <section>
     <h3>logs</h3>
 Apache propose plusieurs formats de logs
-<pre><code data-trim class="hljs nohighlight">
+<pre><code data-trim class="apache">
 CustomLog log/global_access.log vhost_combined
 CustomLog log/access.log combined
 
@@ -317,7 +317,7 @@ RewriteRule ^/foo.txt [L,F]
     <h3>mod_evasive</h3>
     <p>Limite les accès, notamment les dénis de service </p>
     <pre><code data-trim class="apache">
-&lt;IfModule mod_evasive20.c&gt;
+&lt;IfModule mod_evasive20.c>
     DOSHashTableSize    3097
     DOSPageCount        5
     DOSSiteCount        30
@@ -325,7 +325,7 @@ RewriteRule ^/foo.txt [L,F]
     DOSSiteInterval     1
     DOSBlockingPeriod   60
     DOSEmailNotify      security@example.com
-&lt;/IfModule&gt;
+&lt;/IfModule>
 </code></pre>
 </section>
 
@@ -349,16 +349,16 @@ RewriteRule ^/foo.txt [L,F]
   <h3>mod_status</h3>
   Génère une page web résumant l'état d'Apache.
 <pre><code data-trim class="apache">
-&lt;IfModule mod_status.c&gt;
+&lt;IfModule mod_status.c>
     ExtendedStatus On
-    &lt;Location /server-status-XXXX&gt;
+    &lt;Location /server-status-XXXX>
         SetHandler server-status
         Deny from all
         Include ipaddr_whitelist.conf
         Allow from 192.0.2.43
         Allow from 127.0.0.1
-    &lt;/Location&gt;
-&lt;/IfModule&gt;
+    &lt;/Location>
+&lt;/IfModule>
     </code></pre>
   </section>
 </section>
@@ -406,9 +406,9 @@ RewriteRule ^/foo.txt [L,F]
 
   <section>
     <h3>Optimisations "Evolix"</h3>
-    <pre><code data-trim style="max-height: 500px">
+    <pre><code data-trim style="max-height: 500px" class="nginx">
 user www-data;
-worker_processes 8; 
+worker_processes 8;
 pid /var/run/nginx.pid;
 
 events {
@@ -418,7 +418,7 @@ events {
 
 http {
     keepalive_timeout  15;
-[...]
+[…]
 
 # disable Nginx version
 server_tokens off;
@@ -427,41 +427,41 @@ server_tokens off;
 
 <section>
     <h3>VirtualHost</h3>
-<pre><code data-trim class="hljs nohighlight" style="max-height: 600px">
+<pre><code data-trim style="max-height: 600px" class="nginx">
 server {
-        listen 80;
-        server_name static.example.com assets.example.com;
-        access_log  /var/log/nginx/access.log;
-        root   /home/static/www;
-        location /crossdomain.xml {
-                alias   /home/static/www/crossdomain.xml;
-        }
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-                root   /var/www/nginx-default;
-        }
-        location ~\.(jpeg|jpg|gif|png)$ {
-                add_header Cache-Control "public";
-                expires 2w;
-        }
-        location ~\.(js|pdf|css|swf)$ {
-                add_header Cache-Control "public";
-                expires 3w;
-        }
+    listen 80;
+    server_name static.example.com assets.example.com;
+    access_log  /var/log/nginx/access.log;
+    root   /home/static/www;
+    location /crossdomain.xml {
+        alias   /home/static/www/crossdomain.xml;
+    }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /var/www/nginx-default;
+    }
+    location ~\.(jpeg|jpg|gif|png)$ {
+        add_header Cache-Control "public";
+        expires 2w;
+    }
+    location ~\.(js|pdf|css|swf)$ {
+        add_header Cache-Control "public";
+        expires 3w;
+    }
 }
     </code></pre>
 </section>
 
 <section>
-<pre><code data-trim class="hljs nohighlight" style="max-height: 600px">
+<pre><code data-trim class="nginx">
 server {
-        listen 443;
-        server_name static.example.com assets.example.com;
+    listen 443;
+    server_name static.example.com assets.example.com;
 
-        ssl on;
-        ssl_certificate /etc/ssl/certs/static.example.com.crt;
-        ssl_certificate_key /etc/ssl/private/static.example.com.key;
-        #add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+    ssl on;
+    ssl_certificate /etc/ssl/certs/static.example.com.crt;
+    ssl_certificate_key /etc/ssl/private/static.example.com.key;
+    # add_header Strict-Transport-Security "max-age=31536000;";
 }
 </code></pre>
 </section>
@@ -479,7 +479,7 @@ server {
   <pre><code data-trim class="hljs nohighlight">
 # apt install haproxy
 
-# haproxy -c -f /etc/haproxy/haproxy.cfg 
+# haproxy -c -f /etc/haproxy/haproxy.cfg
   </code>
   </pre>
   </section>
@@ -488,19 +488,19 @@ server {
     <h3>Configuration minimale</h3>
     <pre><code data-trim class="hljs haproxy">
 global
-      log 127.0.0.1 local5 debug
+    log 127.0.0.1 local5 debug
 
 defaults
-      mode     http
+    mode     http
 
 listen www
-      bind *:80
-      balance roundrobin
-      option httpchk OPTIONS * HTTP/1.1\r\nHost:\ www.example.com
-      stats uri /haproxy-stats
-      stats auth foo:bar
-      server www00 192.0.2.1:80 maxconn 50 check inter 10s
-      server www01 192.0.2.2:80 maxconn 50 check inter 10s
+    bind *:80
+    balance roundrobin
+    option httpchk OPTIONS * HTTP/1.1\r\nHost:\ www.example.com
+    stats uri /haproxy-stats
+    stats auth foo:bar
+    server www00 192.0.2.1:80 maxconn 50 check inter 10s
+    server www01 192.0.2.2:80 maxconn 50 check inter 10s
       </code></pre>
   </section>
 
@@ -533,7 +533,7 @@ listen memcached 127.0.0.1:11211
 </section>
 
 <section>
-  <h4>mode MySQL (simple)</h4>
+  <h4>Load-balancing MySQL (simple)</h4>
   <pre><code data-trim class="hljs haproxy">
 listen mysql 127.0.0.1:3306
     mode tcp
@@ -543,13 +543,13 @@ listen mysql 127.0.0.1:3306
 </section>
 
 <section>
-  <h4>mode MySQL (avancé)</h4>
+  <h4>Load-balancing MySQL (avancé)</h4>
   Si le test de connexion à MySQL ne suffit pas,<br>on indique un programme pour un test personnalisé<br>qui indiquera à HAProxy si le backend va bien.
 </section>
 
 <section>
   <h4>Dashboard</h4>
-  Une interface web permet de suivre l'état du proxy.
+  <img style="margin:0 0 0 1%;width:100%;max-width: 600px" src="./imagesEvoFormation2017/haproxy.png" border="0">
 </section>
 
 </section>
@@ -598,7 +598,7 @@ Filtres possibles
 
 <section>
 <h3>Syntaxe VCL</h3>
-<pre><code data-trim class="hljs nohighlight">
+<pre><code data-trim class="hljs varnish" style="max-height: 500px">
 sub vcl_recv {
     if (req.http.host == "boutique.example.com") {
 
@@ -632,39 +632,53 @@ sub vcl_backend_response {
 
   <section>
     <h2>Versions de PHP</h2>
-<ul>
-<li>PHP 3 (1997)</li>
-<li>PHP 4 (2000)</li>
-<li>PHP 5 (2004)</li>
-<li>PHP 5.4 (Debian 7)</li>
-<li>PHP 5.6 (Debian 8)</li>
-<li>PHP 7 (Debian 9)</li>
-</ul>
+    <ul>
+      <li>PHP 3 (1997)</li>
+      <li>PHP 4 (2000)</li>
+      <li>PHP 5 (2004)</li>
+      <li>PHP 5.4 (Debian 7)</li>
+      <li>PHP 5.6 (Debian 8)</li>
+      <li>PHP 7 (Debian 9)</li>
+    </ul>
+  </section>
+
+<section>
+<h2>Installation de PHP5</h2>
+<pre><code data-trim class="hljs nohighlight">
+# apt install php5 libapache2-mod-php5 php5-gd php5-imap php5-ldap \
+              php5-mcrypt php5-mhash php5-mysql php5-pgsql \
+              php-gettext librsvg2-bin
+$ php -v
+</code>
+PHP 5.6.30-0+deb8u1 (cli) (built: Feb  8 2017 08:50:21)
+Copyright (c) 1997-2016 The PHP Group
+Zend Engine v2.6.0, Copyright (c) 1998-2016 Zend Technologies
+    with Zend OPcache v7.0.6-dev, Copyright (c) 1999-2016, by Zend Technologies
+</pre>
+
+<pre><code data-trim class="hljs nohighlight">
+# apt install php5-fpm
+</code></pre>
 </section>
 
 <section>
-<h2>Installation</h2>
-<pre><code data-trim class="hljs nohighlight">
-# apt install php5 libapache2-mod-php5 php5-gd php5-imap php5-ldap php5-mcrypt php5-mhash php5-mysql php5-pgsql php-gettext librsvg2-bin
-$ php -v
+  <h3>php.ini</h3>
+  <pre><code data-trim class="ini">
+  short_open_tags = Off
+  disable_functions = exec, shell-exec, system, passthru, putenv, popen
+  expose_php = Off
+  display_errors = Off
+  log_errors = On
+  allow_url_fopen = Off
+  memory_limit = 128M
+  max_execution_time = 10
+  open_basedir = /home
+  </code></pre>
+</section>
 
-# apt install php5-fpm
-
-php.ini
-
-short_open_tags = Off
-disable_functions = exec, shell-exec, system, passthru, putenv, popen
-expose_php = Off
-display_errors = Off
-log_errors = On
-allow_url_fopen = Off
-memory_limit = 128M
-max_execution_time = 10
-open_basedir = /home
-
-
-Délégation dans VortualHost Apache :
-
+<section>
+  <h3>Délégation dans VirtualHost Apache</h3>
+  <pre><code data-trim class="apache">
 #php_admin_flag engine off
 #AddType text/html .html
 #php_admin_flag safe_mode off
@@ -676,18 +690,21 @@ Délégation dans VortualHost Apache :
 php_admin_value sendmail_path "/usr/sbin/sendmail -t -i -f www-bloginfo"
 php_admin_value error_log "/home/bloginfo/log/php.log"
 php_admin_value memory_limit "64M"
+</code></pre>
+</section>
 
-
-
-fpm/php-fpm.conf
-
+<section>
+  <h3>fpm/php-fpm.conf</h3>
+<pre><code data-trim class="ini">
 [global]
 pid = /run/php5-fpm.pid
 error_log = /var/log/php5-fpm.log
+</code></pre>
+</section>
 
-
-fpm/pool.d/www.conf
-
+<section>
+  <h3>fpm/pool.d/www.conf</h3>
+<pre><code data-trim class="ini">
 [www]
 listen = /var/run/php5-fpm.sock
 ;listen = 127.0.0.1:9000
@@ -700,22 +717,30 @@ php_flag[display_errors] = off
 php_admin_value[error_log] = /var/log/fpm-php.www.log
 php_admin_flag[log_errors] = on
 php_admin_value[memory_limit] = 32M
+</code></pre>
+</section>
 
-
+<section>
+  <h3>fpm/pool.d/www.conf</h3>
+<pre><code data-trim class="ini">
 pm = dynamic
 pm.max_children = 100
 pm.start_servers = 50
 pm.min_spare_servers = 20
 pm.max_spare_servers = 30
 pm.max_requests = 100
-
+</code></pre>
 OU
-
+<pre><code data-trim class="ini">
 pm = ondemand
 pm.max_children = 100
 pm.process_idle_timeout = 10s
+</code></pre>
+</section>
 
-
+<section>
+  <h3>fpm/pool.d/www.conf</h3>
+<pre><code data-trim class="ini">
 slowlog = log/$pool.log.slow
 request_slowlog_timeout = 5s
 
@@ -723,19 +748,24 @@ pm.status_path = /fpm-status
 request_terminate_timeout = 60s
 chroot = /home/foo
 access.log = log/$pool.access.log
+</code></pre>
+</section>
 
-
-Avec Apache :
-
+<section>
+  <h3>Avec Apache :</h3>
+  <pre><code data-trim class="hljs nohighlight">
 # a2enmod proxy_fcgi
-
+  </code></pre>
+  <pre><code data-trim class="apache">
 DocumentRoot /home/foo/www/
-#ProxyPassMatch "^/(.*\.php(/.*)?)$" "fcgi://127.0.0.1:9000//home/foo/www/$1"
+# ProxyPassMatch "^/(.*\.php(/.*)?)$" "fcgi://127.0.0.1:9000//home/foo/www/$1"
 ProxyPassMatch "^/(.*\.php(/.*)?)$" "unix:/var/run/php5-fpm.sock|fcgi://localhost/home/foo/www/"
+  </code></pre>
+</section>
 
-
-Avec Nginx :
-
+<section>
+  <h3>Avec Nginx</h3>
+  <pre><code data-trim class="nginx">
 server {
     listen 80;
     server_name www.example.com example.com;
@@ -750,10 +780,12 @@ server {
         include fastcgi_params;
     }
 }
+  </code></pre>
+</section>
 
+<section>
+<pre><code data-trim class="hljs nohighlight">
 $ echo "<?php phpinfo() ; ?>" > /var/www/info.php
-
-
 </code></pre>
 </section>
 
