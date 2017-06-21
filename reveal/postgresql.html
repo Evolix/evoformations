@@ -46,22 +46,156 @@
 <h3>PostgreSQL</h3>
 </section>
 
-https://wiki.evolix.org/HowtoPostgreSQL
-
-https://wiki.evolix.org/HowtoPostgreSQLReplication
-
-https://wiki.evolix.org/HowtoPostgreSQLStreamingReplication
+PostgreSQL est une base de données qui met l'accent sur le respect du standard SQL et la sécurité des données.
+Il se base notamment sur des journaux de transaction (WAL), fichiers binaires qui contient toutes les données
+avant écriture sur les disques.
 
 
+# apt install postgresql
+
+# vim sources.list
+deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+
+Instances :
+
+# pg_ctlcluster <version> <cluster> start|stop|restart|reload|status|promote
+# pg_lsclusters
+Ver Cluster Port Status Owner    Data directory               Log file
+9.4 main    5432 online postgres /var/lib/postgresql/9.4/main /var/log/postgresql/postgresql-9.4-main.log
+# dpkg-reconfigure locales
+$ /usr/bin/pg_createcluster <version> <cluster>
+
+attention à la locales
+
+  * configuration : `/etc/postgresql/<version>/<instance>/`
+  * journaux : `/var/log/postgresql/postgresql-<version>-<instance>.log`
+  * stockage : `/var/lib/postgresql/<version>/<instance>/`
+  * binaires et bibliothèques : `/usr/lib/postgresql/<version>/<instance>/`
+  * etc…
+
+# sudo -u postgres psql
+
+pg_hba.conf :
+
+~~~{.diff}
+- local   all             all                                     peer
++ local   all             all                                     password
+~~~
+
+$ createuser -P <login>
+$ createdb -O <login> <base>
+
+$ dropdb <base>
+$ psql -c "ALTER USER <login> WITH PASSWORD 'foo'"
+$ dropuser <login>
+=# SELECT * FROM pg_user;
+=# \du
+  
+$  psql -l
+= # \d
+= # SELECT * FROM pg_database;
+  
+SELECT pid, datname, usename, client_addr, query_start, waiting, query FROM pg_stat_activity WHERE state='active' ORDER by query_start;
+
+# aptitude install ptop pgbadger pgadmin3
+
+$ pg_top
+
+
+Faire un VACUUM FULL sur toutes les bases de données :
+~~~
+$ vacuumdb -a -f -v
+~~~
+
+ANALYSE sur toutes les tables d'une base de données :
+~~~
+$ psql mydb
+=# ANALYZE;
+~~~
+
+Optimisation
+
+shared_buffers : quantité de mémoire dédiée à PostgreSQL
+work_mem : quantité de mémoire par process
+max_connections
+
+
+sauvegarde
+
+$ pg_dump <base> >dump.sql
+$ pg_dumpall >dump.sql
+
+$ psql <base> < dump.sql
+
+Archivage de WAL :
+wal_level = 'archive'
+archive_command = 'rsync %p backup.example.net:/backup/…/archives/%f'
++ barman
+
+
+Usage
+
+=> CREATE TABLE weather (
+    city            varchar(80),
+    temp_lo         int,           -- low temperature
+    temp_hi         int,           -- high temperature
+    prcp            real,          -- precipitation
+    date            date
+);
+
+=> INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');
+
+
+=> SELECT * FROM weather;
+=> SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
+=> SELECT * FROM weatherWHERE city = 'San Francisco' AND prcp > 0.0;
+=> SELECT DISTINCT city FROM weather ORDER BY city;
+=> SELECT * FROM weather, cities WHERE city = name;
+=> SELECT weather.city, weather.temp_lo, cities.location FROM weather, cities WHERE cities.name = weather.city;
+=> SELECT * FROM weather INNER JOIN cities ON (weather.city = cities.name);
+=> SELECT * FROM weather LEFT OUTER JOIN cities ON (weather.city = cities.name);
+=> SELECT * FROM weather w, cities c WHERE w.city = c.name;
+
+
+pooler de connexions :
+* pgpool
+* pgbouncer  
+  
+
+_Streaming Replication_
+
+master / slave
+
+
+Slony : réplication des données par trigger
+
+ne réplique pas le schéma : toutes les bases à créer
+* Avoir une clé primaire sur chaque table à répliquer (peut être contourné dans certaines conditions, mais fortement déconseillé par les dév. de Slony)
+* Ne pas utiliser la commande SQL "TRUNCATE" (avant PG 8.4)
+SELECT * from pg_stat_replication;
+
+# Initialise le cluster Slony
+slonik_init_cluster | slonik
+# Initialise le set de réplication (ensemble de tables à répliquer), notamment installation des triggers.
+slonik_create_set set1 | slonik
+# zcat /usr/share/doc/slony1-2-bin/examples/slon.conf-sample.gz >/etc/slony1/slon.conf
+# /etc/init.d/slony1 start
+$ slonik_subscribe_set set1 node2 | slonik
+
+
+
+Autres bases de données
+
+* MySQL / MariaDB : base de données très populaire au sein des infrastructures web
 https://wiki.evolix.org/HowtoMySQL
+
+NoSQL : 
 https://wiki.evolix.org/HowtoSQLite
 https://wiki.evolix.org/HowtoMemcached
 https://wiki.evolix.org/HowtoRedis
 https://wiki.evolix.org/HowtoMongoDB
 https://wiki.evolix.org/HowtoElasticsearch
 CouchDB, Cassandra, Riak, Neo4j
-
-
 
             </div>
 
