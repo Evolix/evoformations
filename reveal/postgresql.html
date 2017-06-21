@@ -46,6 +46,7 @@
 <h3>PostgreSQL</h3>
 </section>
 
+<section>
 PostgreSQL est une base de données qui met l'accent sur le respect du standard SQL et la sécurité des données.
 Il se base notamment sur des journaux de transaction (WAL), fichiers binaires qui contient toutes les données
 avant écriture sur les disques.
@@ -90,11 +91,11 @@ $ psql -c "ALTER USER <login> WITH PASSWORD 'foo'"
 $ dropuser <login>
 =# SELECT * FROM pg_user;
 =# \du
-  
+
 $  psql -l
 = # \d
 = # SELECT * FROM pg_database;
-  
+
 SELECT pid, datname, usename, client_addr, query_start, waiting, query FROM pg_stat_activity WHERE state='active' ORDER by query_start;
 
 # aptitude install ptop pgbadger pgadmin3
@@ -159,8 +160,8 @@ Usage
 
 pooler de connexions :
 * pgpool
-* pgbouncer  
-  
+* pgbouncer
+
 
 _Streaming Replication_
 
@@ -184,19 +185,28 @@ $ slonik_subscribe_set set1 node2 | slonik
 
 
 
-Autres bases de données
 
-* MySQL / MariaDB : base de données très populaire au sein des infrastructures web
-https://wiki.evolix.org/HowtoMySQL
+</section>
 
-NoSQL : 
-https://wiki.evolix.org/HowtoSQLite
-https://wiki.evolix.org/HowtoMemcached
-https://wiki.evolix.org/HowtoRedis
-https://wiki.evolix.org/HowtoMongoDB
-https://wiki.evolix.org/HowtoElasticsearch
-CouchDB, Cassandra, Riak, Neo4j
+<section>
+<h2>Autres bases de données</h2>
 
+<h4>Relationnelles</h4>
+<ul>
+  <li>MySQL / MariaDB : base de données très populaires au sein des infrastructures web</li>
+  <li>SQLite : faile à installer, idéal pour embarquer</li>
+</ul>
+
+<h4>NoSQL</h4>
+<ul>
+  <li>Memcached : base de données clés/valeurs volatile et très performante</li>
+  <li>Redis : ressemble à Memcache, mais persistent et plus riche en fonctionnalités</li>
+  <li>InfluxDB : base de données orientée "métriques"</li>
+  <li>Elasticsearch : moteur distribuée d'indexation et de recherche</li>
+  <li>Neo4j : base de données orientée "graph"</li>
+  <li>Autres : MongoDB, CouchDB, Cassandra, Riak…</li>
+</ul>
+</section>
             </div>
 
         </div>
