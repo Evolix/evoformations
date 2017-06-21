@@ -47,112 +47,144 @@
 </section>
 
 <section>
-<p>PostgreSQL est une base de données qui met l'accent sur le respect du standard SQL et la sécurité des données.
-Il se base notamment sur des journaux de transaction (WAL), fichiers binaires qui contient toutes les données
-avant écriture sur les disques.<p>
-<pre>
-<code># apt install postgresql</code>
-<code># vim sources.list</code>
-deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
-</pre>
+<h3>PostgreSQL</h3>
+<ul>
+  <li>le respect du standard SQL</li>
+  <li>la sécurité des données</li>
+  <li>journaux de transaction (WAL) avant persistence</li>
+</ul>
 </section>
 
 <section>
+<h3>Installation</h3>
 <pre>
-<h3>Instances :</h3>
-<code># pg_ctlcluster < version > < cluster > start|stop|restart|reload|status|promote</code>
-<code># pg_lsclusters</code>
-<code>
+<code data-trim class="hljs nohighlight"># vim sources.list</code>
+deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+</pre>
+<pre><code data-trim class="hljs nohighlight"># apt install postgresql</code></pre>
+</section>
+
+<section>
+<h3>Instances</h3>
+<pre>
+<code data-trim class="hljs nohighlight">
+# pg_ctlcluster &lt;version&gt; &lt;cluster&gt; start|stop|restart|reload|status|promote</code>
+<code data-trim class="hljs nohighlight"># pg_lsclusters</code>
+<code data-trim class="hljs nohighlight">
 Ver Cluster Port Status Owner    Data directory               Log file
 9.4 main    5432 online postgres /var/lib/postgresql/9.4/main /var/log/postgresql/postgresql-9.4-main.log
 </code>
-<code># dpkg-reconfigure locales</code>
-<code>$ /usr/bin/pg_createcluster < version > < cluster ></code>
 </pre>
 </section>
 
 <section>
-<p>
-<i>Attention à la locales</i>
-<ul>
-<li><u>configuration :</u><br> <tt>`/etc/postgresql/< version >/< instance >/`</tt></li>
-<li><u>journaux :</u> <br> <tt>`/var/log/postgresql/postgresql-< version >-< instance >.log`</tt></li>
-<li><u>stockage :</u> <br> <tt>`/var/lib/postgresql/< version >/< instance >/`</tt></li>
-<li><u>binaires et bibliothèques :</u> <br> <tt>`/usr/lib/postgresql/< version >/< instance >/`</tt></li>
-<li>etc…</li>
-</p>
+<h4>Attention à la locale</h4>
+<pre>
+<code data-trim class="hljs nohighlight">
+# dpkg-reconfigure locales
+$ /usr/bin/pg_createcluster &lt;version&gt; &lt;cluster&gt;
+</code>
+</pre>
+</section>
+
+<section>
+<h3>Fichiers</h3>
+<pre>
+<strong>configuration</strong> : /etc/postgresql/&lt;version&gt;/&lt;instance&gt;/
+
+<strong>journaux</strong> : /var/log/postgresql/postgresql-&lt;version&gt;-&lt;instance&gt;.log
+
+<strong>stockage</strong> : var/lib/postgresql/&lt;version&gt;/&lt;instance&gt;/
+
+<strong>binaires et bibliothèques</strong> : /usr/lib/postgresql/&lt;version&gt;/&lt;instance&gt;/
+</pre>
 </section>
 
 <section>
 <pre>
-<code># sudo -u postgres psql</code>
+<code data-trim class="hljs nohighlight"># sudo -u postgres psql</code>
+</pre>
 <h3>Contenu de pg_hba.conf :</h3>
-~~~{.diff}
-- local   all             all                                     peer
-+ local   all             all                                     password
-~~~
-<code>$ createuser -P < login ></code>
-<code>$ createdb -O < login > < base ></code>
+<pre><code data-trim class="diff">
+- local   all  all  peer
++ local   all  all  password
+</code>
+<code data-trim class="hljs nohighlight">
+$ createuser -P &lt;login&gt;
+$ createdb -O &lt;login&gt; &lt;base&gt;
+</code>
 </section>
 
 <section>
 <pre>
-<code>$ dropdb < base ></code>
-<code>$ psql -c "ALTER USER < login > WITH PASSWORD 'foo'"</code>
-<code>$ dropuser < login ></code>
+<code data-trim class="hljs nohighlight">
+$ dropdb &lt;base&gt;
+$ psql -c "ALTER USER &lt;login&gt; WITH PASSWORD 'foo'"
+$ dropuser &lt;login&gt;</code>
+<code data-trim class="sql">
 =# SELECT * FROM pg_user;
 =# \du
+</code></pre>
+</section>
 
-<code>$  psql -l</code>
-= # \d
-= # SELECT * FROM pg_database;
+<section>
+<pre>
+<code data-trim class="hljs nohighlight">$  psql -l</code>
+<code data-trim class="sql">
+=# \d
+=# SELECT * FROM pg_database;
+</code>
 
-<code>SELECT pid, datname, usename, client_addr, query_start, waiting, query FROM pg_stat_activity WHERE state='active' ORDER by query_start;</code>
+<code data-trim class="sql">
+SELECT pid, datname, usename, client_addr, query_start, waiting, query
+  FROM pg_stat_activity
+  WHERE state='active'
+  ORDER by query_start;</code>
 </pre>
 </section>
 
 <section>
+<h4>Outils complémentaires</h4>
 <pre>
-<code># aptitude install ptop pgbadger pgadmin3</code>
-<code>$ pg_top</code>
-
-<h3>Faire un VACUUM FULL sur toutes les bases de données :</h3>
-<code>$ vacuumdb -a -f -v</code>
-
-<h3>ANALYSE sur toutes les tables d'une base de données :</h3>
-<code>$ psql mydb</code>
-=# ANALYZE;
-
+<code data-trim class="hljs nohighlight"># aptitude install ptop pgbadger pgadmin3</code>
+<code data-trim class="hljs nohighlight">$ pg_top</code>
+</pre>
+<h4>Faire un VACUUM FULL sur toutes les bases de données</h4>
+<pre><code data-trim class="hljs nohighlight">$ vacuumdb -a -f -v</code>
+</pre>
+<h4>ANALYSE sur toutes les tables d'une base de données</h4>
+<pre><code data-trim class="hljs nohighlight">$ psql mydb</code>
+<code data-trim class="sql">=# ANALYZE;</code>
+</pre>
 </section>
 
 <section>
-<pre>
 <h3>Optimisation</h3>
 <ul>
 <li>shared_buffers : quantité de mémoire dédiée à PostgreSQL</li>
 <li>work_mem : quantité de mémoire par process</li>
 <li>max_connections</li>
-</pre>
 </section>
 
 <section>
-<pre>
 <h3>Sauvegarde</h3>
-<code>$ pg_dump < base > >dump.sql</code>
-<code>$ pg_dumpall >dump.sql</code>
-<code>$ psql < base > < dump.sql</code>
+<pre>
+<code data-trim class="hljs nohighlight">$ pg_dump &lt;base&gt; >dump.sql</code>
+<code data-trim class="hljs nohighlight">$ pg_dumpall > dump.sql</code>
+<code data-trim class="hljs nohighlight">$ psql &lt;base&gt; < dump.sql</code>
+</pre>
 
-<h3>Archivage de WAL :</h3>
-wal_level = 'archive'
+<h4>Archivage de WAL :</h4>
+<pre>wal_level = 'archive'
 archive_command = 'rsync %p backup.example.net:/backup/…/archives/%f'
 </pre>
-<pre>+ barman</pre>
+<h4>barman</h4>
 </section>
 
 <section>
-<pre>
 <h3>Usage</h3>
-=> CREATE TABLE weather (
+<pre><code class="sql">
+CREATE TABLE weather (
     city            varchar(80),
     temp_lo         int,           -- low temperature
     temp_hi         int,           -- high temperature
@@ -160,61 +192,73 @@ archive_command = 'rsync %p backup.example.net:/backup/…/archives/%f'
     date            date
 );
 
-=> INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');
-</pre>
+INSERT INTO weather VALUES ('San Francisco', 46,50,0.25, '1994-11-27');
+</code></pre>
 </section>
 
 <section>
 <pre>
-=> SELECT * FROM weather;
-=> SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
-=> SELECT * FROM weatherWHERE city = 'San Francisco' AND prcp > 0.0;
-=> SELECT DISTINCT city FROM weather ORDER BY city;
-=> SELECT * FROM weather, cities WHERE city = name;
-=> SELECT weather.city, weather.temp_lo, cities.location FROM weather, cities WHERE cities.name = weather.city;
-=> SELECT * FROM weather INNER JOIN cities ON (weather.city = cities.name);
-=> SELECT * FROM weather LEFT OUTER JOIN cities ON (weather.city = cities.name);
-=> SELECT * FROM weather w, cities c WHERE w.city = c.name;
-</pre>
+<code data-trim class="sql" style="max-height: 600px">
+SELECT * FROM weather;
+
+SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
+
+SELECT * FROM weatherWHERE city = 'San Francisco' AND prcp > 0.0;
+
+SELECT DISTINCT city FROM weather ORDER BY city;
+
+SELECT * FROM weather, cities WHERE city = name;
+
+SELECT weather.city, weather.temp_lo, cities.location
+  FROM weather, cities WHERE cities.name = weather.city;
+
+SELECT * FROM weather
+  INNER JOIN cities ON (weather.city = cities.name);
+
+SELECT * FROM weather
+  LEFT OUTER JOIN cities ON (weather.city = cities.name);
+
+SELECT * FROM weather w, cities c WHERE w.city = c.name;
+</code></pre>
 </section>
 
 <section>
-<pre>
-<h4>Pooler de connexions :</h4>
+<h3>Pool de connexions :</h3>
 <ul>
 <li>pgpool</li>
 <li>pgbouncer</li>
 </ul>
+</section>
 
-<h4>Streaming Replication</h4>
+<section>
+<h3>Streaming Replication</h3>
 
 master / slave
 </section>
 
 <section>
-<pre>
 <h4>Slony : réplication des données par trigger</h4>
-<p>Ne réplique pas le schéma : toutes les bases à créer</p>
 <ul>
-<li>Avoir une clé primaire sur chaque table à répliquer <br>
-(peut être contourné dans certaines conditions, <br>
-mais fortement déconseillé par les dév. de Slony)</li>
-<li>Ne pas utiliser la commande SQL "TRUNCATE" (avant PG 8.4)</li>
-<code>SELECT * from pg_stat_replication;</code>
-</pre>
+<li>Ne réplique pas le schéma : toutes les bases à créer</li>
+<li>Avoir une clé primaire sur chaque table à répliquer *</li>
+<li>Ne pas utiliser "TRUNCATE" (PG < 8.4)</li>
+<pre><code class="sql">SELECT * from pg_stat_replication;</code></pre>
+<small>* : peut être contourné mais fortement conseillé.</small>
 </section>
 
 <section>
+<h4>Initialise le cluster Slony</h4>
+<pre>slonik_init_cluster | slonik</pre>
+<h4>Initialise le set de réplication</h4>
+Ensemble de tables à répliquer, y compris les triggers.
+<pre>slonik_create_set set1 | slonik</pre>
 <pre>
-<h4> Initialise le cluster Slony</h4>
-slonik_init_cluster | slonik
-
-<h4> Initialise le set de réplication (ensemble de tables à répliquer), notamment installation des triggers.</h4>
-slonik_create_set set1 | slonik
-
-<code># zcat /usr/share/doc/slony1-2-bin/examples/slon.conf-sample.gz >/etc/slony1/slon.conf</code>
-<code># /etc/init.d/slony1 start</code>
-<code>$ slonik_subscribe_set set1 node2 | slonik</code>
+<code data-trim class="hljs nohighlight">
+# zcat /usr/share/doc/slony1-2-bin/examples/slon.conf-sample.gz \
+       > /etc/slony1/slon.conf
+</code>
+<code data-trim class="hljs nohighlight"># /etc/init.d/slony1 start</code>
+<code data-trim class="hljs nohighlight">$ slonik_subscribe_set set1 node2 | slonik</code>
 </pre>
 </section>
 
